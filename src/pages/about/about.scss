@@ -1,0 +1,208 @@
+.about {
+    width: 100%;
+    background-color: #DEDEDE;
+
+    .aboutContainer {
+        margin: 0 auto;
+        display: flex;
+        max-width: 1200px;
+        background-color: #DEDEDE;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo {
+
+        padding: 20px 0 40px 0;
+
+        img {
+            width: 50px;
+        }
+    }
+
+    section {
+        margin: 50px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .flex-row {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
+        width: 100%;
+
+        .left {
+            text-align: left;
+
+            img {
+                width: 100%;
+            }
+        }
+
+        .right {
+            text-align: left;
+
+        }
+
+        .w-100p {
+            width: 100%;
+        }
+
+        .w-50p {
+            width: 50%;
+        }
+
+        .w-40p {
+            width: 40%;
+        }
+
+        .w-30p {
+            width: 30%;
+        }
+
+        .w-25p {
+            width: 25%;
+        }
+    }
+
+    h2 {
+        font-size: 35px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        margin-bottom: 40px;
+        padding: 0 10px;
+    }
+
+    .btns {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        border: 1px solid #000;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.5s, color 0.5s; // 添加transition属性
+
+        &:hover {
+            background-color: #000;
+            color: #fff;
+        }
+    }
+
+
+    .footer {
+        text-align: center;
+
+        img {
+            width: 150px;
+            cursor: pointer;
+
+        }
+    }
+
+    .a-item {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        align-items: center;
+        font-family:'Times New Roman', Times, serif;
+
+        img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+        }
+    }
+
+    .b-item {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        align-items: center;
+
+        img {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+        }
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .brief p:nth-child(2n+1) {
+        margin-bottom: 0;
+    }
+
+    img {
+        margin-bottom: 20px;
+    }
+
+    a {
+        color: #000;
+        text-decoration: underline;
+    }
+    .centered {
+        text-align: center;
+    }
+    .immersive-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh; /* Minimum height to take up full viewport height */
+        padding: 4rem;
+        background: rgba(0, 0, 0, 0.7); /* A semi-transparent dark background */
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .immersive-text {
+        max-width: 600px; /* Limit the width of the text to maintain readability */
+        margin: 0 auto;
+        font-size: 1.25rem;
+        line-height: 1.6;
+        opacity: 0; /* Start with the text fully transparent */
+        transform: translateY(20px); /* Start 20px below the intended position */
+        transition: opacity 1s ease, transform 1s ease; /* Animate both opacity and position */
+    }
+
+    /* This part is optional: a simple fade-in effect as an example of an animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Apply the animation */
+    .immersive-section:in-viewport(.immersive-text) {
+        animation: fadeInUp 1s ease forwards;
+    }
+
+    .immersive-text-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+
+}
