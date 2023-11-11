@@ -71,7 +71,7 @@ const About = () => {
                             {/*completed my studies under the tutelage of Professor <a href="https://davidbarber.github.io/" target="_blank">David Barber</a> at UCL, with a strong focus on reinforcement learning and machinelearning.Additionally, I was privileged to receive guidance fromProfessor Nadia Berthouze, a pioneer in the field of emotionalcomputing.<br /><br />*/}
                             {/*Beyond the professional sphere, l have a passion for writingtraveling, photography, painting, and devising new stock marketstrategies.I have a profound interest in technological innovationstailored for the deaf-mute community and those with psychologicaimpairments.I'm always open to engaging discussions in this area, sofeel free to reach out.<br /><br />*/}
                         </p><br/>
-                        <p class="centered"><a href={"https://davidbarber.github.io/"}>R E S U M E</a></p>
+                        <p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>
                     </div>
 
                 </section>

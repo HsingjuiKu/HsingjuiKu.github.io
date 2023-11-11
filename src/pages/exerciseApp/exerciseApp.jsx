@@ -146,7 +146,7 @@ const ExerciseAPP = () => {
 
                 <div className="footer">
                     <img src="/assets/kn.png" alt="" onClick={toTop} />
-                    <p>Copyright © Xingrui Gu. All Rights Reserved.</p>
+                    <p>Copyright © Xingrui GU. All Rights Reserved.</p>
                 </div>
 
             </div>

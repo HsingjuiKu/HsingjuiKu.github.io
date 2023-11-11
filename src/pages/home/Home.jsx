@@ -30,7 +30,7 @@ const Home = () => {
                         <div className="btn" onClick={() => { window.location.href = "https://github.com/HsingjuiKu" }}>
                             GITHUB
                         </div>
-                        <div className="btn" onClick={() => { window.location.href = "/#" }}>
+                        <div className="btn" onClick={() => { window.location.href = "https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing" }}>
                             RESUME
                         </div>
                     </div>
@@ -41,7 +41,7 @@ const Home = () => {
                     <p className="centered-paragraph">
                         Drawing inspiration from the artistry of vintage photographs, we delve into the intricate tapestry of facial emotion recognition. With a keen focus on elevating the mental and physical well-being of the elderly, Behavior crafts a meticulously designed UX canvas. A seamless interface that transcends age, uniting past aesthetics with future technologies, to resonate deeply and heal holistically.
                     </p>
-                    <div className="btn" onClick={() => { window.location.href = "/moodClip" }}>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/moodclip')}>
                         START JOURNEY
                     </div>
                 </section>
@@ -51,7 +51,7 @@ const Home = () => {
                     <img src="/assets/LjUs Poster.png" alt="" />
                     <p className="centered-paragraph">Experience the profound interaction of phototherapy, where words are superfluous, and light speaks. We tune into your emotions, crafting a unique therapeutic ambiance through emotion computation. Here, health is not just monitored; it's cherished and nurtured. Let LjUs guide you into the warmth of illumination, embracing your true self.</p>
                     {/*<p>Experience the profound interaction of phototherapy, where words are superfluous, and light speaks. We tuneinto your emotions, crafting a unique therapeutic ambiance through emotion computation. Here, health is not justmonitored; it's cherished and nurtured. Let LjUs guide you into the warmth of illumination, embracing your trueself.</p>*/}
-                    <div className="btn" onClick={() => { window.location.href = "/ljus" }}>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/ljus')}>
                         START JOURNEY
                     </div>
                 </section>
@@ -61,7 +61,7 @@ const Home = () => {
                     <p className="centered-paragraph">Experience the profound interaction of phototherapy, where words are superfluous, and light speaks. We tuneinto your emotions, crafting a unique therapeutic ambiance through emotion computation. Here, health is not justmonitored; it's cherished and nurtured. Let LjUs guide you into the warmth of llumination, embracing your true
                         self.
                     </p>
-                    <div className="btn" onClick={() => { window.location.href = "/miniprogram" }}>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/miniprogram')}>
                         START JOURNEY
                     </div>
                 </section>
@@ -71,7 +71,7 @@ const Home = () => {
                     <p className="centered-paragraph">
                         The project on Smoothed Q-Learning and Smoothed Deep Q-Networks (SDQNs) advanced reinforcement learning by incorporating statistical smoothing techniques, enhancing policy robustness in complex environments. By integrating deep learning and probabilistic confidence measures, these methods demonstrated improved decision-making stability and adaptability to environmental uncertainties.
                     </p>
-                    <div className="btn" onClick={() => { window.location.href = "/rl" }}>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/rl')}>
                         START JOURNEY
                     </div>
                 </section>
@@ -79,7 +79,7 @@ const Home = () => {
                 <section>
                     <img src="/assets/exerciseApp/Exercise Web App.png" alt="" />
                     <p className="centered-paragraph">The UCL Exercises Web Application redefines physiotherapy management by providing a centralized, interactive platform for personalized rehabilitation exercises and clinician-crafted treatment plans. Bridging technology and healthcare, it offers seamless access and tailored user experiences to improve recovery outcomes and clinician efficiency.</p>
-                    <div className="btn" onClick={() => { window.location.href = "/exerciseapp" }}>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/exerciseapp')}>
                         START JOURNEY
                     </div>
                 </section>

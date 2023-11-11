@@ -14,13 +14,12 @@ function App() {
     <HashRouter baseline="/">
       <Routes>
         <Route exact path={process.env.PUBLIC_URL + '/'} element={<Home />} />
-        {/*<Route path="home" element={<Home />} />*/}
         <Route exact path={process.env.PUBLIC_URL + '/about'} element={<About />} />
-        <Route path={process.env.PUBLIC_URL + '/moodclip'} element={<MoodClip />} />
-        <Route path="/miniprogram" element={<MiniProgram />} />
-        <Route path="/ljus" element={<LjUs />} />
-        <Route path="/exerciseapp" element={<ExerciseApp />} />
-        <Route path="/rl" element={<RL />} />
+        <Route exact path={process.env.PUBLIC_URL + '/moodclip'} element={<MoodClip />} />
+        <Route exact path={process.env.PUBLIC_URL + '/miniprogram'} element={<MiniProgram />} />
+        <Route exact path={process.env.PUBLIC_URL + '/ljus'} element={<LjUs />} />
+        <Route exact path={process.env.PUBLIC_URL + '/exerciseapp'} element={<ExerciseApp />} />
+        <Route exact path={process.env.PUBLIC_URL + '/rl'} element={<RL />} />
       </Routes>
     </HashRouter>
     </div>
