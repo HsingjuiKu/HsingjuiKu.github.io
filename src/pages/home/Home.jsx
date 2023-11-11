@@ -1,5 +1,6 @@
 import React from "react";
 import "./home.scss";
+import { useNavigate } from 'react-router-dom';
 
 // Home component
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
             behavior: "smooth"
         });
     }
+    let navigate = useNavigate();
     return (
         <div className="home">
             <div className="homeContainer">
@@ -22,7 +24,7 @@ const Home = () => {
                     <br/>
                     <br/>
                     <div className="btns">
-                        <div className="btn" onClick={() => { window.location.href = "/about" }}>
+                        <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/about')}>
                             ABOUT ME
                         </div>
                         <div className="btn" onClick={() => { window.location.href = "https://github.com/HsingjuiKu" }}>

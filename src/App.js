@@ -13,10 +13,10 @@ function App() {
   return (<div className="app">
     <HashRouter baseline="/">
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path={process.env.PUBLIC_URL + '/'} element={<Home />} />
         {/*<Route path="home" element={<Home />} />*/}
-        <Route path="about" element={<About />} />
-        <Route path="/moodClip" element={<MoodClip />} />
+        <Route path={process.env.PUBLIC_URL + '/about'} element={<About />} />
+        <Route path={process.env.PUBLIC_URL + '/moodclip'} element={<MoodClip />} />
         <Route path="/miniprogram" element={<MiniProgram />} />
         <Route path="/ljus" element={<LjUs />} />
         <Route path="/exerciseapp" element={<ExerciseApp />} />
