@@ -4,6 +4,8 @@ import About from "./pages/about/About";
 import MoodClip from "./pages/moodClip/MoodClip";
 import MiniProgram from "./pages/miniProgram/MiniProgram";
 
+import { HashRouter } from 'react-router-dom';
+
 import { useContext } from "react";
 import LjUs from "./pages/LjUs/LjUs";
 import ExerciseApp from "./pages/exerciseApp/exerciseApp";
@@ -11,7 +13,7 @@ import RL from "./pages/rl/rl";
 
 function App() {
   return (<div className="app">
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />
@@ -22,7 +24,7 @@ function App() {
         <Route path="exerciseapp" element={<ExerciseApp />} />
         <Route path="rl" element={<RL />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </div>
   );
 }
