@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, HashRouter } from "react-router-dom";
 import Home from "./pages/home/Home";
 import About from "./pages/about/About";
 import MoodClip from "./pages/moodClip/MoodClip";
 import MiniProgram from "./pages/miniProgram/MiniProgram";
 
-import { HashRouter } from 'react-router-dom';
+
 import LjUs from "./pages/LjUs/LjUs";
 import ExerciseApp from "./pages/exerciseApp/exerciseApp";
 import RL from "./pages/rl/rl";
@@ -23,7 +23,7 @@ function App() {
         <Route path="/rl" element={<RL />} />
       </Routes>
     </HashRouter>
-  </div>
+    </div>
   );
 }
 
