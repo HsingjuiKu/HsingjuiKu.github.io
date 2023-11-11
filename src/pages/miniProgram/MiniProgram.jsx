@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import "./MiniProgram.scss"
+import {Document, Page} from "react-pdf";
 
 const MiniProgram = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -26,7 +27,7 @@ const MiniProgram = () => {
                     <p>Role: Algorithm Designer and Developer</p>
                     <p>Supervisor: Prof.Nadia Berthouze</p>
                     <p className="bold">Theme: Affective Computing, Machine Learning with Multi-modal, Signal Processing</p>
-                    <p className="bold">Report Link:<a href="">Link</a></p>
+                    {/*<p className="bold">Report Link:<a href="">Link</a></p>*/}
 
                 </section>
 
@@ -103,6 +104,38 @@ const MiniProgram = () => {
                 </section>
                 <section>
                     <img src="/assets/miniprogram/Mini Program5.png" alt="" style={{ border: '1px solid #000' }} />
+                </section>
+
+                <section>
+                    <h2 className="h-t">Report</h2>
+                    <div className="pdf-reader">
+                        <Document
+                            file="/assets/miniprogram/COMP0053_Report.pdf"
+                            onLoadSuccess={onDocumentLoadSuccess}
+                        >
+                            <Page pageNumber={pageNumber} renderTextLayer={false} renderAnnotationLayer={false} className="pdf-page"/>
+                        </Document>
+                        <div className="pagination-container">
+                            <button onClick={() => setPageNumber(pageNumber - 1)} disabled={pageNumber <= 1} className="btn">
+                                Prev
+                            </button>
+                            <input
+                                type="number"
+                                value={pageNumber}
+                                onChange={handlePageChange}
+                                className="pagination-input"
+                                min="1"
+                                max={numPages}
+                                title="Enter page number"
+                            />
+                            <button onClick={() => setPageNumber(pageNumber + 1)} disabled={pageNumber >= numPages} className="btn">
+                                Next
+                            </button>
+                            <span className="pagination-info">
+                                Page {pageNumber} of {numPages}
+                            </span>
+                        </div>
+                    </div>
                 </section>
                 <div className="footer">
                     <img src="/assets/kn.png" alt="" onClick={toTop} />

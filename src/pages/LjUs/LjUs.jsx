@@ -25,7 +25,7 @@ const LjUs = () => {
                     <p>Role: Co-Founder</p>
                     {/*<p>Supervisor: Prof.Nadia Berthouze</p>*/}
                     <p className="bold" >Theme: Affective Computing, Signal Processing, Human Computer Interaction, Human Machine Interaction</p>
-                    <p className="bold" >Video: <a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>LINK</a></p>
+                    <p className="bold" >Video: <a href={"https://youtu.be/e_1jYJT6KJI?si=wHY7yl1DRVUvR1nu"}>L I N K</a></p>
                 </section>
 
                 <section>
