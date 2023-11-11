@@ -9,13 +9,28 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 const MiniProgram = () => {
     const [activeTab, setActiveTab] = useState(0);
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1); // Set the default page to 1
+
+
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setNumPages(numPages);
+    };
+
 
     const toTop = () => {
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
-    }
+    };
+
+    const handlePageChange = (event) => {
+        let page = parseInt(event.target.value, 10);
+        if(page >= 1 && page <= numPages) {
+            setPageNumber(page);
+        }
+    };
     return (
         <div className="MiniProgram">
             <div className="MiniProgramContainer">
