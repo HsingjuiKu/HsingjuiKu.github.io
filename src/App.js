@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route exact path={process.env.PUBLIC_URL + '/'} element={<Home />} />
         {/*<Route path="home" element={<Home />} />*/}
-        <Route path={process.env.PUBLIC_URL + '/about'} element={<About />} />
+        <Route exact path={process.env.PUBLIC_URL + '/about'} element={<About />} />
         <Route path={process.env.PUBLIC_URL + '/moodclip'} element={<MoodClip />} />
         <Route path="/miniprogram" element={<MiniProgram />} />
         <Route path="/ljus" element={<LjUs />} />
