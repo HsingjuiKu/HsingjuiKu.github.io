@@ -11,7 +11,7 @@ import RL from "./pages/rl/rl";
 
 function App() {
   return (<div className="app">
-    <HashRouter>
+    <HashRouter baseline="/">
       <Routes>
         <Route exact path="/" element={<Home />} />
         {/*<Route path="home" element={<Home />} />*/}
