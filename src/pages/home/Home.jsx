@@ -1,6 +1,6 @@
 import React from "react";
 import "./home.scss";
-import {useHistory} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 
 // Home component
 const Home = () => {
@@ -10,7 +10,7 @@ const Home = () => {
             behavior: "smooth"
         });
     }
-    let history = useHistory()
+    let history = useNavigate()
     return (
         <div className="home">
             <div className="homeContainer">
