@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />
-        <Route path="about" element={<About />} />
+        <Route path={`${process.env.PUBLIC_URL}/about`} element={<About />} />
         <Route path="moodClip" element={<MoodClip />} />
         <Route path="miniprogram" element={<MiniProgram />} />
         <Route path="ljus" element={<LjUs />} />
