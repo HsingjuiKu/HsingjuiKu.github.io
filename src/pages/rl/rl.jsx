@@ -34,7 +34,7 @@ const RL = () => {
     return (
         <div className="RL">
             <div className="RLContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <section>
                     <h2 className="h-t">Deep Reinforcement in Smoothed Q Learning</h2>
                     <h3>An Innovation Algorithm in DQN</h3>

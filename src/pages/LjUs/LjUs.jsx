@@ -15,7 +15,7 @@ const LjUs = () => {
     return (
         <div className="LjUs">
             <div className="LjUsContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <section>
                     <h2 className="h-t">LJÜS LIGHTEN US LTD</h2>
                     <h3>Interactive Light Therapy Tailored For You</h3>

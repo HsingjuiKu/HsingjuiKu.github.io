@@ -15,7 +15,7 @@ const MiniProgram = () => {
     return (
         <div className="MiniProgram">
             <div className="MiniProgramContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <section>
                     <h2 className="h-t">Mini Experiment</h2>
                     <h3>Emotion Intelligence Base on Facial, HRV and RRV</h3>

@@ -14,7 +14,7 @@ const MoodClip = () => {
     return (
         <div className="moodClip">
             <div className="moodClipContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <section>
                     <h2 className="h-t">MoodClip</h2>
                     <h3>Capturing Essence through Emotion</h3>

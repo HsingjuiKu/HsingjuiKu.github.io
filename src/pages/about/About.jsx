@@ -39,7 +39,7 @@ const About = () => {
     return (
         <div className="about">
             <div className="aboutContainer">
-            <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+            <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 {/*<div className="about"><p>About</p></div>*/}
                 <div className="banner">
                     <video src="/assets/about.mp4" muted autoPlay loop style={{ width: '100%' }}></video>

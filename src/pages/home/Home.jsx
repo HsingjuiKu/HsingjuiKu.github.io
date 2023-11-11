@@ -1,6 +1,5 @@
 import React from "react";
 import "./home.scss";
-import {useNavigate} from 'react-router-dom'
 
 // Home component
 const Home = () => {
@@ -10,11 +9,10 @@ const Home = () => {
             behavior: "smooth"
         });
     }
-    let history = useNavigate()
     return (
         <div className="home">
             <div className="homeContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <div className="banner">
                     <video src="/assets/home.mp4" muted autoPlay loop style={{ width: '100%' }}></video>
                 </div>
@@ -24,7 +22,7 @@ const Home = () => {
                     <br/>
                     <br/>
                     <div className="btns">
-                        <div className="btn" onClick={() => history.push('/about')}>
+                        <div className="btn" onClick={() => { window.location.href = "/about" }}>
                             ABOUT ME
                         </div>
                         <div className="btn" onClick={() => { window.location.href = "https://github.com/HsingjuiKu" }}>

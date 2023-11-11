@@ -45,7 +45,7 @@ const ExerciseAPP = () => {
     return (
         <div className="exerciseApp">
             <div className="exerciseAppContainer">
-                <div className="logo"><a href="/home"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 <section>
                     <h2 className="h-t">UCL Exercises Web Application For NHS</h2>
                     <h3>Centralized Physiotherapy Resource Platform</h3>
