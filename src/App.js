@@ -11,7 +11,7 @@ import RL from "./pages/rl/rl";
 
 function App() {
   return (<div className="app">
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route exact path="/" element={<Home />} />
         {/*<Route path="home" element={<Home />} />*/}
@@ -22,7 +22,7 @@ function App() {
         <Route path="/exerciseapp" element={<ExerciseApp />} />
         <Route path="/rl" element={<RL />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </div>
   );
 }
