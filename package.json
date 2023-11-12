@@ -19,6 +19,7 @@
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
+    "react-youtube": "^10.1.0",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.69.2",
     "swiper": "^11.0.3",

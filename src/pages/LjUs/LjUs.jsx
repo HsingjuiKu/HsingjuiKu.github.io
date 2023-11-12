@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import "./LjUs.scss"
+import YouTube from 'react-youtube';
 
 const LjUs = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -11,6 +12,19 @@ const LjUs = () => {
             top: 0,
             behavior: "smooth"
         });
+    }
+
+    const videoId = "e_1jYJT6KJI";
+
+    const opts = {
+        height: '550',
+        width: '900',
+        playerVars: {
+            autoplay: 1,
+        },
+    };
+    const onReady = (event) => {
+        event.target.pauseVideo();
     }
     return (
         <div className="LjUs">
@@ -25,7 +39,7 @@ const LjUs = () => {
                     <p>Role: Co-Founder</p>
                     {/*<p>Supervisor: Prof.Nadia Berthouze</p>*/}
                     <p className="bold" >Theme: Affective Computing, Signal Processing, Human Computer Interaction, Human Machine Interaction</p>
-                    <p className="bold" >Video: <a href={"https://youtu.be/e_1jYJT6KJI?si=wHY7yl1DRVUvR1nu"}>L I N K</a></p>
+                    {/*<p className="bold" >Video: <a href={"https://youtu.be/e_1jYJT6KJI?si=wHY7yl1DRVUvR1nu"}>L I N K</a></p>*/}
                 </section>
 
                 <section>
@@ -140,6 +154,11 @@ const LjUs = () => {
                 </section>
                 <section>
                     <img src="/assets/LjUs/Behaviour 9.png" alt="" />
+                </section>
+
+                <section>
+                    <h3 style={{ fontWeight: 'bold', fontSize: '30px' }}>YouTube Video</h3>
+                    <YouTube videoId={videoId} opts={opts} onReady={onReady} />
                 </section>
                 {/*<section>*/}
                 {/*    <img src="/assets/LjUs/Behaviour 12.png" alt="" />*/}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Document, Page } from 'react-pdf';
 import { Carousel } from 'react-responsive-carousel';
+import YouTube from 'react-youtube';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import "./exerciseApp.scss";
 import { pdfjs } from 'react-pdf';
@@ -41,6 +42,19 @@ const ExerciseAPP = () => {
     //         alert('Please enter a valid page number.');
     //     }
     // };
+
+    const videoId = "7aOCn-MnFgE";
+
+    const opts = {
+        height: '550',
+        width: '900',
+        playerVars: {
+            autoplay: 1,
+        },
+    };
+    const onReady = (event) => {
+        event.target.pauseVideo();
+    }
 
     return (
         <div className="exerciseApp">
@@ -109,9 +123,14 @@ const ExerciseAPP = () => {
                     <img src="/assets/exerciseApp/Exercise Web App1.png" alt="" />
                 </section>
 
+                <section>
+                    <h3 style={{ fontWeight: 'bold', fontSize: '30px' }}>YouTube Video</h3>
+                    <YouTube videoId={videoId} opts={opts} onReady={onReady} />
+                </section>
+
 
                 <section>
-                    <h2 className="h-t">Report</h2>
+                    <h3 style={{ fontWeight: 'bold', fontSize: '30px' }}>Report</h3>
                     <div className="pdf-reader">
                         <Document
                             file="assets/exerciseApp/App_Engineering.pdf"
