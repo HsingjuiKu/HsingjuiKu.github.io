@@ -79,6 +79,15 @@ const ExerciseAPP = () => {
                         <div>
                             <img src="/assets/exerciseApp/Exercise Web App1.png" alt="" />
                         </div>
+                        <div>
+                            <img src="/assets/exerciseApp/Exercise Web App 2.png" alt="" />
+                        </div>
+                        <div>
+                            <img src="/assets/exerciseApp/Exercise Web App 3.png" alt="" />
+                        </div>
+                        <div>
+                            <img src="/assets/exerciseApp/Exercise Web App 4.png" alt="" />
+                        </div>
                     </Carousel>
                     <h3 style={{ fontWeight: 'bold', fontSize: '30px' }}>Program Introduction</h3>
                     <p className="centered-paragraph">
@@ -121,6 +130,15 @@ const ExerciseAPP = () => {
 
                 <section>
                     <img src="/assets/exerciseApp/Exercise Web App1.png" alt="" />
+                </section>
+                <section>
+                    <img src="/assets/exerciseApp/Exercise Web App 2.png" alt="" />
+                </section>
+                <section>
+                    <img src="/assets/exerciseApp/Exercise Web App 3.png" alt="" />
+                </section>
+                <section>
+                    <img src="/assets/exerciseApp/Exercise Web App 4.png" alt="" />
                 </section>
 
                 <section>

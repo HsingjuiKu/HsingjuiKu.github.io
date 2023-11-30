@@ -8,6 +8,7 @@ import MiniProgram from "./pages/miniProgram/MiniProgram";
 import LjUs from "./pages/LjUs/LjUs";
 import ExerciseApp from "./pages/exerciseApp/exerciseApp";
 import RL from "./pages/rl/rl";
+import NeuralHear from "./pages/neuralHear/NeuralHear"
 
 function App() {
   return (<div className="app">
@@ -20,6 +21,7 @@ function App() {
         <Route exact path={process.env.PUBLIC_URL + '/ljus'} element={<LjUs />} />
         <Route exact path={process.env.PUBLIC_URL + '/exerciseapp'} element={<ExerciseApp />} />
         <Route exact path={process.env.PUBLIC_URL + '/rl'} element={<RL />} />
+        <Route exact path={process.env.PUBLIC_URL + '/neuralhear'} element={<NeuralHear />} />
       </Routes>
     </HashRouter>
     </div>

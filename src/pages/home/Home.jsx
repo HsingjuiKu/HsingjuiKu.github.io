@@ -57,6 +57,14 @@ const Home = () => {
                 </section>
 
                 <section>
+                    <img src="/assets/neuralHear/Neural Hear.png.png" alt="" />
+                    <p className="centered-paragraph">Neural Hear is a groundbreaking innovation in auditory health, revolutionizing the traditional pure-tone hearing test with advanced brain-computer interface technology. Designed to capture the brain's direct response to sound frequencies, it eliminates subjective feedback, offering a more accurate and effortless hearing assessment. With Neural Hear, experience the future of hearing tests — precise, non-invasive, and accessible to all.</p>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/neuralhear')}>
+                        START JOURNEY
+                    </div>
+                </section>
+
+                <section>
                     <img src="/assets/miniprogram/MiniProgram Poster.png" alt="" />
                     <p className="centered-paragraph">Experience the profound interaction of phototherapy, where words are superfluous, and light speaks. We tuneinto your emotions, crafting a unique therapeutic ambiance through emotion computation. Here, health is not justmonitored; it's cherished and nurtured. Let LjUs guide you into the warmth of llumination, embracing your true
                         self.
