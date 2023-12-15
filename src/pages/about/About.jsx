@@ -109,6 +109,10 @@ const About = () => {
                         <p>Institute of Radiological Medicine, Chinese Academy of Medical Sciences</p>
                         <p><i className="bold">2021.12 - Present</i></p>
                         <p>LJÜS LIGHTEN US LTD</p>
+                        <p><i className="bold">2022.07 - 2022.08</i></p>
+                        <p>International Innovative Practice Summer Camp, Shanghai Jiao Tong University</p>
+                        <p><i className="bold">2022.09 - 2023.01</i></p>
+                        <p>Stanford E-China, Stanford University</p>
                         <p><i className="bold">2021.09 - 2021.11 & 2023.05 - 2023.09</i></p>
                         <p>Institute for Al Industry Research, Tsinghua University</p>
                         <p><i className="bold">2023.05 - 2023.10</i></p>

@@ -65,6 +65,14 @@ const Home = () => {
                 </section>
 
                 <section>
+                    <img src="/assets/almour/Almour.png" alt="" />
+                    <p className="centered-paragraph">Almour is designed for deaf children, utilizing visual and tactile elements to enhance learning. It integrates multisensory techniques to compensate for hearing loss, focusing on improving phonological skills and cognitive development.</p>
+                    <div className="btn" onClick={() => navigate(process.env.PUBLIC_URL + '/almour')}>
+                        START JOURNEY
+                    </div>
+                </section>
+
+                <section>
                     <img src="/assets/miniprogram/MiniProgram Poster.png" alt="" />
                     <p className="centered-paragraph">Experience the profound interaction of phototherapy, where words are superfluous, and light speaks. We tuneinto your emotions, crafting a unique therapeutic ambiance through emotion computation. Here, health is not justmonitored; it's cherished and nurtured. Let LjUs guide you into the warmth of llumination, embracing your true
                         self.

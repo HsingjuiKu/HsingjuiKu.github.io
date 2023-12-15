@@ -9,7 +9,7 @@ import LjUs from "./pages/LjUs/LjUs";
 import ExerciseApp from "./pages/exerciseApp/exerciseApp";
 import RL from "./pages/rl/rl";
 import NeuralHear from "./pages/neuralHear/NeuralHear"
-
+import Almour from "./pages/almour/Almour";
 function App() {
   return (<div className="app">
     <HashRouter baseline="/">
@@ -22,6 +22,7 @@ function App() {
         <Route exact path={process.env.PUBLIC_URL + '/exerciseapp'} element={<ExerciseApp />} />
         <Route exact path={process.env.PUBLIC_URL + '/rl'} element={<RL />} />
         <Route exact path={process.env.PUBLIC_URL + '/neuralhear'} element={<NeuralHear />} />
+        <Route exact path={process.env.PUBLIC_URL + '/almour'} element={<Almour />} />
       </Routes>
     </HashRouter>
     </div>
