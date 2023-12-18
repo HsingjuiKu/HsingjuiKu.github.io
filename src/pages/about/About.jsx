@@ -66,6 +66,7 @@ const About = () => {
                     <div className="right" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
                         <p class="centered">
                             Hi, I'm Xingrui Gu, a Creative AI Interaction Engineer, Data Scientist and Designer. <br/>
+                            {/*I am interested in Statistics and Machine Learning, Reinforcement Learning, Affective Computing, Interaction Intelligence System, Human Computer Interaction and Design Engineering <br/>*/}
                             Nice to meet you!
                             {/*I'm driven by the ethos of human-centric Al. In that spirit,l am dedicatedto working within the domain of intelligent systems, with an aim toestablish reliable Al models that can be subsequently tailored intotechnological products that cater to specific user needs. <br /><br />*/}
                             {/*completed my studies under the tutelage of Professor <a href="https://davidbarber.github.io/" target="_blank">David Barber</a> at UCL, with a strong focus on reinforcement learning and machinelearning.Additionally, I was privileged to receive guidance fromProfessor Nadia Berthouze, a pioneer in the field of emotionalcomputing.<br /><br />*/}
@@ -146,11 +147,12 @@ const About = () => {
                         <h2>Honors</h2>
                     </div>
                     <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
+                        <p>● Received an investment intention of 1.5 million RMB, 2023</p>
                         <p>● "Chunhui Cup"lnnovation and Entrepreneurship Competition for Chinese OverseasStudents, Award-winning Project, 2023</p>
                         <p>● "Straight to Wuzhen" competition, Final list, 2023</p>
                         <p>● UCL Hatchery Incubator, Semi-Final list, 2023</p>
                         <p>● "To win in Suthou, Create a winning future" venture contest, Sweden Final list, 2022</p>
-                        <p>● KCL Opportunity Fund, E400, 2022</p>
+                        <p>● KCL Opportunity Fund, GBP 400 pounds, 2022</p>
                         <p>● The KTH Innovation pre-incubator program, Final list, 2022</p>
                     </div>
 
