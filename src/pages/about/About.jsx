@@ -65,14 +65,10 @@ const About = () => {
                     </div>
                     <div className="right" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
                         <p class="centered">
-                            Hi, I'm Xingrui Gu, a Creative AI Interaction Engineer, Data Scientist and Designer. <br/>
-                            {/*I am interested in Statistics and Machine Learning, Reinforcement Learning, Affective Computing, Interaction Intelligence System, Human Computer Interaction and Design Engineering <br/>*/}
-                            Nice to meet you!
-                            {/*I'm driven by the ethos of human-centric Al. In that spirit,l am dedicatedto working within the domain of intelligent systems, with an aim toestablish reliable Al models that can be subsequently tailored intotechnological products that cater to specific user needs. <br /><br />*/}
-                            {/*completed my studies under the tutelage of Professor <a href="https://davidbarber.github.io/" target="_blank">David Barber</a> at UCL, with a strong focus on reinforcement learning and machinelearning.Additionally, I was privileged to receive guidance fromProfessor Nadia Berthouze, a pioneer in the field of emotionalcomputing.<br /><br />*/}
-                            {/*Beyond the professional sphere, l have a passion for writingtraveling, photography, painting, and devising new stock marketstrategies.I have a profound interest in technological innovationstailored for the deaf-mute community and those with psychologicaimpairments.I'm always open to engaging discussions in this area, sofeel free to reach out.<br /><br />*/}
+                            Hi, I'm Xingrui Gu. I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language. I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
                         </p><br/>
-                        <p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>
+                        {/*<p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>*/}
+                        {/*<p class="centered"></p>*/}
                     </div>
 
                 </section>
