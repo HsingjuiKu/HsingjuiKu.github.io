@@ -90,6 +90,11 @@ const About = () => {
                             <span><span className="bold">2022 - 2023</span><br/>
                                 <span>MSc Computer Science, University College London</span></span>
                         </div>
+                        <div className="a-item">
+                            <img src="/assets/a3.png" alt="" />
+                            <span><span className="bold">2024 - 2025</span><br/>
+                                <span>MEng Computer Science, University of California, Berkeley</span></span>
+                        </div>
                     </div>
 
                 </section>
