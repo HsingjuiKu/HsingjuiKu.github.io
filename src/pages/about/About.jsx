@@ -119,8 +119,10 @@ const About = () => {
                         <p>Institute for Al Industry Research, Tsinghua University</p>
                         <p><i className="bold">2023.05 - 2023.10</i></p>
                         <p>Centre for Artificial Intelligence, UCL</p>
-                        <p><i className="bold">2023.10 - Present</i></p>
+                        <p><i className="bold">2023.10 - 2024.06</i></p>
                         <p>The Future Laboratory, Tsinghua University</p>
+                        <p><i className="bold">2024.06 - 2024.08</i></p>
+                        <p>INNO Angel Fund</p>
                     </div>
 
                 </section>
@@ -130,13 +132,18 @@ const About = () => {
                         <h2>Publication</h2>
                     </div>
                     <div className="right brief" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        <p><i className="bold">How do end users without Al knowledge perceive Al's decision-making: An empirical study on online crowd.
-                            sourcing medical consultation platforms.</i></p>
+                        {/*<p><i className="bold">How do end users without Al knowledge perceive Al's decision-making: An empirical study on online crowd.*/}
+                        {/*    sourcing medical consultation platforms.</i></p>*/}
+                        {/*<p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>*/}
+                        {/*<p><i className="bold">What Makes a Fantastic Passenger-Car Driver in Urban Contexts?</i></p>*/}
+                        {/*<p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>*/}
+                        {/*<p><i className="bold">Deep Reinforcement Learning with Smoothed Q-Learning</i></p>*/}
+                        {/*<p>(Status: master thesis-await to be publish)</p>*/}
+
+
+                        <p><i className="bold"><a href={"https://arxiv.org/abs/2404.00320"}> Advancing Multimodal Data Fusion in Pain Recognition: A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives</a></i></p>
                         <p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>
-                        <p><i className="bold">What Makes a Fantastic Passenger-Car Driver in Urban Contexts?</i></p>
-                        <p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>
-                        <p><i className="bold">Deep Reinforcement Learning with Smoothed Q-Learning</i></p>
-                        <p>(Status: master thesis-await to be publish)</p>
+
 
                     </div>
 
