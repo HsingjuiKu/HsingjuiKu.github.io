@@ -109,7 +109,7 @@ const About = () => {
                         <p>China Automotive Technology and Research Center Co. Ltd</p>
                         <p><i className="bold">2021.07 - 2021.09</i></p>
                         <p>Institute of Radiological Medicine, Chinese Academy of Medical Sciences</p>
-                        <p><i className="bold">2021.12 - Present</i></p>
+                        <p><i className="bold">2021.12 - 2024.03</i></p>
                         <p>LJÜS LIGHTEN US LTD</p>
                         <p><i className="bold">2022.07 - 2022.08</i></p>
                         <p>International Innovative Practice Summer Camp, Shanghai Jiao Tong University</p>
