@@ -143,7 +143,7 @@ const About = () => {
 
                         <p><i className="bold"><a href={"https://arxiv.org/abs/2404.00320"}> Advancing Multimodal Data Fusion in Pain Recognition: A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives</a></i></p>
                         <p>(Submitted journal: ACII AHRI Workshop; Status: Accepted)</p>
-                        <p><i className="bold"> CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</i></p>
+                        <p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
                         <p>(Submitted journal: IEEE Automatic Face and Gesture Recognition; Status: Under View)</p>
                         <p><i className="bold"> Cognitive Belief Driven Q-Learning</i></p>
                         <p>(Submitted journal: ICLR; Status: Under View)</p>
