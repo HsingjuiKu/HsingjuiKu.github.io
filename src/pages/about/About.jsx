@@ -132,21 +132,13 @@ const About = () => {
                         <h2>Publication</h2>
                     </div>
                     <div className="right brief" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        {/*<p><i className="bold">How do end users without Al knowledge perceive Al's decision-making: An empirical study on online crowd.*/}
-                        {/*    sourcing medical consultation platforms.</i></p>*/}
-                        {/*<p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>*/}
-                        {/*<p><i className="bold">What Makes a Fantastic Passenger-Car Driver in Urban Contexts?</i></p>*/}
-                        {/*<p>(Submitted journal: CHI24; Status: Double-anonymous under review)</p>*/}
-                        {/*<p><i className="bold">Deep Reinforcement Learning with Smoothed Q-Learning</i></p>*/}
-                        {/*<p>(Status: master thesis-await to be publish)</p>*/}
-
 
                         <p><i className="bold"><a href={"https://arxiv.org/abs/2404.00320"}> Advancing Multimodal Data Fusion in Pain Recognition: A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives</a></i></p>
                         <p>(Submitted journal: ACII AHRI Workshop; Status: Accepted)</p>
                         <p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
                         <p>(Submitted journal: IEEE Automatic Face and Gesture Recognition; Status: Under View)</p>
-                        <p><i className="bold"> Cognitive Belief Driven Q-Learning</i></p>
-                        <p>(Submitted journal: ICLR; Status: Under View)</p>
+                        <p><i className="bold"> Cognitive Belief Driven Reinforcement Learning</i></p>
+                        <p>(Submitted journal: ICML; Status: Under View)</p>
 
 
                     </div>
