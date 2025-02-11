@@ -59,18 +59,67 @@ const About = () => {
                     </p>
                 </section>
 
-                <section className="flex-row">
-                    <div className="left" style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>
-                        <img src="/assets/WechatIMG371.jpeg" alt="" />
-                    </div>
-                    <div className="right" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        <p class="centered">
-                            Hi, I'm Xingrui Gu. I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language. I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
-                        </p><br/>
-                        {/*<p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>*/}
-                        {/*<p class="centered"></p>*/}
-                    </div>
+                {/*<section className="flex-row">*/}
+                {/*    <div className="left" style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>*/}
+                {/*        <img src="/assets/WechatIMG371.jpeg" alt="" />*/}
+                {/*    </div>*/}
+                {/*    <div className="right" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>*/}
+                {/*        <p class="centered">*/}
+                {/*            Hi, I'm Xingrui Gu. I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language. I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.*/}
+                {/*        </p><br/>*/}
+                {/*        /!*<p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>*!/*/}
+                {/*        /!*<p class="centered"></p>*!/*/}
+                {/*    </div>*/}
 
+                {/*</section>*/}
+
+
+                <section className="flex-row" style={{ padding: '2rem 0' }}>
+                    <div className="left" style={{
+                        width: '30%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        paddingRight: '2rem'
+                    }}>
+                        <img
+                            src="/assets/WechatIMG371.jpeg"
+                            alt=""
+                            style={{
+                                width: '100%',
+                                borderRadius: '10px',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}
+                        />
+                    </div>
+                    <div className="right" style={{
+                        width: '70%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center'
+                    }}>
+                        <h1 style={{
+                            fontSize: '2rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem'
+                        }}>
+                            Hi, I'm Xingrui Gu
+                        </h1>
+                        <p className="centered" style={{
+                            fontSize: '1.1rem',
+                            lineHeight: '1.8',
+                            color: '#333'
+                        }}>
+                            I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language.
+                        </p>
+                        <p className="centered" style={{
+                            fontSize: '1.1rem',
+                            lineHeight: '1.8',
+                            color: '#333',
+                            marginTop: '1rem'
+                        }}>
+                            I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
+                        </p>
+                    </div>
                 </section>
 
                 <section className="flex-row">
