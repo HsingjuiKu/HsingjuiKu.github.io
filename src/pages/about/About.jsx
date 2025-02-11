@@ -74,78 +74,131 @@ const About = () => {
                 {/*</section>*/}
 
 
-                <section className="flex-row" style={{ padding: '2rem 0' }}>
-                    <div className="left" style={{
-                        width: '30%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        paddingRight: '2rem'
+                <section style={{
+                    padding: '6rem 0',
+                    background: 'linear-gradient(to bottom, #ffffff, #f8f9fa)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    {/* 背景装饰 */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '0',
+                        width: '100%',
+                        height: '50%',
+                        background: 'linear-gradient(to bottom right, rgba(238, 238, 238, 0.5), rgba(245, 245, 245, 0.5))',
+                        transform: 'skewY(-6deg)',
+                        zIndex: 0
+                    }}/>
+
+                    <div style={{
+                        maxWidth: '1200px',
+                        margin: '0 auto',
+                        padding: '0 2rem',
+                        position: 'relative',
+                        zIndex: 1
                     }}>
-                        <img
-                            src="/assets/WechatIMG371.jpeg"
-                            alt=""
-                            style={{
-                                width: '100%',
-                                borderRadius: '10px',
-                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                            }}
-                        />
-                    </div>
-                    <div className="right" style={{
-                        width: '70%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center'
-                    }}>
-                        <h1 style={{
-                            fontSize: '2rem',
-                            fontWeight: 'bold',
-                            marginBottom: '1.5rem'
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1.2fr',
+                            gap: '4rem',
+                            alignItems: 'center'
                         }}>
-                            Hi, I'm Xingrui Gu
-                        </h1>
-                        <p className="centered" style={{
-                            fontSize: '1.1rem',
-                            lineHeight: '1.8',
-                            color: '#333'
-                        }}>
-                            I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language.
-                        </p>
-                        <p className="centered" style={{
-                            fontSize: '1.1rem',
-                            lineHeight: '1.8',
-                            color: '#333',
-                            marginTop: '1rem'
-                        }}>
-                            I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
-                        </p>
-                    </div>
-                </section>
+                            {/* 左侧图片容器 */}
+                            <div style={{
+                                position: 'relative',
+                                padding: '1rem',
+                                background: 'white',
+                                borderRadius: '20px',
+                                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                                transform: 'rotate(-2deg)'
+                            }}>
+                                <img
+                                    src="/assets/WechatIMG371.jpeg"
+                                    alt="Profile"
+                                    style={{
+                                        width: '100%',
+                                        borderRadius: '12px',
+                                        filter: 'grayscale(100%)',
+                                        transition: 'transform 0.3s ease',
+                                        transform: 'rotate(2deg)'
+                                    }}
+                                />
+                            </div>
 
-                <section className="flex-row">
-                    <div className="left" style={{ width: '50%' }}>
-                        <h2>Academic Journey</h2>
-                        
-                    </div>
-                    <div className="right" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                        <div className="a-item">
-                            <img src="/assets/a1.webp" alt="" />
-                            <span><span className="bold">2019 - 2022</span><br/>
-                                <span>BSc Mathematics with Statistics, King's College London</span></span>
-                        </div>
+                            {/* 右侧文字内容 */}
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '2rem'
+                            }}>
+                                <div>
+                                    <h4 style={{
+                                        fontSize: '1.1rem',
+                                        color: '#6c757d',
+                                        marginBottom: '0.5rem',
+                                        fontWeight: '500',
+                                        letterSpacing: '2px'
+                                    }}>
+                                        WELCOME TO MY PORTFOLIO
+                                    </h4>
+                                    <h1 style={{
+                                        fontSize: '3.5rem',
+                                        fontWeight: '700',
+                                        background: 'linear-gradient(45deg, #333, #666)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        Hi, I'm Xingrui Gu
+                                    </h1>
+                                </div>
 
-                        <div className="a-item">
-                            <img src="/assets/a2.png" alt="" />
-                            <span><span className="bold">2022 - 2023</span><br/>
-                                <span>MSc Computer Science, University College London</span></span>
-                        </div>
-                        <div className="a-item">
-                            <img src="/assets/a3.png" alt="" />
-                            <span><span className="bold">2024 - 2025</span><br/>
-                                <span>MEng Computer Science, University of California, Berkeley</span></span>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '1.5rem'
+                                }}>
+                                    <p style={{
+                                        fontSize: '1.1rem',
+                                        lineHeight: '1.8',
+                                        color: '#495057'
+                                    }}>
+                                        I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language.
+                                    </p>
+                                    <p style={{
+                                        fontSize: '1.1rem',
+                                        lineHeight: '1.8',
+                                        color: '#495057'
+                                    }}>
+                                        I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
+                                    </p>
+                                </div>
+
+                                {/* 技术关键词标签 */}
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '0.8rem',
+                                    flexWrap: 'wrap',
+                                    marginTop: '1rem'
+                                }}>
+                                    {['HCI', 'AI', 'Cognitive Science', 'Machine Learning'].map(tag => (
+                                        <span key={tag} style={{
+                                            padding: '0.5rem 1rem',
+                                            background: '#f8f9fa',
+                                            borderRadius: '50px',
+                                            fontSize: '0.9rem',
+                                            color: '#495057',
+                                            border: '1px solid #dee2e6'
+                                        }}>
+                            {tag}
+                        </span>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </section>
 
 
