@@ -49,14 +49,78 @@ const About = () => {
                 <br/>
                 <br/>
                 <br/>
-                <section className="immersive-section">
-                    <p ref={textRef} style={{ fontWeight: 'bold', fontSize: '30px' }}>
-                        My Story
-                    </p>
+                {/*<section className="immersive-section">*/}
+                {/*    <p ref={textRef} style={{ fontWeight: 'bold', fontSize: '30px' }}>*/}
+                {/*        My Story*/}
+                {/*    </p>*/}
 
-                    <p ref={textRef} className="immersive-text">
-                        In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.
-                    </p>
+                {/*    <p ref={textRef} className="immersive-text">*/}
+                {/*        In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.*/}
+                {/*    </p>*/}
+                {/*</section>*/}
+
+                <section style={{
+                    padding: '8rem 0',
+                    background: '#363636',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: '80vh'
+                }}>
+                    {/* 背景装饰效果 */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%)',
+                        opacity: 0.6
+                    }}/>
+
+                    <div style={{
+                        maxWidth: '900px',
+                        margin: '0 auto',
+                        padding: '0 2rem',
+                        position: 'relative',
+                        zIndex: 1
+                    }}>
+                        <h2 ref={textRef} style={{
+                            fontSize: '3rem',
+                            fontWeight: '700',
+                            textAlign: 'center',
+                            marginBottom: '3rem',
+                            letterSpacing: '2px'
+                        }}>
+                            My Story
+                        </h2>
+
+                        <p ref={textRef} style={{
+                            fontSize: '1.4rem',
+                            lineHeight: '2',
+                            textAlign: 'center',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            fontWeight: '300',
+                            letterSpacing: '0.5px'
+                        }}>
+                            In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.
+                        </p>
+
+                        {/* 装饰性分割线 */}
+                        <div style={{
+                            width: '150px',
+                            height: '4px',
+                            background: 'linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.8), rgba(255,255,255,0.1))',
+                            margin: '4rem auto',
+                            borderRadius: '2px'
+                        }}/>
+                    </div>
+
+                    {/* 动态背景效果 - 可以保留原来的 Intersection Observer 效果 */}
                 </section>
 
                 {/*<section className="flex-row">*/}
@@ -141,7 +205,7 @@ const About = () => {
                                         fontWeight: '500',
                                         letterSpacing: '2px'
                                     }}>
-                                        WELCOME TO MY PORTFOLIO
+                                        WELCOME TO MY WEBSITE
                                     </h4>
                                     <h1 style={{
                                         fontSize: '3.5rem',
