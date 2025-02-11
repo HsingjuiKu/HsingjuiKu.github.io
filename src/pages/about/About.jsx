@@ -41,9 +41,9 @@ const About = () => {
             <div className="aboutContainer">
             <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 {/*<div className="about"><p>About</p></div>*/}
-                <div className="banner">
-                    <video src="/assets/about.mp4" muted autoPlay loop style={{ width: '100%' }}></video>
-                </div>
+                {/*<div className="banner">*/}
+                {/*    <video src="/assets/about.mp4" muted autoPlay loop style={{ width: '100%' }}></video>*/}
+                {/*</div>*/}
                 <br/>
                 <br/>
                 <br/>
