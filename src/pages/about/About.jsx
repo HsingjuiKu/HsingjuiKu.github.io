@@ -39,7 +39,7 @@ const About = () => {
     return (
         <div className="about">
             <div className="aboutContainer">
-            <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
+                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
                 {/*<div className="about"><p>About</p></div>*/}
                 {/*<div className="banner">*/}
                 {/*    <video src="/assets/about.mp4" muted autoPlay loop style={{ width: '100%' }}></video>*/}
@@ -202,6 +202,192 @@ const About = () => {
                 </section>
 
 
+                {/* Education Section */}
+                <section id="education" ref={educationRef} className="fade-in" style={{
+                    padding: '120px 40px',
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    opacity: 0,
+                    transform: 'translateY(20px)',
+                    transition: 'opacity 1s ease, transform 1s ease'
+                }}>
+                    <h2 style={{
+                        fontSize: '48px',
+                        fontWeight: '600',
+                        marginBottom: '60px',
+                        textAlign: 'center',
+                        letterSpacing: '-0.5px'
+                    }}>
+                        Education
+                    </h2>
+
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                        gap: '40px'
+                    }}>
+                        {/* King's College London */}
+                        <div style={{
+                            backgroundColor: '#fff',
+                            borderRadius: '20px',
+                            overflow: 'hidden',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                        }}>
+                            <div style={{
+                                height: '200px',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '30px',
+                                backgroundColor: '#f5f5f7'
+                            }}>
+                                <img
+                                    src="/assets/a1.webp"
+                                    alt="King's College London"
+                                    style={{
+                                        maxHeight: '120px',
+                                        maxWidth: '100%',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                            <div style={{
+                                padding: '30px'
+                            }}>
+                                <h3 style={{
+                                    fontSize: '22px',
+                                    fontWeight: '600',
+                                    marginBottom: '10px'
+                                }}>
+                                    King's College London
+                                </h3>
+                                <p style={{
+                                    fontSize: '18px',
+                                    color: '#666',
+                                    marginBottom: '10px'
+                                }}>
+                                    BSc Mathematics with Statistics
+                                </p>
+                                <p style={{
+                                    fontSize: '16px',
+                                    color: '#888'
+                                }}>
+                                    2019 - 2022
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* UCL */}
+                        <div style={{
+                            backgroundColor: '#fff',
+                            borderRadius: '20px',
+                            overflow: 'hidden',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                        }}>
+                            <div style={{
+                                height: '200px',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '30px',
+                                backgroundColor: '#f5f5f7'
+                            }}>
+                                <img
+                                    src="/assets/a2.png"
+                                    alt="University College London"
+                                    style={{
+                                        maxHeight: '120px',
+                                        maxWidth: '100%',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                            <div style={{
+                                padding: '30px'
+                            }}>
+                                <h3 style={{
+                                    fontSize: '22px',
+                                    fontWeight: '600',
+                                    marginBottom: '10px'
+                                }}>
+                                    University College London
+                                </h3>
+                                <p style={{
+                                    fontSize: '18px',
+                                    color: '#666',
+                                    marginBottom: '10px'
+                                }}>
+                                    MSc Computer Science
+                                </p>
+                                <p style={{
+                                    fontSize: '16px',
+                                    color: '#888'
+                                }}>
+                                    2022 - 2023
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* UC Berkeley */}
+                        <div style={{
+                            backgroundColor: '#fff',
+                            borderRadius: '20px',
+                            overflow: 'hidden',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                        }}>
+                            <div style={{
+                                height: '200px',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '30px',
+                                backgroundColor: '#f5f5f7'
+                            }}>
+                                <img
+                                    src="/assets/a3.png"
+                                    alt="UC Berkeley"
+                                    style={{
+                                        maxHeight: '120px',
+                                        maxWidth: '100%',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                            <div style={{
+                                padding: '30px'
+                            }}>
+                                <h3 style={{
+                                    fontSize: '22px',
+                                    fontWeight: '600',
+                                    marginBottom: '10px'
+                                }}>
+                                    UC Berkeley
+                                </h3>
+                                <p style={{
+                                    fontSize: '18px',
+                                    color: '#666',
+                                    marginBottom: '10px'
+                                }}>
+                                    MEng Electrical Engineering and Computer Science
+                                </p>
+                                <p style={{
+                                    fontSize: '16px',
+                                    color: '#888'
+                                }}>
+                                    Current
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
                 <section className="flex-row">
                     <div className="left" style={{ width: '50%' }}>
                         <h2>In Brief</h2>
@@ -221,9 +407,9 @@ const About = () => {
                         <p>Institute for Al Industry Research, Tsinghua University</p>
                         <p><i className="bold">2023.05 - 2023.10</i></p>
                         <p>Centre for Artificial Intelligence, UCL</p>
-                        <p><i className="bold">2023.10 - 2024.06</i></p>
-                        <p><i className="bold">2024.06 - 2024.08</i></p>
+                        <p><i className="bold">2023.06 - 2023.08</i></p>
                         <p>Microsoft</p>
+                        <p><i className="bold">2023.10 - 2024.06</i></p>
                         <p>The Future Laboratory, Tsinghua University</p>
                         <p><i className="bold">2024.06 - 2024.08</i></p>
                         <p>INNO Angel Fund</p>
@@ -255,13 +441,13 @@ const About = () => {
                         <h2>Honors</h2>
                     </div>
                     <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        <p>● Received an investment intention of 1.5 million RMB, 2023</p>
+                        {/*<p>● Received an investment intention of 1.5 million RMB, 2023</p>*/}
                         <p>● "Chunhui Cup"lnnovation and Entrepreneurship Competition for Chinese OverseasStudents, Award-winning Project, 2023</p>
-                        <p>● "Straight to Wuzhen" competition, Final list, 2023</p>
-                        <p>● UCL Hatchery Incubator, Semi-Final list, 2023</p>
-                        <p>● "To win in Suthou, Create a winning future" venture contest, Sweden Final list, 2022</p>
+                        {/*<p>● "Straight to Wuzhen" competition, Final list, 2023</p>*/}
+                        {/*<p>● UCL Hatchery Incubator, Semi-Final list, 2023</p>*/}
+                        {/*<p>● "To win in Suthou, Create a winning future" venture contest, Sweden Final list, 2022</p>*/}
                         <p>● KCL Opportunity Fund, GBP 400 pounds, 2022</p>
-                        <p>● The KTH Innovation pre-incubator program, Final list, 2022</p>
+                        {/*<p>● The KTH Innovation pre-incubator program, Final list, 2022</p>*/}
                     </div>
 
                 </section>
