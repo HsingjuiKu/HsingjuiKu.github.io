@@ -183,7 +183,7 @@ const About = () => {
                                     flexWrap: 'wrap',
                                     marginTop: '1rem'
                                 }}>
-                                    {['HCI', 'AI', 'Cognitive Science', 'Machine Learning'].map(tag => (
+                                    {['Reinforcement Learning', 'Cognitive Science', 'Decision Science', 'Human Computer Interaction'].map(tag => (
                                         <span key={tag} style={{
                                             padding: '0.5rem 1rem',
                                             background: '#f8f9fa',
@@ -202,44 +202,58 @@ const About = () => {
                 </section>
 
 
+                {/*<section className="flex-row">*/}
+                {/*    <div className="left w-30p">*/}
+                {/*        <h2>Education</h2>*/}
+                {/*    </div>*/}
+                {/*    <div className="right brief w-70p">*/}
+                {/*        /!* Entry 1 *!/*/}
+                {/*        <p><i className="bold">2019–2022</i></p>*/}
+                {/*        <p>*/}
+                {/*            <img*/}
+                {/*                src="/assets/a1.webp"*/}
+                {/*                alt="KCL Logo"*/}
+                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
+                {/*            />*/}
+                {/*            King’s College London — BSc Mathematics with Statistics*/}
+                {/*        </p>*/}
+                {/*        /!* Entry 2 *!/*/}
+                {/*        <p><i className="bold">2022–2023</i></p>*/}
+                {/*        <p>*/}
+                {/*            <img*/}
+                {/*                src="/assets/a2.png"*/}
+                {/*                alt="UCL Logo"*/}
+                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
+                {/*            />*/}
+                {/*            University College London — MSc Computer Science*/}
+                {/*        </p>*/}
+                {/*        /!* Entry 3 *!/*/}
+                {/*        <p><i className="bold">2023–Present</i></p>*/}
+                {/*        <p>*/}
+                {/*            <img*/}
+                {/*                src="/assets/a3.png"*/}
+                {/*                alt="UCB Logo"*/}
+                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
+                {/*            />*/}
+                {/*            University of California, Berkeley — MEng Electrical Engineering and Computer Science*/}
+                {/*        </p>*/}
+                {/*    </div>*/}
+                {/*</section>*/}
+
+
                 <section className="flex-row">
                     <div className="left w-30p">
                         <h2>Education</h2>
                     </div>
                     <div className="right brief w-70p">
-                        {/* Entry 1 */}
-                        <p><i className="bold">2019–2022</i></p>
-                        <p>
-                            <img
-                                src="/assets/a1.webp"
-                                alt="KCL Logo"
-                                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
-                            />
-                            King’s College London — BSc Mathematics with Statistics
-                        </p>
-                        {/* Entry 2 */}
-                        <p><i className="bold">2022–2023</i></p>
-                        <p>
-                            <img
-                                src="/assets/a2.png"
-                                alt="UCL Logo"
-                                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
-                            />
-                            University College London — MSc Computer Science
-                        </p>
-                        {/* Entry 3 */}
-                        <p><i className="bold">2023–Present</i></p>
-                        <p>
-                            <img
-                                src="/assets/a3.png"
-                                alt="UCB Logo"
-                                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
-                            />
-                            University of California, Berkeley — MEng Electrical Engineering and Computer Science
-                        </p>
+                        <p><i className="bold">2019 – 2022</i></p>
+                        <p>King’s College London — BSc Mathematics with Statistics</p>
+                        <p><i className="bold">2022 – 2023</i></p>
+                        <p>University College London — MSc Computer Science</p>
+                        <p><i className="bold">2024 – 2025</i></p>
+                        <p>University of California, Berkeley — MEng Electrical Engineering and Computer Science</p>
                     </div>
                 </section>
-
 
 
                 <section className="flex-row">
