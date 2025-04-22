@@ -202,47 +202,43 @@ const About = () => {
                 </section>
 
 
-                <div className="section">
-                    <div className="section-header">
+                <section className="flex-row">
+                    <div className="left w-30p">
                         <h2>Education</h2>
                     </div>
-
-                    <div className="entry">
-                        <div className="entry-dates">2019 - 2022</div>
-                        <div className="entry-org">
+                    <div className="right brief w-70p">
+                        {/* Entry 1 */}
+                        <p><i className="bold">2019–2022</i></p>
+                        <p>
                             <img
                                 src="/assets/a1.webp"
                                 alt="KCL Logo"
                                 style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
                             />
                             King’s College London — BSc Mathematics with Statistics
-                        </div>
-                    </div>
-
-                    <div className="entry">
-                        <div className="entry-dates">2022 - 2023</div>
-                        <div className="entry-org">
+                        </p>
+                        {/* Entry 2 */}
+                        <p><i className="bold">2022–2023</i></p>
+                        <p>
                             <img
                                 src="/assets/a2.png"
                                 alt="UCL Logo"
                                 style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
                             />
                             University College London — MSc Computer Science
-                        </div>
-                    </div>
-
-                    <div className="entry">
-                        <div className="entry-dates">2023 - Present</div>
-                        <div className="entry-org">
+                        </p>
+                        {/* Entry 3 */}
+                        <p><i className="bold">2023–Present</i></p>
+                        <p>
                             <img
                                 src="/assets/a3.png"
                                 alt="UCB Logo"
                                 style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}
                             />
                             University of California, Berkeley — MEng Electrical Engineering and Computer Science
-                        </div>
+                        </p>
                     </div>
-                </div>
+                </section>
 
 
 
