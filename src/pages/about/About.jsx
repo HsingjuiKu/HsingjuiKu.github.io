@@ -202,560 +202,87 @@ const About = () => {
                 </section>
 
 
-                {/* Education Section */}
-                <section id="education" style={{
-                    padding: '120px 40px',
-                    maxWidth: '1200px',
-                    margin: '0 auto'
-                }}>
-                    <h2 style={{
-                        fontSize: '48px',
-                        fontWeight: '600',
-                        marginBottom: '60px',
-                        textAlign: 'center',
-                        letterSpacing: '-0.5px'
-                    }}>
-                        Education
-                    </h2>
+                <div className="section">
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                        gap: '40px'
-                    }}>
-                        {/* King's College London */}
-                        <div style={{
-                            backgroundColor: '#fff',
-                            borderRadius: '20px',
-                            overflow: 'hidden',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                        }}>
-                            <div style={{
-                                height: '200px',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: '30px',
-                                backgroundColor: '#f5f5f7'
-                            }}>
-                                <img
-                                    src="/assets/a1.webp"
-                                    alt="King's College London"
-                                    style={{
-                                        maxHeight: '120px',
-                                        maxWidth: '100%',
-                                        objectFit: 'contain'
-                                    }}
-                                />
-                            </div>
-                            <div style={{
-                                padding: '30px'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '22px',
-                                    fontWeight: '600',
-                                    marginBottom: '10px'
-                                }}>
-                                    King's College London
-                                </h3>
-                                <p style={{
-                                    fontSize: '18px',
-                                    color: '#666',
-                                    marginBottom: '10px'
-                                }}>
-                                    BSc Mathematics with Statistics
-                                </p>
-                                <p style={{
-                                    fontSize: '16px',
-                                    color: '#888'
-                                }}>
-                                    2019 - 2022
-                                </p>
-                            </div>
-                        </div>
+                    <div className="section-header">
+                        <h2>Education</h2>
+                    </div>
 
-                        {/* UCL */}
-                        <div style={{
-                            backgroundColor: '#fff',
-                            borderRadius: '20px',
-                            overflow: 'hidden',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                        }}>
-                            <div style={{
-                                height: '200px',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: '30px',
-                                backgroundColor: '#f5f5f7'
-                            }}>
-                                <img
-                                    src="/assets/a2.png"
-                                    alt="University College London"
-                                    style={{
-                                        maxHeight: '120px',
-                                        maxWidth: '100%',
-                                        objectFit: 'contain'
-                                    }}
-                                />
-                            </div>
-                            <div style={{
-                                padding: '30px'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '22px',
-                                    fontWeight: '600',
-                                    marginBottom: '10px'
-                                }}>
-                                    University College London
-                                </h3>
-                                <p style={{
-                                    fontSize: '18px',
-                                    color: '#666',
-                                    marginBottom: '10px'
-                                }}>
-                                    MSc Computer Science
-                                </p>
-                                <p style={{
-                                    fontSize: '16px',
-                                    color: '#888'
-                                }}>
-                                    2022 - 2023
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* UC Berkeley */}
-                        <div style={{
-                            backgroundColor: '#fff',
-                            borderRadius: '20px',
-                            overflow: 'hidden',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                        }}>
-                            <div style={{
-                                height: '200px',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: '30px',
-                                backgroundColor: '#f5f5f7'
-                            }}>
-                                <img
-                                    src="/assets/a3.png"
-                                    alt="UC Berkeley"
-                                    style={{
-                                        maxHeight: '120px',
-                                        maxWidth: '100%',
-                                        objectFit: 'contain'
-                                    }}
-                                />
-                            </div>
-                            <div style={{
-                                padding: '30px'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '22px',
-                                    fontWeight: '600',
-                                    marginBottom: '10px'
-                                }}>
-                                    UC Berkeley
-                                </h3>
-                                <p style={{
-                                    fontSize: '18px',
-                                    color: '#666',
-                                    marginBottom: '10px'
-                                }}>
-                                    MEng Electrical Engineering and Computer Science
-                                </p>
-                                <p style={{
-                                    fontSize: '16px',
-                                    color: '#888'
-                                }}>
-                                    Current
-                                </p>
-                            </div>
+                    <div className="entry">
+                        <div className="entry-dates">2019 - 2022</div>
+                        <div className="entry-org">
+                            <img src="/assets/a1.webp" alt="KCL Logo"
+                                 style="height: 20px; vertical-align: middle; margin-right: 8px;">
+                                King’s College London — BSc Mathematics with Statistics
                         </div>
                     </div>
+
+                    <div className="entry">
+                        <div className="entry-dates">2022 - 2023</div>
+                        <div className="entry-org">
+                            <img src="/assets/a2.png" alt="UCL Logo"
+                                 style="height: 20px; vertical-align: middle; margin-right: 8px;">
+                                University College London — MSc Computer Science
+                        </div>
+                    </div>
+
+                    <div className="entry">
+                        <div className="entry-dates">2023 - Present</div>
+                        <div className="entry-org">
+                            <img src="/assets/a3.png" alt="UCB Logo"
+                                 style="height: 20px; vertical-align: middle; margin-right: 8px;">
+                                University of California, Berkeley — MEng Electrical Engineering and Computer Science
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <section className="flex-row">
+                    <div className="left" style={{ width: '50%' }}>
+                        <h2>In Brief</h2>
+                    </div>
+                    <div className="right brief" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
+                        <p><i className="bold">2020.08 - 2020.12</i></p>
+                        <p>China Automotive Technology and Research Center Co. Ltd</p>
+                        <p><i className="bold">2021.07 - 2021.09</i></p>
+                        <p>Institute of Radiological Medicine, Chinese Academy of Medical Sciences</p>
+                        <p><i className="bold">2021.12 - 2024.03</i></p>
+                        <p>LJÜS LIGHTEN US LTD</p>
+                        <p><i className="bold">2022.07 - 2022.08</i></p>
+                        <p>International Innovative Practice Summer Camp, Shanghai Jiao Tong University</p>
+                        <p><i className="bold">2022.09 - 2023.01</i></p>
+                        <p>Stanford E-China, Stanford University</p>
+                        <p><i className="bold">2021.09 - 2021.11 & 2023.05 - 2023.09</i></p>
+                        <p>Institute for Al Industry Research, Tsinghua University</p>
+                        <p><i className="bold">2023.05 - 2023.10</i></p>
+                        <p>Centre for Artificial Intelligence, UCL</p>
+                        <p><i className="bold">2023.06 - 2023.08</i></p>
+                        <p>Microsoft</p>
+                        <p><i className="bold">2023.10 - 2024.06</i></p>
+                        <p>The Future Laboratory, Tsinghua University</p>
+                        <p><i className="bold">2024.06 - 2024.08</i></p>
+                        <p>INNO Angel Fund</p>
+                    </div>
+
                 </section>
 
-
-                {/* Experience Section - Redesigned */}
-                <section id="experience" className="fade-in" style={{
-                    padding: '120px 40px',
-                    maxWidth: '1200px',
-                    margin: '0 auto',
-                    opacity: 0,
-                    transform: 'translateY(20px)',
-                    transition: 'opacity 1s ease, transform 1s ease'
-                }}>
-                    <h2 style={{
-                        fontSize: '48px',
-                        fontWeight: '600',
-                        marginBottom: '60px',
-                        textAlign: 'center',
-                        letterSpacing: '-0.5px'
-                    }}>
-                        Professional Experience
-                    </h2>
-
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                        gap: '30px'
-                    }}>
-                        {[
-                            {
-                                period: '2024.06 - 2024.08',
-                                organization: 'INNO Angel Fund',
-                                role: 'Investment Analyst',
-                                color: '#f0f0f2'
-                            },
-                            {
-                                period: '2023.06 - 2023.08',
-                                organization: 'Microsoft',
-                                role: 'Research Intern',
-                                color: '#f0f5ff'
-                            },
-                            {
-                                period: '2023.10 - 2024.06',
-                                organization: 'The Future Laboratory, Tsinghua University',
-                                role: 'Research Assistant',
-                                color: '#f0f5f0'
-                            },
-                            {
-                                period: '2023.05 - 2023.10',
-                                organization: 'Centre for Artificial Intelligence, UCL',
-                                role: 'Research Assistant',
-                                color: '#f5f0f5'
-                            },
-                            {
-                                period: '2021.09 - 2021.11 & 2023.05 - 2023.09',
-                                organization: 'Institute for AI Industry Research, Tsinghua University',
-                                role: 'Research Intern',
-                                color: '#f0f0f5'
-                            },
-                            {
-                                period: '2022.09 - 2023.01',
-                                organization: 'Stanford E-China, Stanford University',
-                                role: 'Student Researcher',
-                                color: '#fff0f0'
-                            },
-                            {
-                                period: '2022.07 - 2022.08',
-                                organization: 'International Innovative Practice Summer Camp, Shanghai Jiao Tong University',
-                                role: 'Participant',
-                                color: '#f0fff0'
-                            },
-                            {
-                                period: '2021.12 - 2024.03',
-                                organization: 'LJÜS LIGHTEN US LTD',
-                                role: 'Co-founder',
-                                color: '#f5f5f0'
-                            },
-                            {
-                                period: '2021.07 - 2021.09',
-                                organization: 'Institute of Radiological Medicine, Chinese Academy of Medical Sciences',
-                                role: 'Research Intern',
-                                color: '#f0f5f5'
-                            },
-                            {
-                                period: '2020.08 - 2020.12',
-                                organization: 'China Automotive Technology and Research Center Co. Ltd',
-                                role: 'Research Intern',
-                                color: '#f5f0f0'
-                            }
-                        ].map((exp, index) => (
-                            <div key={index} style={{
-                                backgroundColor: '#fff',
-                                borderRadius: '20px',
-                                overflow: 'hidden',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <div style={{
-                                    backgroundColor: exp.color,
-                                    padding: '25px 30px',
-                                    borderBottom: '1px solid rgba(0,0,0,0.05)'
-                                }}>
-                                    <p style={{
-                                        margin: 0,
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        color: '#555'
-                                    }}>
-                                        {exp.period}
-                                    </p>
-                                </div>
-                                <div style={{
-                                    padding: '25px 30px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '10px',
-                                    flex: 1
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '20px',
-                                        fontWeight: '600',
-                                        margin: 0
-                                    }}>
-                                        {exp.organization}
-                                    </h3>
-                                    <p style={{
-                                        fontSize: '16px',
-                                        color: '#666',
-                                        margin: 0
-                                    }}>
-                                        {exp.role}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                <section className="flex-row">
+                    <div className="left">
+                        <h2>Publication</h2>
                     </div>
-                </section>
+                    <div className="right brief" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
 
-                {/* Publications Section - Redesigned */}
-                <section id="publications" className="fade-in" style={{
-                    padding: '120px 0',
-                    backgroundColor: '#f5f5f7',
-                    opacity: 0,
-                    transform: 'translateY(20px)',
-                    transition: 'opacity 1s ease, transform 1s ease'
-                }}>
-                    <div style={{
-                        maxWidth: '1200px',
-                        margin: '0 auto',
-                        padding: '0 40px'
-                    }}>
-                        <h2 style={{
-                            fontSize: '48px',
-                            fontWeight: '600',
-                            marginBottom: '60px',
-                            textAlign: 'center',
-                            letterSpacing: '-0.5px'
-                        }}>
-                            Publications
-                        </h2>
+                        <p><i className="bold"><a href={"https://arxiv.org/abs/2404.00320"}> Advancing Multimodal Data Fusion in Pain Recognition: A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives</a></i></p>
+                        <p>(Submitted journal: ACII AHRI Workshop; Status: Accepted)</p>
+                        <p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
+                        <p>(Submitted journal: IEEE Automatic Face and Gesture Recognition; Status: Accepted)</p>
+                        <p><i className="bold"> Cognitive Belief Driven Reinforcement Learning</i></p>
+                        <p>(Submitted journal: ICML; Status: Under View)</p>
 
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '30px'
-                        }}>
-                            {/* Publication 1 */}
-                            <div style={{
-                                backgroundColor: '#fff',
-                                borderRadius: '24px',
-                                overflow: 'hidden',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                            }}>
-                                <div style={{
-                                    padding: '40px',
-                                    borderBottom: '1px solid #f0f0f0'
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '24px',
-                                        fontWeight: '600',
-                                        marginBottom: '16px',
-                                        lineHeight: '1.4'
-                                    }}>
-                                        <a href="https://arxiv.org/abs/2404.00320"
-                                           target="_blank"
-                                           rel="noopener noreferrer"
-                                           style={{
-                                               color: '#000',
-                                               textDecoration: 'none',
-                                               transition: 'color 0.2s ease',
-                                               display: 'inline-flex',
-                                               alignItems: 'center',
-                                               gap: '10px'
-                                           }}>
-                                            Advancing Multimodal Data Fusion in Pain Recognition
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                <polyline points="15 3 21 3 21 9"></polyline>
-                                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                                            </svg>
-                                        </a>
-                                    </h3>
-                                    <p style={{
-                                        fontSize: '18px',
-                                        lineHeight: '1.6',
-                                        color: '#444'
-                                    }}>
-                                        A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives
-                                    </p>
-                                </div>
-                                <div style={{
-                                    padding: '20px 40px',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    backgroundColor: '#fafafa'
-                                }}>
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <div style={{
-                                            width: '12px',
-                                            height: '12px',
-                                            borderRadius: '50%',
-                                            backgroundColor: '#34c759' // Apple's green
-                                        }}></div>
-                                        <span style={{
-                                            fontSize: '16px',
-                                            color: '#666'
-                                        }}>
-                            Accepted
-                        </span>
-                                    </div>
-                                    <p style={{
-                                        fontSize: '16px',
-                                        color: '#666'
-                                    }}>
-                                        ACII AHRI Workshop
-                                    </p>
-                                </div>
-                            </div>
 
-                            {/* Publication 2 */}
-                            <div style={{
-                                backgroundColor: '#fff',
-                                borderRadius: '24px',
-                                overflow: 'hidden',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                            }}>
-                                <div style={{
-                                    padding: '40px',
-                                    borderBottom: '1px solid #f0f0f0'
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '24px',
-                                        fontWeight: '600',
-                                        marginBottom: '16px',
-                                        lineHeight: '1.4'
-                                    }}>
-                                        <a href="https://arxiv.org/abs/2409.15564"
-                                           target="_blank"
-                                           rel="noopener noreferrer"
-                                           style={{
-                                               color: '#000',
-                                               textDecoration: 'none',
-                                               transition: 'color 0.2s ease',
-                                               display: 'inline-flex',
-                                               alignItems: 'center',
-                                               gap: '10px'
-                                           }}>
-                                            CauSkelNet: Causal Representation Learning for Human Behaviour Analysis
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                <polyline points="15 3 21 3 21 9"></polyline>
-                                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                                            </svg>
-                                        </a>
-                                    </h3>
-                                </div>
-                                <div style={{
-                                    padding: '20px 40px',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    backgroundColor: '#fafafa'
-                                }}>
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <div style={{
-                                            width: '12px',
-                                            height: '12px',
-                                            borderRadius: '50%',
-                                            backgroundColor: '#34c759' // Apple's green
-                                        }}></div>
-                                        <span style={{
-                                            fontSize: '16px',
-                                            color: '#666'
-                                        }}>
-                            Accepted
-                        </span>
-                                    </div>
-                                    <p style={{
-                                        fontSize: '16px',
-                                        color: '#666'
-                                    }}>
-                                        IEEE Automatic Face and Gesture Recognition
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Publication 3 */}
-                            <div style={{
-                                backgroundColor: '#fff',
-                                borderRadius: '24px',
-                                overflow: 'hidden',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                            }}>
-                                <div style={{
-                                    padding: '40px',
-                                    borderBottom: '1px solid #f0f0f0'
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '24px',
-                                        fontWeight: '600',
-                                        marginBottom: '16px',
-                                        lineHeight: '1.4'
-                                    }}>
-                                        Cognitive Belief Driven Reinforcement Learning
-                                    </h3>
-                                </div>
-                                <div style={{
-                                    padding: '20px 40px',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    backgroundColor: '#fafafa'
-                                }}>
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <div style={{
-                                            width: '12px',
-                                            height: '12px',
-                                            borderRadius: '50%',
-                                            backgroundColor: '#ff9f0a' // Apple's orange
-                                        }}></div>
-                                        <span style={{
-                                            fontSize: '16px',
-                                            color: '#666'
-                                        }}>
-                            Under Review
-                        </span>
-                                    </div>
-                                    <p style={{
-                                        fontSize: '16px',
-                                        color: '#666'
-                                    }}>
-                                        ICML
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
                 </section>
 
 
@@ -764,8 +291,13 @@ const About = () => {
                         <h2>Honors</h2>
                     </div>
                     <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
+                        {/*<p>● Received an investment intention of 1.5 million RMB, 2023</p>*/}
                         <p>● "Chunhui Cup"lnnovation and Entrepreneurship Competition for Chinese OverseasStudents, Award-winning Project, 2023</p>
+                        {/*<p>● "Straight to Wuzhen" competition, Final list, 2023</p>*/}
+                        {/*<p>● UCL Hatchery Incubator, Semi-Final list, 2023</p>*/}
+                        {/*<p>● "To win in Suthou, Create a winning future" venture contest, Sweden Final list, 2022</p>*/}
                         <p>● KCL Opportunity Fund, GBP 400 pounds, 2022</p>
+                        {/*<p>● The KTH Innovation pre-incubator program, Final list, 2022</p>*/}
                     </div>
 
                 </section>
