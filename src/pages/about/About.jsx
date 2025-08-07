@@ -297,11 +297,10 @@ const About = () => {
                         <p>(Submitted journal: 2024 12th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW); Status: Accepted)</p>
                         <p><i className="bold"> <a href={"https://ieeexplore.ieee.org/document/11099310"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
                         <p>(Submitted journal: 2025 IEEE 19th International Conference on Automatic Face and Gesture Recognition (FG); Status: Accepted)</p>
-                        <p><i className="bold"> <a href={"https://openreview.net/forum?id=LGJJCTjvVQ"}> Cognitive Belief Driven Reinforcement Learning </a> </i></p>
+                        <p><i className="bold"> <a href={"https://openreview.net/forum?id=LGJJCTjvVQ"}> Mimicking Human Intuition: Cognitive Belief-Driven Reinforcement Learning </a> </i></p>
                         <p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>
                         {/*<p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}> Cognitive Belief Driven Reinforcement Learning </a> </i></p>*/}
                         {/*<p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>*/}
-
 
                     </div>
 
