@@ -281,6 +281,8 @@ const About = () => {
                         <p>The Future Laboratory, Tsinghua University</p>
                         <p><i className="bold">2024.06 - 2024.08</i></p>
                         <p>INNO Angel Fund</p>
+                        <p><i className="bold">2024.08 - Present</i></p>
+                        <p>BAIR Lab / Helen Wills Neuroscience Institute, University of California, Berkeley</p>
                     </div>
 
                 </section>
@@ -291,12 +293,14 @@ const About = () => {
                     </div>
                     <div className="right brief" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
 
-                        <p><i className="bold"><a href={"https://arxiv.org/abs/2404.00320"}> Advancing Multimodal Data Fusion in Pain Recognition: A Strategy Leveraging Statistical Correlation and Human-Centered Perspectives</a></i></p>
-                        <p>(Submitted journal: ACII AHRI Workshop; Status: Accepted)</p>
-                        <p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
-                        <p>(Submitted journal: IEEE Automatic Face and Gesture Recognition; Status: Accepted)</p>
-                        <p><i className="bold"> Cognitive Belief Driven Reinforcement Learning</i></p>
-                        <p>(Submitted journal: ICML; Status: Under View)</p>
+                        <p><i className="bold"><a href={"https://ieeexplore.ieee.org/document/10970218"}> Advancing Pain Recognition Through Statistical Correlation-Driven Multimodal Fusion</a></i></p>
+                        <p>(Submitted journal: 2024 12th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW); Status: Accepted)</p>
+                        <p><i className="bold"> <a href={"https://ieeexplore.ieee.org/document/11099310"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
+                        <p>(Submitted journal: 2025 IEEE 19th International Conference on Automatic Face and Gesture Recognition (FG); Status: Accepted)</p>
+                        <p><i className="bold"> <a href={"https://openreview.net/forum?id=LGJJCTjvVQ"}> Cognitive Belief Driven Reinforcement Learning </a> </i></p>
+                        <p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>
+                        {/*<p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}> Cognitive Belief Driven Reinforcement Learning </a> </i></p>*/}
+                        {/*<p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>*/}
 
 
                     </div>
