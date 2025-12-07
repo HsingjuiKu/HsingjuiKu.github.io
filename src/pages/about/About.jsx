@@ -165,7 +165,7 @@ const About = () => {
                                         lineHeight: '1.8',
                                         color: '#495057'
                                     }}>
-                                        I am broadly interested in what it really means for an artificial agent to learn from its own experience. I take seriously the experience-centric view of reinforcement learning championed by Richard Sutton and David Silver: intelligence should emerge from long-term interaction, not from static offline datasets or hand-crafted rules. A formative moment for me was a coffee chat with <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">
+                                        I am broadly interested in what it really means for an artificial agent to learn from its own experience. I take seriously the experience-centric view of reinforcement learning championed by Richard Sutton and David Silver: intelligence should emerge from long-term interaction, not from static offline datasets or hand-crafted rules. A formative moment for me was a long chat with <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">
                                         Chris Watkins </a>, where Q-learning was not just an algorithm but a way of thinking about how behaviour is shaped by accumulated evidence. Since then, my work has tried to push this “Human Centered” philosophy one step further: experience should not just be replayed, but organised—into beliefs, manifolds, and memory operators that reshape the learning rule itself.</p>
                                     <p style={{
                                         fontSize: '1.1rem',
