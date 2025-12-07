@@ -49,15 +49,15 @@ const About = () => {
                 <br/>
                 <br/>
                 <br/>
-                <section className="immersive-section">
-                    <p ref={textRef} style={{ fontWeight: 'bold', fontSize: '30px' }}>
-                        My Story
-                    </p>
+                {/*<section className="immersive-section">*/}
+                {/*    <p ref={textRef} style={{ fontWeight: 'bold', fontSize: '30px' }}>*/}
+                {/*        My Story*/}
+                {/*    </p>*/}
 
-                    <p ref={textRef} className="immersive-text">
-                        In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.
-                    </p>
-                </section>
+                {/*    <p ref={textRef} className="immersive-text">*/}
+                {/*        In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.*/}
+                {/*    </p>*/}
+                {/*</section>*/}
 
                 {/*<section className="flex-row">*/}
                 {/*    <div className="left" style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>*/}
@@ -165,15 +165,14 @@ const About = () => {
                                         lineHeight: '1.8',
                                         color: '#495057'
                                     }}>
-                                        I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language.
-                                    </p>
+                                        I am broadly interested in what it really means for an artificial agent to learn from its own experience. I take seriously the experience-centric view of reinforcement learning championed by Richard Sutton and David Silver: intelligence should emerge from long-term interaction, not from static offline datasets or hand-crafted rules. A formative moment for me was a coffee chat with <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">
+                                        Chris Watkins </a>, where Q-learning was not just an algorithm but a way of thinking about how behaviour is shaped by accumulated evidence. Since then, my work has tried to push this “Human Centered” philosophy one step further: experience should not just be replayed, but organised—into beliefs, manifolds, and memory operators that reshape the learning rule itself.</p>
                                     <p style={{
                                         fontSize: '1.1rem',
                                         lineHeight: '1.8',
                                         color: '#495057'
                                     }}>
-                                        I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.
-                                    </p>
+                                        My research sits between Lifelong Learning, Reinforcement learning, Bayesian machine learning, and cognitive science. At UCL’s Centre for AI, working with <a href="https://davidbarber.github.io/" target="_blank" rel="noopener noreferrer">David Barber</a>, I explored Bayesian and operator-based views of policy and value updates. At UC Berkeley’s Computational Cognitive Neuroscience Lab, under <a href="https://psychology.berkeley.edu/people/anne-collins" target="_blank" rel="noopener noreferrer">Anne Collins</a>, I studied how human behaviour and working memory suggest richer notions of state, credit assignment, and concept formation.                                    </p>
                                 </div>
 
                                 {/* 技术关键词标签 */}
@@ -183,7 +182,7 @@ const About = () => {
                                     flexWrap: 'wrap',
                                     marginTop: '1rem'
                                 }}>
-                                    {['Reinforcement Learning', 'Cognitive Science', 'Decision Science', 'Human Computer Interaction'].map(tag => (
+                                    {['Lifelong Learning', 'Baysiean Machine Learning', 'Decision Science', 'Human Computer Interaction'].map(tag => (
                                         <span key={tag} style={{
                                             padding: '0.5rem 1rem',
                                             background: '#f8f9fa',
@@ -312,13 +311,11 @@ const About = () => {
                         <h2>Honors</h2>
                     </div>
                     <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        {/*<p>● Received an investment intention of 1.5 million RMB, 2023</p>*/}
+                        <p>● BTT Pitch Competition Winner, Los Angel, 2025</p>
+                        <p>● Received an investment intention of 0.6 million RMB in LJÜS, 2023</p>
                         <p>● "Chunhui Cup"lnnovation and Entrepreneurship Competition for Chinese OverseasStudents, Award-winning Project, 2023</p>
-                        {/*<p>● "Straight to Wuzhen" competition, Final list, 2023</p>*/}
-                        {/*<p>● UCL Hatchery Incubator, Semi-Final list, 2023</p>*/}
-                        {/*<p>● "To win in Suthou, Create a winning future" venture contest, Sweden Final list, 2022</p>*/}
                         <p>● KCL Opportunity Fund, GBP 400 pounds, 2022</p>
-                        {/*<p>● The KTH Innovation pre-incubator program, Final list, 2022</p>*/}
+
                     </div>
 
                 </section>

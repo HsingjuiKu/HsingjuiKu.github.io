@@ -31,7 +31,7 @@ const Home = () => {
                             GITHUB
                         </div>
                         <div className="btn" onClick={() => { window.location.href = "https://drive.google.com/file/d/1serjpE8P0w5kweriYV7Uc7vJ50A-5R0z/view?usp=sharing" }}>
-                            RESUME
+                            PUBLICATION
                         </div>
                     </div>
                 </section>
