@@ -241,7 +241,7 @@ const About = () => {
 
 
                 <section className="flex-row">
-                    <div className="left w-30p">
+                    <div className="left">
                         <h2>Education</h2>
                     </div>
                     <div className="right brief w-70p">
@@ -254,7 +254,6 @@ const About = () => {
                     </div>
                 </section>
 
-
                 <section className="flex-row">
                     <div className="left" style={{ width: '50%' }}>
                         <h2>In Brief</h2>
@@ -262,22 +261,10 @@ const About = () => {
                     <div className="right brief" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
                         <p><i className="bold">2020.08 - 2020.12</i></p>
                         <p>China Automotive Technology and Research Center Co. Ltd</p>
-                        {/*<p><i className="bold">2021.07 - 2021.09</i></p>*/}
-                        {/*<p>Institute of Radiological Medicine, Chinese Academy of Medical Sciences</p>*/}
                         <p><i className="bold">2021.12 - 2024.03</i></p>
                         <p>LJÜS LIGHTEN US LTD</p>
-                        {/*<p><i className="bold">2022.07 - 2022.08</i></p>*/}
-                        {/*<p>International Innovative Practice Summer Camp, Shanghai Jiao Tong University</p>*/}
-                        {/*<p><i className="bold">2022.09 - 2023.01</i></p>*/}
-                        {/*<p>Stanford E-China, Stanford University</p>*/}
-                        {/*<p><i className="bold">2021.09 - 2021.11 & 2023.05 - 2023.09</i></p>*/}
-                        {/*<p>Institute for Al Industry Research, Tsinghua University</p>*/}
-                        {/*<p><i className="bold">2023.05 - 2023.10</i></p>*/}
-                        {/*<p>Centre for Artificial Intelligence, UCL</p>*/}
                         <p><i className="bold">2023.06 - 2023.08</i></p>
                         <p>Microsoft</p>
-                        {/*<p><i className="bold">2023.10 - 2024.06</i></p>*/}
-                        {/*<p>The Future Laboratory, Tsinghua University</p>*/}
                         <p><i className="bold">2024.06 - 2024.08</i></p>
                         <p>INNO Angel Fund</p>
                         <p><i className="bold">2024.08 - Present</i></p>
