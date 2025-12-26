@@ -244,7 +244,7 @@ const About = () => {
                     <div className="left">
                         <h2>Education</h2>
                     </div>
-                    <div className="right brief w-70p">
+                    <div className="right brief" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
                         <p><i className="bold">2019 – 2022</i></p>
                         <p>King’s College London — BSc Mathematics with Statistics</p>
                         <p><i className="bold">2022 – 2023</i></p>
