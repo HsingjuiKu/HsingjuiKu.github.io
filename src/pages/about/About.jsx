@@ -1,352 +1,367 @@
-import React from "react";
-import { useEffect, useRef } from "react";
-import "./about.scss"
+import React, { useEffect, useRef } from "react";
+import "./about.scss";
 
 const About = () => {
-    const toTop=()=>{
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    }
+    const timelineRef = useRef(null);
+    const dragState = useRef({
+        active: false, startX: 0, scrollLeft: 0,
+        velocity: 0, lastX: 0, lastTime: 0, rafId: null,
+    });
 
-    const textRef = useRef(null);
+    // ─── 1. Ambient cursor glow (smooth lag follow) ─────────────────────
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('immersive-text-visible');
-                } else {
-                    entry.target.classList.remove('immersive-text-visible');
-                }
-            },
-            {
-                threshold: 0.1 // Trigger when at least 10% of the element is in the viewport
-            }
-        );
+        const glow = document.getElementById("cursor-glow");
+        let raf;
+        let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+        let cx = tx, cy = ty;
 
-        if (textRef.current) {
-            observer.observe(textRef.current);
-        }
+        const onMove = (e) => { tx = e.clientX; ty = e.clientY; };
+        const tick = () => {
+            cx += (tx - cx) * 0.075;
+            cy += (ty - cy) * 0.075;
+            if (glow) { glow.style.left = cx + "px"; glow.style.top = cy + "px"; }
+            raf = requestAnimationFrame(tick);
+        };
+
+        window.addEventListener("mousemove", onMove, { passive: true });
+        raf = requestAnimationFrame(tick);
+        return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+    }, []);
+
+    // ─── 2. Scroll progress bar ─────────────────────────────────────────
+    useEffect(() => {
+        const bar = document.getElementById("scroll-bar");
+        const onScroll = () => {
+            const d = document.documentElement;
+            const pct = d.scrollTop / (d.scrollHeight - d.clientHeight);
+            if (bar) bar.style.transform = `scaleX(${pct})`;
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    // ─── 3. Scroll reveal ───────────────────────────────────────────────
+    useEffect(() => {
+        const obs = new IntersectionObserver(
+            (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in-view"); }),
+            { threshold: 0.08 }
+        );
+        document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
+        return () => obs.disconnect();
+    }, []);
+
+    // ─── 4. Horizontal drag timeline with momentum physics ─────────────
+    useEffect(() => {
+        const track = timelineRef.current;
+        if (!track) return;
+        const ds = dragState.current;
+
+        const start = (clientX) => {
+            ds.active = true;
+            ds.startX = clientX - track.getBoundingClientRect().left;
+            ds.scrollLeft = track.scrollLeft;
+            ds.velocity = 0;
+            ds.lastX = clientX;
+            ds.lastTime = performance.now();
+            cancelAnimationFrame(ds.rafId);
+            track.classList.add("dragging");
+        };
+        const move = (clientX) => {
+            if (!ds.active) return;
+            const now = performance.now();
+            const dt = now - ds.lastTime || 1;
+            ds.velocity = (clientX - ds.lastX) / dt;
+            ds.lastX = clientX;
+            ds.lastTime = now;
+            const x = clientX - track.getBoundingClientRect().left;
+            track.scrollLeft = ds.scrollLeft - (x - ds.startX);
+        };
+        const end = () => {
+            if (!ds.active) return;
+            ds.active = false;
+            track.classList.remove("dragging");
+            const decelerate = () => {
+                ds.velocity *= 0.93;
+                track.scrollLeft -= ds.velocity * 16;
+                if (Math.abs(ds.velocity) > 0.25) ds.rafId = requestAnimationFrame(decelerate);
+            };
+            ds.rafId = requestAnimationFrame(decelerate);
+        };
+
+        const onMD = (e) => { e.preventDefault(); start(e.clientX); };
+        const onMM = (e) => move(e.clientX);
+        const onMU = () => end();
+        const onTS = (e) => start(e.touches[0].clientX);
+        const onTM = (e) => { e.preventDefault(); move(e.touches[0].clientX); };
+
+        track.addEventListener("mousedown", onMD);
+        track.addEventListener("touchstart", onTS, { passive: false });
+        window.addEventListener("mousemove", onMM);
+        window.addEventListener("mouseup", onMU);
+        track.addEventListener("touchmove", onTM, { passive: false });
+        track.addEventListener("touchend", end);
 
         return () => {
-            if (textRef.current) {
-                observer.unobserve(textRef.current);
-            }
+            track.removeEventListener("mousedown", onMD);
+            track.removeEventListener("touchstart", onTS);
+            window.removeEventListener("mousemove", onMM);
+            window.removeEventListener("mouseup", onMU);
+            track.removeEventListener("touchmove", onTM);
+            track.removeEventListener("touchend", end);
+            cancelAnimationFrame(ds.rafId);
         };
     }, []);
 
+    // ─── 5. Magnetic hover links ────────────────────────────────────────
+    useEffect(() => {
+        const els = document.querySelectorAll(".magnetic");
+        const pairs = [];
+        els.forEach((el) => {
+            const onMove = (e) => {
+                const r = el.getBoundingClientRect();
+                const dx = (e.clientX - (r.left + r.width / 2)) * 0.2;
+                const dy = (e.clientY - (r.top + r.height / 2)) * 0.2;
+                el.style.transition = "transform 0.15s ease";
+                el.style.transform = `translate(${dx}px, ${dy}px)`;
+            };
+            const onLeave = () => {
+                el.style.transition = "transform 0.55s cubic-bezier(0.23, 1, 0.32, 1)";
+                el.style.transform = "";
+            };
+            el.addEventListener("mousemove", onMove);
+            el.addEventListener("mouseleave", onLeave);
+            pairs.push({ el, onMove, onLeave });
+        });
+        return () => pairs.forEach(({ el, onMove, onLeave }) => {
+            el.removeEventListener("mousemove", onMove);
+            el.removeEventListener("mouseleave", onLeave);
+        });
+    }, []);
+
+    // ─── 6. 3D perspective tilt on pub cards ────────────────────────────
+    const onTilt = (e) => {
+        const card = e.currentTarget;
+        const r = card.getBoundingClientRect();
+        const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+        const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+        card.style.transition = "transform 0.1s ease";
+        card.style.transform = `perspective(1000px) rotateY(${dx * 8}deg) rotateX(${-dy * 5}deg) scale(1.015)`;
+        const shimmer = card.querySelector(".pt-shimmer");
+        if (shimmer) {
+            const px = ((e.clientX - r.left) / r.width) * 100;
+            const py = ((e.clientY - r.top) / r.height) * 100;
+            shimmer.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.08) 0%, transparent 60%)`;
+        }
+    };
+    const offTilt = (e) => {
+        const card = e.currentTarget;
+        card.style.transition = "transform 0.65s cubic-bezier(0.23, 1, 0.32, 1)";
+        card.style.transform = "";
+        const shimmer = card.querySelector(".pt-shimmer");
+        if (shimmer) shimmer.style.background = "";
+    };
+
+    // ─── Data ────────────────────────────────────────────────────────────
+    const floatTags = [
+        "Lifelong Learning", "Bayesian ML", "Reinforcement Learning",
+        "Decision Science", "HCI", "Cognitive Science",
+    ];
+    const timeline = [
+        { type: "edu",  date: "2019–2022", org: "King's College London",        role: "BSc Mathematics with Statistics" },
+        { type: "work", date: "2020",      org: "China Automotive Tech Center", role: "Intern" },
+        { type: "edu",  date: "2022–2023", org: "University College London",    role: "MSc Computer Science" },
+        { type: "work", date: "2021–2024", org: "LJÜS LIGHTEN US LTD",         role: "Co-founder" },
+        { type: "work", date: "2023",      org: "Microsoft",                    role: "Software Engineering Intern" },
+        { type: "edu",  date: "2024–2025", org: "UC Berkeley",                  role: "MEng Computer Science" },
+        { type: "work", date: "2024",      org: "INNO Angel Fund",              role: "" },
+        { type: "work", date: "2024–Now",  org: "BAIR Lab · Helen Wills Neuroscience Institute", role: "Researcher, UC Berkeley" },
+        { type: "work", date: "2025–Now",  org: "Tensor",                       role: "" },
+    ];
+    const pubs = [
+        { title: "Advancing Pain Recognition Through Statistical Correlation-Driven Multimodal Fusion",     venue: "2024 12th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW)",          status: "Accepted",            href: "https://ieeexplore.ieee.org/document/10970218" },
+        { title: "CauSkelNet: Causal Representation Learning for Human Behaviour Analysis",                  venue: "2025 IEEE 19th International Conference on Automatic Face and Gesture Recognition (FG)",               status: "Accepted",            href: "https://ieeexplore.ieee.org/document/11099310" },
+        { title: "Mimicking Human Intuition: Cognitive Belief-Driven Reinforcement Learning",                venue: "ICML 2nd Workshop on Models of Human Feedback for AI Alignment 2025 · ICLR 2026", status: "Accepted", href: "https://openreview.net/forum?id=LGJJCTjvVQ" },
+        { title: "Laplacian Flows for Policy Learning from Experience",                venue: "ICLR 2026 Workshop on Geometry-grounded Representation Learning and Generative Modeling", status: "Accepted", href: "https://openreview.net/forum?id=55FIDiXzvP#discussion" },
+        { title: "Task-Aware Delegation Cues for LLM Agents",                venue: "CHI'26 Workshop on Developing Standards and Documentation For LLM Use as Simulated Research Participants", status: "Accepted", href: "https://arxiv.org/abs/2603.11011" },
+        { title: "Uncertainty-Gated Generative Modeling\n",                venue: "ICLR 2026 Workshop Advances in Financial AI", status: "Accepted", href: "https://arxiv.org/abs/2603.07753n" },
+        { title: "Laplacian Flows for Policy Learning from Experience",                venue: "ICLR 2026 Workshop on Geometry-grounded Representation Learning and Generative Modeling", status: "Accepted", href: "https://openreview.net/forum?id=55FIDiXzvP#discussion" },
+
+    ];
+    const honors = [
+        "BTT Pitch Competition Winner — Los Angeles, 2025",
+        "Investment intention of ¥600k in LJÜS — 2023",
+        '"Chunhui Cup" Award-winning Project — 2023',
+        "KCL Opportunity Fund, £400 — 2022",
+    ];
+    const contacts = [
+        { label: "Email",     val: "x.gu.hayden@gmail.com", href: "mailto:x.gu.hayden@gmail.com" },
+        { label: "Instagram", val: "grxprc98",               href: "https://www.instagram.com/grxprc98" },
+        { label: "LinkedIn",  val: "Xingrui Gu",             href: "https://www.linkedin.com/in/xingrui-gu-1b22b0236/" },
+        { label: "X",  val: "@grxprc98",             href: "https://x.com/grxprc98" },
+    ];
+
     return (
         <div className="about">
-            <div className="aboutContainer">
-                <div className="logo"><a href="/"><img src="/assets/logo.png" alt="" /></a></div>
-                {/*<div className="about"><p>About</p></div>*/}
-                {/*<div className="banner">*/}
-                {/*    <video src="/assets/about.mp4" muted autoPlay loop style={{ width: '100%' }}></video>*/}
-                {/*</div>*/}
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                {/*<section className="immersive-section">*/}
-                {/*    <p ref={textRef} style={{ fontWeight: 'bold', fontSize: '30px' }}>*/}
-                {/*        My Story*/}
-                {/*    </p>*/}
+            {/* Global overlays */}
+            <div id="cursor-glow" className="cursor-glow" />
+            <div id="scroll-bar" className="scroll-bar" />
 
-                {/*    <p ref={textRef} className="immersive-text">*/}
-                {/*        In silence, I came to be, where melodies and secrets turned to silent regrets within me. My deafness once isolated me, stirring tempests within and solitude around. But as I sought healing, I found myself in the mesmerizing fields of cognitive science and emotional computation. In the quiet, my search for sound mirrored a night's quest for starlight. Data science opened new worlds to me, and AI, along with interactive technology, fused numbers, sound, and feeling. My affinity for technology was more than passion—it was a dream of a world alive with sound and sentiment. The advent of hearing aids illuminated my life, revealing that technology bridges more than data and sound—it connects us at the soul, pulling me into the cosmic dance.*/}
-                {/*    </p>*/}
-                {/*</section>*/}
+            {/* Nav */}
+            <nav className="av3-nav">
+                <a href="/" className="nav-logo"><img src="/assets/logo.png" alt="logo" /></a>
+                <span className="nav-loc">Berkeley · CA</span>
+            </nav>
 
-                {/*<section className="flex-row">*/}
-                {/*    <div className="left" style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>*/}
-                {/*        <img src="/assets/WechatIMG371.jpeg" alt="" />*/}
-                {/*    </div>*/}
-                {/*    <div className="right" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>*/}
-                {/*        <p class="centered">*/}
-                {/*            Hi, I'm Xingrui Gu. I'm deeply passionate about exploring the intricacies of the human mind and its interaction with technology. My research primarily focuses on Human Intuitive Reasoning, especially in Causal and Bayesian Reasoning, which allows us to understand how people make sense of the world around them through mathematical language. I'm also highly interested in Human Centered Computing, Affective Computing, Reinforcement Learning and Human-Computer Interaction, areas where I aim to further contribute by developing more intuitive and effective AI technology interfaces.*/}
-                {/*        </p><br/>*/}
-                {/*        /!*<p class="centered"><a href={"https://drive.google.com/file/d/1W6tw4YMhG_84DD-N6O8BCIsl0FdW228B/view?usp=sharing"}>R E S U M E</a></p>*!/*/}
-                {/*        /!*<p class="centered"></p>*!/*/}
-                {/*    </div>*/}
-
-                {/*</section>*/}
-
-
-                <section style={{
-                    padding: '6rem 0',
-                    background: 'linear-gradient(to bottom, #ffffff, #f8f9fa)',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* 背景装饰 */}
-                    <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '0',
-                        width: '100%',
-                        height: '50%',
-                        background: 'linear-gradient(to bottom right, rgba(238, 238, 238, 0.5), rgba(245, 245, 245, 0.5))',
-                        transform: 'skewY(-6deg)',
-                        zIndex: 0
-                    }}/>
-
-                    <div style={{
-                        maxWidth: '1200px',
-                        margin: '0 auto',
-                        padding: '0 2rem',
-                        position: 'relative',
-                        zIndex: 1
-                    }}>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1.2fr',
-                            gap: '4rem',
-                            alignItems: 'center'
-                        }}>
-                            {/* 左侧图片容器 */}
-                            <div style={{
-                                position: 'relative',
-                                padding: '1rem',
-                                background: 'white',
-                                borderRadius: '20px',
-                                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-                                transform: 'rotate(-2deg)'
-                            }}>
-                                <img
-                                    src="/assets/WechatIMG371.jpeg"
-                                    alt="Profile"
-                                    style={{
-                                        width: '100%',
-                                        borderRadius: '12px',
-                                        filter: 'grayscale(100%)',
-                                        transition: 'transform 0.3s ease',
-                                        transform: 'rotate(2deg)'
-                                    }}
-                                />
-                            </div>
-
-                            {/* 右侧文字内容 */}
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '2rem'
-                            }}>
-                                <div>
-                                    <h4 style={{
-                                        fontSize: '1.1rem',
-                                        color: '#6c757d',
-                                        marginBottom: '0.5rem',
-                                        fontWeight: '500',
-                                        letterSpacing: '2px'
-                                    }}>
-                                        WELCOME TO MY WEBSITE
-                                    </h4>
-                                    <h1 style={{
-                                        fontSize: '3.5rem',
-                                        fontWeight: '700',
-                                        background: 'linear-gradient(45deg, #333, #666)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        marginBottom: '2rem'
-                                    }}>
-                                        Hi, I'm Xingrui Gu
-                                    </h1>
-                                </div>
-
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '1.5rem'
-                                }}>
-                                    <p style={{
-                                        fontSize: '1.1rem',
-                                        lineHeight: '1.8',
-                                        color: '#495057'
-                                    }}>
-                                        I am broadly interested in what it really means for an artificial agent to learn from its own experience. I take seriously the experience-centric view of reinforcement learning championed by Richard Sutton and David Silver: intelligence should emerge from long-term interaction, not from static offline datasets or hand-crafted rules. A formative moment for me was a long chat with <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">
-                                        Chris Watkins </a>, where Q-learning was not just an algorithm but a way of thinking about how behaviour is shaped by accumulated evidence. Since then, my work has tried to push this “Human Centered” philosophy one step further: experience should not just be replayed, but organised—into beliefs, manifolds, and memory operators that reshape the learning rule itself.</p>
-                                    <p style={{
-                                        fontSize: '1.1rem',
-                                        lineHeight: '1.8',
-                                        color: '#495057'
-                                    }}>
-                                        My research sits between Lifelong Learning, Reinforcement learning, Bayesian machine learning, and cognitive science. At UCL’s Centre for AI, working with <a href="https://davidbarber.github.io/" target="_blank" rel="noopener noreferrer">David Barber</a>, I explored Bayesian and operator-based views of policy and value updates. At UC Berkeley’s Computational Cognitive Neuroscience Lab, under <a href="https://psychology.berkeley.edu/people/anne-collins" target="_blank" rel="noopener noreferrer">Anne Collins</a>, I studied how human behaviour and working memory suggest richer notions of state, credit assignment, and concept formation.                                    </p>
-                                </div>
-
-                                {/* 技术关键词标签 */}
-                                <div style={{
-                                    display: 'flex',
-                                    gap: '0.8rem',
-                                    flexWrap: 'wrap',
-                                    marginTop: '1rem'
-                                }}>
-                                    {['Lifelong Learning', 'Baysiean Machine Learning', 'Decision Science', 'Human Computer Interaction'].map(tag => (
-                                        <span key={tag} style={{
-                                            padding: '0.5rem 1rem',
-                                            background: '#f8f9fa',
-                                            borderRadius: '50px',
-                                            fontSize: '0.9rem',
-                                            color: '#495057',
-                                            border: '1px solid #dee2e6'
-                                        }}>
-                            {tag}
-                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-
-                {/*<section className="flex-row">*/}
-                {/*    <div className="left w-30p">*/}
-                {/*        <h2>Education</h2>*/}
-                {/*    </div>*/}
-                {/*    <div className="right brief w-70p">*/}
-                {/*        /!* Entry 1 *!/*/}
-                {/*        <p><i className="bold">2019–2022</i></p>*/}
-                {/*        <p>*/}
-                {/*            <img*/}
-                {/*                src="/assets/a1.webp"*/}
-                {/*                alt="KCL Logo"*/}
-                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
-                {/*            />*/}
-                {/*            King’s College London — BSc Mathematics with Statistics*/}
-                {/*        </p>*/}
-                {/*        /!* Entry 2 *!/*/}
-                {/*        <p><i className="bold">2022–2023</i></p>*/}
-                {/*        <p>*/}
-                {/*            <img*/}
-                {/*                src="/assets/a2.png"*/}
-                {/*                alt="UCL Logo"*/}
-                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
-                {/*            />*/}
-                {/*            University College London — MSc Computer Science*/}
-                {/*        </p>*/}
-                {/*        /!* Entry 3 *!/*/}
-                {/*        <p><i className="bold">2023–Present</i></p>*/}
-                {/*        <p>*/}
-                {/*            <img*/}
-                {/*                src="/assets/a3.png"*/}
-                {/*                alt="UCB Logo"*/}
-                {/*                style={{ height: '20px', verticalAlign: 'middle', marginRight: '8px' }}*/}
-                {/*            />*/}
-                {/*            University of California, Berkeley — MEng Electrical Engineering and Computer Science*/}
-                {/*        </p>*/}
-                {/*    </div>*/}
-                {/*</section>*/}
-
-
-                <section className="flex-row">
-                    <div className="left">
-                        <h2>Education</h2>
-                    </div>
-                    <div className="right brief" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                        <p><i className="bold">2019 – 2022</i></p>
-                        <p>King’s College London — BSc Mathematics with Statistics</p>
-                        <p><i className="bold">2022 – 2023</i></p>
-                        <p>University College London — MSc Computer Science</p>
-                        <p><i className="bold">2024 – 2025</i></p>
-                        <p>University of California, Berkeley — MEng Computer Science</p>
-                    </div>
-                </section>
-
-                <section className="flex-row">
-                    <div className="left" style={{ width: '50%' }}>
-                        <h2>In Brief</h2>
-                    </div>
-                    <div className="right brief" style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                        <p><i className="bold">2020.08 - 2020.12</i></p>
-                        <p>China Automotive Technology and Research Center Co. Ltd</p>
-                        <p><i className="bold">2021.12 - 2024.03</i></p>
-                        <p>LJÜS LIGHTEN US LTD</p>
-                        <p><i className="bold">2023.06 - 2023.08</i></p>
-                        <p>Microsoft</p>
-                        <p><i className="bold">2024.06 - 2024.08</i></p>
-                        <p>INNO Angel Fund</p>
-                        <p><i className="bold">2024.08 - Present</i></p>
-                        <p>BAIR Lab / Helen Wills Neuroscience Institute, University of California, Berkeley</p>
-                        <p><i className="bold">2025.11 - Present</i></p>
-                        <p>Tensor</p>
-
-                    </div>
-
-                </section>
-
-                <section className="flex-row">
-                    <div className="left">
-                        <h2>Publication</h2>
-                    </div>
-                    <div className="right brief" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-
-                        <p><i className="bold"><a href={"https://ieeexplore.ieee.org/document/10970218"}> Advancing Pain Recognition Through Statistical Correlation-Driven Multimodal Fusion</a></i></p>
-                        <p>(Submitted journal: 2024 12th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW); Status: Accepted)</p>
-                        <p><i className="bold"> <a href={"https://ieeexplore.ieee.org/document/11099310"}>CauSkelNet: Causal Representation Learning for Human Behaviour Analysis</a> </i></p>
-                        <p>(Submitted journal: 2025 IEEE 19th International Conference on Automatic Face and Gesture Recognition (FG); Status: Accepted)</p>
-                        <p><i className="bold"> <a href={"https://openreview.net/forum?id=LGJJCTjvVQ"}> Mimicking Human Intuition: Cognitive Belief-Driven Reinforcement Learning </a> </i></p>
-                        <p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>
-                        {/*<p><i className="bold"> <a href={"https://arxiv.org/abs/2409.15564"}> Cognitive Belief Driven Reinforcement Learning </a> </i></p>*/}
-                        {/*<p>(Submitted journal: 2025 ICML MoFA Workshop; Status: Accepted / Submitted journal: 2026 ICLR; Status: Under Review)</p>*/}
-
-                    </div>
-
-                </section>
-
-
-                <section className="flex-row">
-                    <div className="left">
-                        <h2>Honors</h2>
-                    </div>
-                    <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        <p>● BTT Pitch Competition Winner, Los Angel, 2025</p>
-                        <p>● Received an investment intention of 0.6 million RMB in LJÜS, 2023</p>
-                        <p>● "Chunhui Cup"lnnovation and Entrepreneurship Competition for Chinese OverseasStudents, Award-winning Project, 2023</p>
-                        <p>● KCL Opportunity Fund, GBP 400 pounds, 2022</p>
-
-                    </div>
-
-                </section>
-
-                <section className="flex-row">
-                    <div className="left" >
-                        <h2>Contact</h2>
-                    </div>
-                    <div className="right " style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                        <div className="b-item">
-                            <img src="/assets/Vector2.png" alt="" />
-                            <i><span className="bold">Email: x.gu.hayden@gmail.com</span></i>
-                        </div>
-
-                        <div className="b-item">
-                            <img src="/assets/Vector1.png" alt="" />
-                            <i><span className="bold">Ins: grxprc98</span></i>
-                        </div>
-
-                        <div className="b-item">
-                            <img src="/assets/Vector.png" alt="" />
-                            <i><span className="bold">Linkedln:  <a href="https://www.linkedin.com/in/xingrui-gu-1b22b0236/" target="_blank"> Xingrui Gu </a></span></i>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-
-                <div className="footer">
-                    <img src="/assets/kn.png" alt="" onClick={toTop}/>
-                    <p>Copyright © Xingrui GU. All Rights Reserved.</p>
-
+            {/* ══ HERO ══════════════════════════════════════════════════════════ */}
+            <section className="av3-hero">
+                {/* Softly drifting orbital research tags */}
+                <div className="hero-orbitals" aria-hidden="true">
+                    {floatTags.map((tag, i) => (
+                        <span key={tag} className={`orbital-tag ot-${i}`}>{tag}</span>
+                    ))}
                 </div>
 
-            </div>
+                <div className="hero-core">
+                    <p className="hero-label">Researcher · Engineer · Builder</p>
+                    <h1 className="hero-name">
+                        <span>Xingrui</span>
+                        <span className="hn-indent">Gu</span>
+                    </h1>
+                    <p className="hero-caption">BAIR Lab · UC Berkeley · MEng Computer Science</p>
+                </div>
+
+                <div className="scroll-cue" aria-hidden="true">
+                    <div className="sc-line" />
+                    <span className="sc-text">Scroll</span>
+                </div>
+            </section>
+
+            {/* ══ 01 RESEARCH ══════════════════════════════════════════════════ */}
+            <section className="av3-section reveal" id="research">
+                <header className="sec-header">
+                    <span className="sec-num">01</span>
+                    <h2 className="sec-name">Research</h2>
+                </header>
+                <div className="research-grid">
+                    <div className="research-photo reveal">
+                        <div className="photo-wrap">
+                            <img src="/assets/WechatIMG371.jpeg" alt="Xingrui Gu" />
+                        </div>
+                    </div>
+                    <div className="research-text reveal">
+                        <blockquote className="pullquote">
+                            "Experience should not just be replayed, but organised — into beliefs, manifolds, and memory operators that reshape the learning rule itself."
+                        </blockquote>
+                        <p>
+                            I am broadly interested in what it really means for an artificial agent to learn from its own experience. I take seriously the experience-centric view of RL championed by Sutton and Silver: intelligence should emerge from long-term interaction. A formative conversation with{" "}
+                            <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">Chris Watkins</a>{" "}
+                            reframed Q-learning as a way of thinking about how behaviour is shaped by accumulated evidence.
+                        </p>
+                        <p>
+                            My research sits at the intersection of Lifelong Learning, Bayesian ML, and cognitive science. At UCL's Centre for AI with{" "}
+                            <a href="https://davidbarber.github.io/" target="_blank" rel="noopener noreferrer">David Barber</a>
+                            , I explored operator-based views of policy updates. At Berkeley's CCN Lab with{" "}
+                            <a href="https://psychology.berkeley.edu/people/anne-collins" target="_blank" rel="noopener noreferrer">Anne Collins</a>
+                            , I studied how working memory shapes credit assignment and concept formation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* ══ 02 JOURNEY — horizontal drag timeline ════════════════════════ */}
+            <section className="av3-section av3-journey reveal" id="journey">
+                <header className="sec-header">
+                    <span className="sec-num">02</span>
+                    <h2 className="sec-name">Journey</h2>
+                    <span className="drag-hint">
+            <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">
+              <path d="M0 5h14M10 1l5 4-5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            drag to explore
+          </span>
+                </header>
+                <div className="tl-track" ref={timelineRef}>
+                    <div className="tl-axis" aria-hidden="true" />
+                    {timeline.map((item, i) => (
+                        <div className={`tl-card tc-${item.type}`} key={i}>
+                            <div className="tc-badge">{item.type === "edu" ? "Education" : "Experience"}</div>
+                            <div className="tc-date">{item.date}</div>
+                            <div className="tc-org">{item.org}</div>
+                            {item.role && <div className="tc-role">{item.role}</div>}
+                            <div className="tc-dot" />
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ══ 03 PUBLICATIONS — 3D tilt cards ══════════════════════════════ */}
+            <section className="av3-section reveal" id="publications">
+                <header className="sec-header">
+                    <span className="sec-num">03</span>
+                    <h2 className="sec-name">Publications</h2>
+                </header>
+                <div className="pub-grid">
+                    {pubs.map((pub, i) => (
+                        <a
+                            key={i}
+                            className="pub-tile reveal"
+                            href={pub.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onMouseMove={onTilt}
+                            onMouseLeave={offTilt}
+                            style={{ "--delay": `${i * 0.1}s` }}
+                        >
+                            <div className="pt-num">0{i + 1}</div>
+                            <div className="pt-body">
+                                <h3 className="pt-title">{pub.title}</h3>
+                                <p className="pt-venue">{pub.venue}</p>
+                                <span className="pt-status">{pub.status}</span>
+                            </div>
+                            <div className="pt-corner">↗</div>
+                            <div className="pt-shimmer" aria-hidden="true" />
+                        </a>
+                    ))}
+                </div>
+            </section>
+
+            {/* ══ 04 + 05 HONORS + CONTACT ══════════════════════════════════════ */}
+            <section className="av3-section av3-duo reveal" id="contact">
+                <div className="duo-col">
+                    <header className="sec-header">
+                        <span className="sec-num">04</span>
+                        <h2 className="sec-name">Honors</h2>
+                    </header>
+                    <ul className="honors-list">
+                        {honors.map((h, i) => (
+                            <li key={i}><span className="hl-dot" /><span>{h}</span></li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="duo-col">
+                    <header className="sec-header">
+                        <span className="sec-num">05</span>
+                        <h2 className="sec-name">Contact</h2>
+                    </header>
+                    <div className="contact-list">
+                        {contacts.map(({ label, val, href }) => (
+                            <a key={label} className="contact-row magnetic" href={href} target="_blank" rel="noopener noreferrer">
+                                <span className="cr-label">{label}</span>
+                                <span className="cr-val">{val}</span>
+                                <span className="cr-arrow">↗</span>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="av3-footer">
+                <img src="/assets/kn.png" alt="Back to top" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
+                <p>© Xingrui Gu — All Rights Reserved</p>
+            </footer>
         </div>
     );
-
 };
 
-export default About
+export default About;
