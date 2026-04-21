@@ -76,7 +76,7 @@ const CONTACTS = [
     { label: "X",         val: "@grxprc98",              href: "https://x.com/grxprc98" },
 ];
 
-const TAGS = ["Machine Learning", "Bayesian ML", "Learning Theory"];
+const TAGS = ["Machine Learning", "Learning Theory"];
 
 /* ── Component ──────────────────────────────────────────────────────────── */
 const About = () => {
@@ -217,13 +217,13 @@ const About = () => {
             {/* Nav */}
             <nav className="xg-nav">
                 <a className="xg-logo" href="/"><img src="/assets/logo.png" alt="logo" /></a>
-                <span className="xg-nav-loc">TJ · SF</span>
+                <span className="xg-nav-loc">San Francisco · CA</span>
             </nav>
 
             {/* ══ HERO ══════════════════════════════════════════════════════ */}
             <div className="xg-hero" ref={heroRef}>
                 <div className="xg-hero-l">
-                    <p className="xg-eyebrow">Researcher · Engineer · Builder</p>
+                    <p className="xg-eyebrow">Researcher · Designer · Engineer</p>
 
                     <div className="xg-name-wrap" ref={nameWrapRef}>
                         {/* Shadow layer for depth illusion */}

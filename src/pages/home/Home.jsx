@@ -269,9 +269,9 @@ const Home = () => {
 
                 {/* Subtitle + location */}
                 <div className={`hm-hero-sub${subIn ? " hm-sub-in" : ""}`}>
-                    <span className="hm-sub-role">Researcher · Engineer · Builder</span>
+                    <span className="hm-sub-role">Researcher · Designer · Engineer</span>
                     <span className="hm-sub-sep">—</span>
-                    <span className="hm-sub-loc">Berkeley, CA</span>
+                    <span className="hm-sub-loc">San Francisco, CA</span>
                 </div>
 
                 {/* CTA buttons */}
