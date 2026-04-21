@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./about.scss";
 
-/* ── Data ──────────────────────────────────────────────────────────────── */
+/* ── Data ─────────────────────────────────────────────────────────────────── */
 const EDUCATION = [
     { date: "2019 – 2022", org: "King's College London",     role: "BSc Mathematics with Statistics" },
     { date: "2022 – 2023", org: "University College London", role: "MSc Computer Science" },
@@ -20,35 +20,35 @@ const EXPERIENCE = [
 const PUBLICATIONS = [
     {
         title:  "Advancing Pain Recognition Through Statistical Correlation-Driven Multimodal Fusion",
-        venue:  "2024 12th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW)",
+        venue:  "ACIIW 2024 — IEEE",
         status: "Accepted",
         desc:   "A multimodal framework leveraging statistical correlations across physiological and behavioural signals to advance automatic pain recognition.",
         href:   "https://ieeexplore.ieee.org/document/10970218",
     },
     {
         title:  "CauSkelNet: Causal Representation Learning for Human Behaviour Analysis",
-        venue:  "2025 IEEE 19th International Conference on Automatic Face and Gesture Recognition (FG)",
+        venue:  "IEEE FG 2025",
         status: "Accepted",
         desc:   "A causal representation learning approach applied to skeletal data that disentangles the generative factors underlying human motion.",
         href:   "https://ieeexplore.ieee.org/document/11099310",
     },
     {
         title:  "Mimicking Human Intuition: Cognitive Belief-Driven Reinforcement Learning",
-        venue:  "ICML 2nd Workshop on Models of Human Feedback for AI Alignment 2025 · ICLR 2026",
+        venue:  "ICML MoFA 2025 · ICLR 2026",
         status: "Accepted",
         desc:   "Introduces structured belief states inspired by human working memory into RL agents, improving sample efficiency and out-of-distribution generalisation.",
         href:   "https://openreview.net/forum?id=LGJJCTjvVQ",
     },
     {
         title:  "Laplacian Flows for Policy Learning from Experience",
-        venue:  "ICLR 2026 Workshop on Geometry-grounded Representation Learning and Generative Modeling",
+        venue:  "ICLR 2026 Workshop — Geometry-grounded Representation Learning",
         status: "Accepted",
         desc:   "Frames policy learning as a flow on a Laplacian-regularised manifold, grounding representation geometry directly in the agent's accumulated experience.",
         href:   "https://openreview.net/forum?id=55FIDiXzvP#discussion",
     },
     {
         title:  "Task-Aware Delegation Cues for LLM Agents",
-        venue:  "CHI'26 Workshop on Developing Standards and Documentation For LLM Use as Simulated Research Participants",
+        venue:  "CHI'26 Workshop on LLM Use as Simulated Research Participants",
         status: "Accepted",
         desc:   "Proposes structured delegation cues that allow LLM agents to signal task boundaries and uncertainty, improving human-AI collaborative workflows.",
         href:   "https://arxiv.org/abs/2603.11011",
@@ -57,7 +57,7 @@ const PUBLICATIONS = [
         title:  "Uncertainty-Gated Generative Modeling",
         venue:  "ICLR 2026 Workshop Advances in Financial AI",
         status: "Accepted",
-        desc:   "Introduces an uncertainty-gating mechanism into generative models enabling selective generation conditioned on epistemic confidence, with applications in financial forecasting.",
+        desc:   "Introduces an uncertainty-gating mechanism into generative models enabling selective generation conditioned on epistemic confidence.",
         href:   "https://arxiv.org/abs/2603.07753",
     },
 ];
@@ -70,78 +70,218 @@ const HONORS = [
 ];
 
 const CONTACTS = [
-    { label: "Email",     val: "x.gu.hayden@gmail.com", href: "mailto:x.gu.hayden@gmail.com" },
-    { label: "Instagram", val: "grxprc98",               href: "https://www.instagram.com/grxprc98" },
-    { label: "LinkedIn",  val: "Xingrui Gu",             href: "https://www.linkedin.com/in/xingrui-gu-1b22b0236/" },
-    { label: "X",         val: "@grxprc98",              href: "https://x.com/grxprc98" },
+    { label: "Email",     val: "x.gu.hayden@gmail.com",  href: "mailto:x.gu.hayden@gmail.com" },
+    { label: "Instagram", val: "grxprc98",                href: "https://www.instagram.com/grxprc98" },
+    { label: "LinkedIn",  val: "Xingrui Gu",              href: "https://www.linkedin.com/in/xingrui-gu-1b22b0236/" },
+    { label: "X",         val: "@grxprc98",               href: "https://x.com/grxprc98" },
 ];
 
-const TAGS = ["Machine Learning", "Learning Theory"];
+const TAGS = ["Lifelong Learning", "Bayesian ML", "Decision Science", "HCI", "RL"];
 
-/* ── Component ──────────────────────────────────────────────────────────── */
+/* ── FireTitle — characters ignite on scroll-in ────────────────────────────── */
+const FireTitle = ({ text, tag: Tag = "div", className = "", baseDelay = 0 }) => {
+    const [lit, setLit] = useState(false);
+    const ref = useRef(null);
+    useEffect(() => {
+        const obs = new IntersectionObserver(
+            ([e]) => { if (e.isIntersecting) setLit(true); },
+            { threshold: 0.3 }
+        );
+        if (ref.current) obs.observe(ref.current);
+        return () => obs.disconnect();
+    }, []);
+    return (
+        <Tag ref={ref} className={className}>
+            {text.split("").map((ch, i) => (
+                <span
+                    key={i}
+                    className={`ab-fch${lit ? " ab-fch-on" : ""}`}
+                    style={{ "--d": `${baseDelay + i * 0.042}s` }}
+                    aria-hidden={i > 0 ? "true" : undefined}
+                >
+                    {ch === " " ? "\u00a0" : ch}
+                </span>
+            ))}
+            <span className="ab-sr">{text}</span>
+        </Tag>
+    );
+};
+
+/* ── Main Component ────────────────────────────────────────────────────────── */
 const About = () => {
     const [expandedPub, setExpandedPub] = useState(null);
+    const [nameReady,   setNameReady]   = useState(false);
+    const [subReady,    setSubReady]    = useState(false);
 
-    const cursorRef   = useRef(null);
-    const heroRef     = useRef(null);
-    const nameWrapRef = useRef(null);
-    const photoRef    = useRef(null);
-    const progressRef = useRef(null);
-    const tagRefs     = useRef([]);
-    const eduRef      = useRef(null);
-    const expRef      = useRef(null);
+    const canvasRef  = useRef(null);
+    const progRef    = useRef(null);
+    const eduRef     = useRef(null);
+    const expRef     = useRef(null);
+    const tagRefs    = useRef([]);
 
-    /* 1. Ambient cursor orb */
+    /* ── 1+2+3: Canvas — fire cursor / water ripple / ambient embers ── */
     useEffect(() => {
-        const fn = (e) => {
-            if (!cursorRef.current) return;
-            cursorRef.current.style.left = e.clientX + "px";
-            cursorRef.current.style.top  = e.clientY + "px";
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+
+        let W = window.innerWidth, H = window.innerHeight;
+        canvas.width = W; canvas.height = H;
+        const resize = () => {
+            W = window.innerWidth; H = window.innerHeight;
+            canvas.width = W; canvas.height = H;
         };
-        window.addEventListener("mousemove", fn, { passive: true });
-        return () => window.removeEventListener("mousemove", fn);
+        window.addEventListener("resize", resize);
+
+        const fps = [];     // fire particles (cursor trail)
+        const rips = [];    // water ripples (click)
+        const embs = [];    // ambient floating embers
+
+        let lastEmber = 0;
+
+        const spawnFire = (x, y, n = 5) => {
+            for (let i = 0; i < n; i++) {
+                fps.push({
+                    x: x + (Math.random() - 0.5) * 14,
+                    y,
+                    vx: (Math.random() - 0.5) * 1.4,
+                    vy: -(Math.random() * 2.8 + 1.6),
+                    life: 1,
+                    decay: Math.random() * 0.026 + 0.018,
+                    sz: Math.random() * 8 + 3,
+                });
+            }
+        };
+
+        const spawnRipple = (x, y) => rips.push({ x, y, r: 2, life: 1 });
+
+        const spawnEmber = (ts) => {
+            if (ts - lastEmber < 280) return;
+            lastEmber = ts;
+            embs.push({
+                x: Math.random() * W,
+                y: H + 6,
+                vx: (Math.random() - 0.5) * 0.55,
+                vy: -(Math.random() * 0.7 + 0.35),
+                life: 1,
+                decay: Math.random() * 0.003 + 0.0018,
+                sz: Math.random() * 1.8 + 0.8,
+            });
+        };
+
+        const onMove = (e) => spawnFire(e.clientX, e.clientY, 4);
+        const onClick = (e) => spawnRipple(e.clientX, e.clientY);
+        window.addEventListener("mousemove", onMove, { passive: true });
+        window.addEventListener("click", onClick);
+
+        let raf;
+        const draw = (ts) => {
+            ctx.clearRect(0, 0, W, H);
+            spawnEmber(ts);
+
+            // ambient embers
+            for (let i = embs.length - 1; i >= 0; i--) {
+                const e = embs[i];
+                e.x += e.vx + (Math.random() - 0.5) * 0.12;
+                e.y += e.vy;
+                e.life -= e.decay;
+                if (e.life <= 0 || e.y < -8) { embs.splice(i, 1); continue; }
+                const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.sz * 2.5);
+                g.addColorStop(0, `rgba(255,210,130,${e.life})`);
+                g.addColorStop(0.5, `rgba(200,69,58,${e.life * 0.45})`);
+                g.addColorStop(1, "rgba(200,69,58,0)");
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.sz * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // fire cursor trail
+            for (let i = fps.length - 1; i >= 0; i--) {
+                const p = fps[i];
+                p.x += p.vx; p.y += p.vy;
+                p.vy *= 0.97; p.vx *= 0.97;
+                p.life -= p.decay;
+                p.sz *= 0.965;
+                if (p.life <= 0) { fps.splice(i, 1); continue; }
+                const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.sz);
+                g.addColorStop(0, `rgba(255,240,200,${p.life})`);
+                g.addColorStop(0.28, `rgba(255,155,55,${p.life * 0.8})`);
+                g.addColorStop(0.65, `rgba(200,69,58,${p.life * 0.4})`);
+                g.addColorStop(1, "rgba(200,69,58,0)");
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.sz, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // water ripples
+            for (let i = rips.length - 1; i >= 0; i--) {
+                const r = rips[i];
+                r.r += 3.8;
+                r.life = 1 - r.r / 150;
+                if (r.life <= 0) { rips.splice(i, 1); continue; }
+                for (let j = 0; j < 3; j++) {
+                    const rr = r.r - j * 16;
+                    if (rr < 0) continue;
+                    ctx.strokeStyle = `rgba(200,69,58,${r.life * (0.55 - j * 0.15)})`;
+                    ctx.lineWidth = 1 - j * 0.28;
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, rr, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            raf = requestAnimationFrame(draw);
+        };
+        raf = requestAnimationFrame(draw);
+
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", resize);
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("click", onClick);
+        };
     }, []);
 
-    /* 2. Scroll progress */
+    /* ── 4: Hero name ignition ── */
+    useEffect(() => {
+        const t1 = setTimeout(() => setNameReady(true), 300);
+        const t2 = setTimeout(() => setSubReady(true), 1400);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, []);
+
+    /* ── 5: Ember progress bar ── */
     useEffect(() => {
         const fn = () => {
-            if (!progressRef.current) return;
+            if (!progRef.current) return;
             const max = document.documentElement.scrollHeight - window.innerHeight;
             if (max <= 0) return;
-            progressRef.current.style.height = (window.scrollY / max) * 100 + "%";
+            progRef.current.style.height = (window.scrollY / max) * 100 + "%";
         };
         window.addEventListener("scroll", fn, { passive: true });
         return () => window.removeEventListener("scroll", fn);
     }, []);
 
-    /* 3. Hero name parallax */
+    /* ── 6: Scroll reveal (fire sweep) ── */
     useEffect(() => {
-        const hero = heroRef.current;
-        const wrap = nameWrapRef.current;
-        if (!hero || !wrap) return;
-        const move  = (e) => {
-            const r  = hero.getBoundingClientRect();
-            const dx = (e.clientX - (r.left + r.width  / 2)) / r.width;
-            const dy = (e.clientY - (r.top  + r.height / 2)) / r.height;
-            wrap.style.transform = `translate(${dx * 18}px, ${dy * 10}px)`;
-        };
-        const leave = () => { wrap.style.transform = "translate(0,0)"; };
-        hero.addEventListener("mousemove",  move,  { passive: true });
-        hero.addEventListener("mouseleave", leave);
-        return () => {
-            hero.removeEventListener("mousemove",  move);
-            hero.removeEventListener("mouseleave", leave);
-        };
+        const els = document.querySelectorAll(".ab-reveal");
+        const obs = new IntersectionObserver(
+            (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("ab-in"); }),
+            { threshold: 0.05 }
+        );
+        els.forEach((el) => obs.observe(el));
+        return () => els.forEach((el) => obs.unobserve(el));
     }, []);
 
-    /* 4. Magnetic tags */
+    /* ── Magnetic tags ── */
     useEffect(() => {
         const fn = (e) => {
             tagRefs.current.forEach((tag) => {
                 if (!tag) return;
-                const r    = tag.getBoundingClientRect();
-                const dx   = e.clientX - (r.left + r.width  / 2);
-                const dy   = e.clientY - (r.top  + r.height / 2);
+                const r  = tag.getBoundingClientRect();
+                const dx = e.clientX - (r.left + r.width  / 2);
+                const dy = e.clientY - (r.top  + r.height / 2);
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 tag.style.transform = dist < 110
                     ? `translate(${dx * (1 - dist / 110) * 0.38}px, ${dy * (1 - dist / 110) * 0.38}px)`
@@ -152,25 +292,19 @@ const About = () => {
         return () => document.removeEventListener("mousemove", fn);
     }, []);
 
-    /* 5. Scroll reveal */
-    useEffect(() => {
-        const els = document.querySelectorAll(".xg-reveal");
-        const obs = new IntersectionObserver(
-            (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("xg-in"); }),
-            { threshold: 0.06 }
-        );
-        els.forEach((el) => obs.observe(el));
-        return () => els.forEach((el) => obs.unobserve(el));
-    }, []);
-
-    /* 6. Horizontal drag-scroll */
-    const makeDraggable = useCallback((ref) => {
+    /* ── Draggable timelines ── */
+    const makeDrag = useCallback((ref) => {
         const el = ref.current;
         if (!el) return;
-        let on = false, sx = 0, ss = 0;
-        const down  = (e) => { on = true;  sx = e.pageX - el.offsetLeft; ss = el.scrollLeft; el.style.cursor = "grabbing"; };
-        const move  = (e) => { if (!on) return; e.preventDefault(); el.scrollLeft = ss - (e.pageX - el.offsetLeft - sx) * 1.4; };
-        const up    = ()  => { on = false; el.style.cursor = "grab"; };
+        let on = false, sx = 0, ss = 0, vel = 0, last = 0, raf;
+        const coast = () => {
+            vel *= 0.88;
+            el.scrollLeft -= vel;
+            if (Math.abs(vel) > 0.5) raf = requestAnimationFrame(coast);
+        };
+        const down  = (e) => { on = true; sx = e.pageX - el.offsetLeft; ss = el.scrollLeft; last = e.pageX; cancelAnimationFrame(raf); el.style.cursor = "grabbing"; };
+        const move  = (e) => { if (!on) return; vel = (e.pageX - last) * 0.9; last = e.pageX; el.scrollLeft = ss - (e.pageX - el.offsetLeft - sx) * 1.4; };
+        const up    = ()  => { on = false; el.style.cursor = "grab"; raf = requestAnimationFrame(coast); };
         el.addEventListener("mousedown",  down);
         el.addEventListener("mousemove",  move);
         el.addEventListener("mouseup",    up);
@@ -180,195 +314,208 @@ const About = () => {
             el.removeEventListener("mousemove",  move);
             el.removeEventListener("mouseup",    up);
             el.removeEventListener("mouseleave", up);
+            cancelAnimationFrame(raf);
         };
     }, []);
 
     useEffect(() => {
-        const c1 = makeDraggable(eduRef);
-        const c2 = makeDraggable(expRef);
+        const c1 = makeDrag(eduRef);
+        const c2 = makeDrag(expRef);
         return () => { c1?.(); c2?.(); };
-    }, [makeDraggable]);
-
-    /* 7. Photo 3-D tilt */
-    const tiltPhoto = (e) => {
-        const f = photoRef.current;
-        if (!f) return;
-        const r  = f.getBoundingClientRect();
-        const rx = ((e.clientY - (r.top  + r.height / 2)) / (r.height / 2)) * -10;
-        const ry = ((e.clientX - (r.left + r.width  / 2)) / (r.width  / 2)) *  10;
-        f.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
-    };
-    const resetPhoto = () => {
-        if (photoRef.current)
-            photoRef.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";
-    };
+    }, [makeDrag]);
 
     const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
     return (
-        <div className="xg-root">
+        <div className="ab-root">
 
-            {/* Cursor orb */}
-            <div className="xg-orb" ref={cursorRef} />
+            {/* Canvas — fire / ripple / embers */}
+            <canvas className="ab-canvas" ref={canvasRef} />
 
-            {/* Scroll progress */}
-            <div className="xg-prog-track"><div className="xg-prog-fill" ref={progressRef} /></div>
+            {/* Ember progress bar — right edge */}
+            <div className="ab-prog-track">
+                <div className="ab-prog-fill" ref={progRef} />
+            </div>
 
             {/* Nav */}
-            <nav className="xg-nav">
-                <a className="xg-logo" href="/"><img src="/assets/logo.png" alt="logo" /></a>
-                <span className="xg-nav-loc">San Francisco · CA</span>
+            <nav className="ab-nav">
+                <a className="ab-logo" href="/"><img src="/assets/logo.png" alt="home" /></a>
+                <span className="ab-nav-loc">Berkeley · CA</span>
             </nav>
 
-            {/* ══ HERO ══════════════════════════════════════════════════════ */}
-            <div className="xg-hero" ref={heroRef}>
-                <div className="xg-hero-l">
-                    <p className="xg-eyebrow">Researcher · Designer · Engineer</p>
-
-                    <div className="xg-name-wrap" ref={nameWrapRef}>
-                        {/* Shadow layer for depth illusion */}
-                        <div className="xg-name-shadow" aria-hidden="true">Xingrui<br />Gu</div>
-                        <div className="xg-name">Xingrui<br /><span className="xg-name-indent">Gu</span></div>
-                    </div>
-
-                    <p className="xg-hero-desc">
-                        Pushing the boundaries of how artificial agents learn, remember,
-                        and reason — shaped by the lens of human cognition.
-                    </p>
-
-                    <div className="xg-tags">
-                        {TAGS.map((t, i) => (
-                            <span key={t} className="xg-tag" ref={(el) => (tagRefs.current[i] = el)}>{t}</span>
+            {/* ══ HERO ══════════════════════════════════════════════════════════ */}
+            <div className="ab-hero">
+                {/* 4. Name ignition — characters fire-written one by one */}
+                <div className="ab-hero-name-wrap">
+                    <div className={`ab-hero-line1${nameReady ? " ab-name-go" : ""}`}>
+                        {"XINGRUI".split("").map((ch, i) => (
+                            <span key={i} className="ab-nch" style={{ "--i": i }}>
+                                {ch}
+                            </span>
                         ))}
+                    </div>
+                    <div className={`ab-hero-line2${nameReady ? " ab-name-go" : ""}`}>
+                        <span className="ab-line2-solid">
+                            {"GU".split("").map((ch, i) => (
+                                <span key={i} className="ab-nch" style={{ "--i": i + 7 }}>
+                                    {ch}
+                                </span>
+                            ))}
+                        </span>
+                        {/* Ghost outline — depth layer */}
+                        <span className="ab-line2-ghost" aria-hidden="true">GU</span>
                     </div>
                 </div>
 
-                <div className="xg-hero-r">
-                    <div className="xg-photo" ref={photoRef} onMouseMove={tiltPhoto} onMouseLeave={resetPhoto}>
-                        <img src="/assets/WechatIMG371.jpeg" alt="Xingrui Gu" />
-                        <div className="xg-glare" />
-                    </div>
-                    <span className="xg-affil">BAIR Lab · UC Berkeley</span>
+                {/* Subtitle */}
+                <div className={`ab-hero-sub${subReady ? " ab-sub-in" : ""}`}>
+                    <span>Researcher</span>
+                    <span className="ab-sep">·</span>
+                    <span>Engineer</span>
+                    <span className="ab-sep">·</span>
+                    <span>Builder</span>
+                </div>
+
+                {/* Tags */}
+                <div className={`ab-hero-tags${subReady ? " ab-sub-in" : ""}`} style={{ transitionDelay: "0.1s" }}>
+                    {TAGS.map((t, i) => (
+                        <span
+                            key={t}
+                            className="ab-tag"
+                            ref={(el) => (tagRefs.current[i] = el)}
+                        >
+                            {t}
+                        </span>
+                    ))}
+                </div>
+
+                {/* Scroll cue */}
+                <div className="ab-scroll-cue">
+                    <div className="ab-scroll-line" />
+                    <span className="ab-scroll-lbl">Scroll</span>
                 </div>
             </div>
 
-            {/* ══ 01 RESEARCH ═══════════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">01</span>
-                        <span className="xg-stitle">Research</span>
+            {/* ══ 01 RESEARCH ═══════════════════════════════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">01</span>
+                        <FireTitle text="Research" className="ab-stitle" />
                     </div>
-                    <div className="xg-body xg-bio">
+                    <div className="ab-sbody ab-bio">
                         <p>
                             I am broadly interested in what it really means for an artificial agent to
                             learn from its own experience. I take seriously the experience-centric view
                             of reinforcement learning: intelligence should emerge from long-term
                             interaction, not from static offline datasets or hand-crafted rules. A
                             formative moment was a conversation with{" "}
-                            <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">Chris Watkins</a>,
-                            where Q-learning was not just an algorithm but a lens for understanding how
-                            behaviour is shaped by accumulated evidence. Since then, my work has tried to
-                            push this "Human Centered" philosophy one step further: experience should not
-                            just be replayed, but organised — into beliefs, manifolds, and memory operators
-                            that reshape the learning rule itself.
+                            <a href="https://www.cs.rhul.ac.uk/~chrisw/" target="_blank" rel="noopener noreferrer">
+                                Chris Watkins
+                            </a>
+                            , where Q-learning was not just an algorithm but a lens for understanding
+                            how behaviour is shaped by accumulated evidence.
                         </p>
                         <p>
-                            My research sits between Lifelong Learning, Reinforcement learning, Bayesian
+                            My research sits between Lifelong Learning, Reinforcement Learning, Bayesian
                             machine learning, and cognitive science. At UCL's Centre for AI, working
                             with{" "}
-                            <a href="https://davidbarber.github.io/" target="_blank" rel="noopener noreferrer">David Barber</a>,
-                            I explored operator-based views of policy and value updates. At UC Berkeley's
-                            Computational Cognitive Neuroscience Lab, under{" "}
-                            <a href="https://psychology.berkeley.edu/people/anne-collins" target="_blank" rel="noopener noreferrer">Anne Collins</a>,
-                            I studied how human working memory suggests richer notions of state, credit
-                            assignment, and concept formation.
+                            <a href="https://davidbarber.github.io/" target="_blank" rel="noopener noreferrer">
+                                David Barber
+                            </a>
+                            , I explored operator-based views of policy and value updates. At UC
+                            Berkeley's Computational Cognitive Neuroscience Lab, under{" "}
+                            <a href="https://psychology.berkeley.edu/people/anne-collins" target="_blank" rel="noopener noreferrer">
+                                Anne Collins
+                            </a>
+                            , I studied how human working memory suggests richer notions of state,
+                            credit assignment, and concept formation.
                         </p>
                     </div>
                 </div>
             </div>
 
-            {/* ══ 02 EDUCATION ══════════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">02</span>
-                        <span className="xg-stitle">Education</span>
-                        <span className="xg-drag-hint">← drag →</span>
+            {/* ══ 02 EDUCATION — Burning drag timeline ══════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">02</span>
+                        <FireTitle text="Education" className="ab-stitle" baseDelay={0.05} />
+                        <span className="ab-drag-hint">← drag →</span>
                     </div>
-                    <div className="xg-body">
-                        <div className="xg-horiz" ref={eduRef}>
-                            <div className="xg-track">
+                    <div className="ab-sbody">
+                        <div className="ab-horiz" ref={eduRef}>
+                            <div className="ab-track">
                                 {EDUCATION.map((item, i) => (
-                                    <div className="xg-titem" key={i}>
-                                        <div className="xg-tdot" />
-                                        <div className="xg-tdate">{item.date}</div>
-                                        <div className="xg-torg">{item.org}</div>
-                                        <div className="xg-trole">{item.role}</div>
+                                    <div className="ab-titem" key={i}>
+                                        <div className="ab-tdot" />
+                                        <div className="ab-tdate">{item.date}</div>
+                                        <div className="ab-torg">{item.org}</div>
+                                        <div className="ab-trole">{item.role}</div>
                                     </div>
                                 ))}
-                                <div className="xg-tspacer" />
+                                <div className="ab-tspacer" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* ══ 03 EXPERIENCE ═════════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">03</span>
-                        <span className="xg-stitle">Experience</span>
-                        <span className="xg-drag-hint">← drag →</span>
+            {/* ══ 03 EXPERIENCE ═════════════════════════════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">03</span>
+                        <FireTitle text="Experience" className="ab-stitle" baseDelay={0.05} />
+                        <span className="ab-drag-hint">← drag →</span>
                     </div>
-                    <div className="xg-body">
-                        <div className="xg-horiz" ref={expRef}>
-                            <div className="xg-track">
+                    <div className="ab-sbody">
+                        <div className="ab-horiz" ref={expRef}>
+                            <div className="ab-track">
                                 {EXPERIENCE.map((item, i) => (
-                                    <div className="xg-titem" key={i}>
-                                        <div className="xg-tdot" />
-                                        <div className="xg-tdate">{item.date}</div>
-                                        <div className="xg-torg">{item.org}</div>
-                                        {item.role && <div className="xg-trole">{item.role}</div>}
+                                    <div className="ab-titem" key={i}>
+                                        <div className="ab-tdot" />
+                                        <div className="ab-tdate">{item.date}</div>
+                                        <div className="ab-torg">{item.org}</div>
+                                        {item.role && <div className="ab-trole">{item.role}</div>}
                                     </div>
                                 ))}
-                                <div className="xg-tspacer" />
+                                <div className="ab-tspacer" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* ══ 04 PUBLICATIONS ═══════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">04</span>
-                        <span className="xg-stitle">Publications</span>
-                        <span className="xg-pub-count">{PUBLICATIONS.length} papers</span>
+            {/* ══ 04 PUBLICATIONS — Fire-glow accordion ════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">04</span>
+                        <FireTitle text="Publications" className="ab-stitle" baseDelay={0.05} />
+                        <span className="ab-pub-count">{PUBLICATIONS.length} papers</span>
                     </div>
-                    <div className="xg-body">
-                        <div className="xg-pubs">
+                    <div className="ab-sbody">
+                        <div className="ab-pubs">
                             {PUBLICATIONS.map((pub, i) => (
                                 <div
                                     key={i}
-                                    className={`xg-pub${expandedPub === i ? " xg-pub-open" : ""}`}
+                                    className={`ab-pub${expandedPub === i ? " ab-pub-open" : ""}`}
                                     onClick={() => setExpandedPub(expandedPub === i ? null : i)}
                                 >
-                                    <div className="xg-pub-row">
-                                        <span className="xg-pub-num">{String(i + 1).padStart(2, "0")}</span>
-                                        <span className="xg-pub-title">{pub.title}</span>
-                                        <span className="xg-pub-plus">{expandedPub === i ? "−" : "+"}</span>
+                                    <div className="ab-pub-row">
+                                        <span className="ab-pub-num">{String(i + 1).padStart(2, "0")}</span>
+                                        <span className="ab-pub-title">{pub.title}</span>
+                                        <span className="ab-pub-plus">{expandedPub === i ? "−" : "+"}</span>
                                     </div>
-                                    <div className="xg-pub-drawer" style={{ maxHeight: expandedPub === i ? "280px" : "0" }}>
-                                        <div className="xg-pub-drawer-inner">
-                                            <p className="xg-pub-desc">{pub.desc}</p>
-                                            <div className="xg-pub-foot">
-                                                <span className="xg-pub-venue">{pub.venue}</span>
-                                                <span className="xg-pub-badge">{pub.status}</span>
+                                    <div className="ab-pub-drawer" style={{ maxHeight: expandedPub === i ? "280px" : "0" }}>
+                                        <div className="ab-pub-drawer-inner">
+                                            <p className="ab-pub-desc">{pub.desc}</p>
+                                            <div className="ab-pub-foot">
+                                                <span className="ab-pub-venue">{pub.venue}</span>
+                                                <span className="ab-pub-badge">{pub.status}</span>
                                                 <a
-                                                    className="xg-pub-link"
+                                                    className="ab-pub-link"
                                                     href={pub.href}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
@@ -379,6 +526,8 @@ const About = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    {/* ember glow beneath card */}
+                                    <div className="ab-pub-glow" />
                                 </div>
                             ))}
                         </div>
@@ -386,19 +535,19 @@ const About = () => {
                 </div>
             </div>
 
-            {/* ══ 05 HONORS ═════════════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">05</span>
-                        <span className="xg-stitle">Honors</span>
+            {/* ══ 05 HONORS ═════════════════════════════════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">05</span>
+                        <FireTitle text="Honors" className="ab-stitle" baseDelay={0.05} />
                     </div>
-                    <div className="xg-body">
-                        <div className="xg-honors">
+                    <div className="ab-sbody">
+                        <div className="ab-honors">
                             {HONORS.map((h, i) => (
-                                <div className="xg-honor" key={i}>
-                                    <div className="xg-honor-dot" />
-                                    <span className="xg-honor-text">{h}</span>
+                                <div className="ab-honor" key={i}>
+                                    <div className="ab-honor-ember" />
+                                    <span className="ab-honor-text">{h}</span>
                                 </div>
                             ))}
                         </div>
@@ -406,26 +555,26 @@ const About = () => {
                 </div>
             </div>
 
-            {/* ══ 06 CONTACT ════════════════════════════════════════════════ */}
-            <div className="xg-section xg-reveal">
-                <div className="xg-inner">
-                    <div className="xg-meta">
-                        <span className="xg-idx">06</span>
-                        <span className="xg-stitle">Contact</span>
+            {/* ══ 06 CONTACT ════════════════════════════════════════════════════ */}
+            <div className="ab-section ab-reveal">
+                <div className="ab-inner">
+                    <div className="ab-smeta">
+                        <span className="ab-idx">06</span>
+                        <FireTitle text="Contact" className="ab-stitle" baseDelay={0.05} />
                     </div>
-                    <div className="xg-body">
-                        <div className="xg-contacts">
+                    <div className="ab-sbody">
+                        <div className="ab-contacts">
                             {CONTACTS.map((c) => (
                                 <a
                                     key={c.label}
-                                    className="xg-contact"
+                                    className="ab-contact"
                                     href={c.href}
                                     target={c.href.startsWith("mailto") ? undefined : "_blank"}
                                     rel="noopener noreferrer"
                                 >
-                                    <span className="xg-clabel">{c.label}</span>
-                                    <span className="xg-cval">{c.val}</span>
-                                    <span className="xg-carrow">↗</span>
+                                    <span className="ab-clabel">{c.label}</span>
+                                    <span className="ab-cval">{c.val}</span>
+                                    <span className="ab-carrow">↗</span>
                                 </a>
                             ))}
                         </div>
@@ -433,10 +582,10 @@ const About = () => {
                 </div>
             </div>
 
-            {/* ══ FOOTER ════════════════════════════════════════════════════ */}
-            <div className="xg-footer">
-                <img src="/assets/kn.png" alt="Back to top" onClick={toTop} />
-                <p className="xg-copy">© Xingrui Gu — All Rights Reserved</p>
+            {/* Footer */}
+            <div className="ab-footer">
+                <img src="/assets/kn.png" alt="back to top" className="ab-footer-logo" onClick={toTop} />
+                <span className="ab-footer-copy">© Xingrui Gu — All Rights Reserved</span>
             </div>
 
         </div>
