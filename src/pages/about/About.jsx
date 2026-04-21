@@ -76,7 +76,7 @@ const CONTACTS = [
     { label: "X",         val: "@grxprc98",              href: "https://x.com/grxprc98" },
 ];
 
-const TAGS = ["Lifelong Learning", "Bayesian ML", "Decision Science", "HCI", "RL"];
+const TAGS = ["Machine Learning", "Bayesian ML", "Learning Theory"];
 
 /* ── Component ──────────────────────────────────────────────────────────── */
 const About = () => {
@@ -217,7 +217,7 @@ const About = () => {
             {/* Nav */}
             <nav className="xg-nav">
                 <a className="xg-logo" href="/"><img src="/assets/logo.png" alt="logo" /></a>
-                <span className="xg-nav-loc">Berkeley · CA</span>
+                <span className="xg-nav-loc">TJ · SF</span>
             </nav>
 
             {/* ══ HERO ══════════════════════════════════════════════════════ */}

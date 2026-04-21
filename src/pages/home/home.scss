@@ -1,91 +1,635 @@
-.home {
+/*
+  ⚠️  Add to public/index.html <head>:
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;0,500;1,200&display=swap" rel="stylesheet">
+*/
+
+/* ── TOKENS ─────────────────────────────────────────────────────────────── */
+.hm-root {
+    --hero-bg:   #0F0F0F;
+    --body-bg:   #E8E8E8;
+    --text-dark: #F2F2F2;
+    --text-body: #1A1A1A;
+    --muted:     #888890;
+    --rule:      #C8C8CC;
+    --accent:    #F2F2F2;
+
+    background-color: var(--body-bg);
+    color: var(--text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+
+    /* Grain texture */
+    &::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.028;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    img { display: block; max-width: 100%; }
+    button { appearance: none; border: none; background: none; cursor: pointer; font: inherit; }
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+}
+
+/* ── 1. CURSOR ORB ─────────────────────────────────────────────────────── */
+.hm-orb {
+    position: fixed;
+    width: 640px;
+    height: 640px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+    will-change: left, top;
+    transition: left 0.07s linear, top 0.07s linear;
+    background: radial-gradient(
+                    circle at center,
+                    rgba(255,255,255,0.14) 0%,
+                    rgba(255,255,255,0.04) 38%,
+                    transparent 66%
+    );
+    mix-blend-mode: screen;
+}
+
+/* ── HERO ───────────────────────────────────────────────────────────────── */
+.hm-hero {
+    position: relative;
     width: 100%;
-    background-color: #DEDEDE;
+    height: 100vh;
+    min-height: 700px;
+    background: var(--hero-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
 
-    .homeContainer {
-        margin: 0 auto;
-        display: flex;
-        max-width: 1200px;
-        background-color: #DEDEDE;
-        flex-direction: column;
-        align-items: center;
+/* 3. Video parallax */
+.hm-video-shell {
+    position: absolute;
+    inset: -12% 0;
+    z-index: 0;
+}
+
+.hm-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.12);
+    will-change: transform;
+    /* Start slightly above so parallax downward reveals more */
+    transform-origin: center center;
+}
+
+/* Multi-layer depth overlays */
+.hm-overlay-grad {
+    position: absolute;
+    inset: 0;
+    /* Darken bottom heavily so text is readable, keep top more video-visible */
+    background: linear-gradient(
+                    to bottom,
+                    rgba(10,10,10,0.25)  0%,
+                    rgba(10,10,10,0.15) 40%,
+                    rgba(10,10,10,0.72) 75%,
+                    rgba(10,10,10,0.92) 100%
+    );
+}
+
+.hm-overlay-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+                    ellipse at center,
+                    transparent 40%,
+                    rgba(0,0,0,0.55) 100%
+    );
+}
+
+/* ── NAV ────────────────────────────────────────────────────────────────── */
+.hm-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 300;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3.5rem;
+    /* Frosted glass nav */
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.4s ease, background 0.4s ease;
+}
+
+.hm-logo img {
+    width: 34px;
+    filter: brightness(0) invert(1);   /* white logo on dark hero */
+    transition: filter 0.4s ease;
+}
+
+.hm-nav-r {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.hm-nav-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    transition: color 0.22s ease;
+    cursor: pointer;
+    &:hover { color: #fff; }
+}
+
+/* ── SCRAMBLE HEADLINE ─────────────────────────────────────────────────── */
+.hm-headline {
+    position: relative;
+    z-index: 10;
+    padding: 0 3.5rem 1rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+
+    &.hm-hl-in {
+        opacity: 1;
+        transform: none;
     }
+}
 
-    .logo {
+/* Line 1: XINGRUI */
+.hm-hl-line1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    /* Massive display — nearly full viewport width */
+    font-size: clamp(80px, 14vw, 200px);
+    font-weight: 200;
+    line-height: 0.88;
+    color: #F0EDE8;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    /* Scramble uses monospace feel — keep layout stable */
+}
 
-        padding: 20px 0 40px 0;
+/* Line 2: GU — with solid + outline ghost layered */
+.hm-hl-line2 {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    line-height: 0.88;
+}
 
-        img {
-            width: 50px;
-        }
+.hm-hl-gu {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(80px, 14vw, 200px);
+    font-weight: 200;
+    color: #F0EDE8;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+}
+
+/* Outline ghost — offset right for depth */
+.hm-hl-ghost {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(80px, 14vw, 200px);
+    font-weight: 200;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(240,237,232,0.18);
+    letter-spacing: -0.02em;
+    position: absolute;
+    left: 0.08em;
+    top: 0.04em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── HERO SUBLINE ──────────────────────────────────────────────────────── */
+.hm-hero-sub {
+    position: relative;
+    z-index: 10;
+    padding: 1.2rem 3.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+
+    &.hm-sub-in {
+        opacity: 1;
+        transform: none;
     }
+}
 
-    section {
-        margin: 50px 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+.hm-sub-role {
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+}
+
+.hm-sub-sep {
+    color: rgba(255,255,255,0.25);
+    font-size: 0.8rem;
+}
+
+.hm-sub-loc {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+}
+
+/* ── CTA BUTTONS ───────────────────────────────────────────────────────── */
+.hm-ctas {
+    position: relative;
+    z-index: 10;
+    padding: 1.8rem 3.5rem 4rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+
+    &.hm-ctas-in {
+        opacity: 1;
+        transform: none;
     }
+}
 
-    h2 {
-        font-size: 50px;
-        font-weight: bold;
-        margin-bottom: 20px;
+.hm-btn-primary {
+    padding: 0.75rem 2rem;
+    background: #F0EDE8;
+    color: #0F0F0F;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition:
+            transform    0.45s cubic-bezier(0.23,1,0.32,1),
+            background   0.22s ease,
+            color        0.22s ease;
+    will-change: transform;
+
+    &:hover {
+        background: #fff;
     }
+}
 
-    p {
-        font-size: 18px;
-        margin-bottom: 40px;
-        text-align: center;
-        padding: 0 10px;
+.hm-btn-ghost {
+    padding: 0.75rem 1.8rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.75);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition:
+            transform      0.45s cubic-bezier(0.23,1,0.32,1),
+            border-color   0.22s ease,
+            color          0.22s ease;
+    will-change: transform;
+
+    &:hover {
+        border-color: rgba(255,255,255,0.75);
+        color: #fff;
     }
+}
 
-    img {
-        width: 100%;
-        margin-bottom: 20px;
+/* ── SCROLL CUE ────────────────────────────────────────────────────────── */
+.hm-scroll-cue {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 3.5rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.45;
+}
+
+.hm-scroll-line {
+    width: 1px;
+    height: 48px;
+    background: #fff;
+    transform-origin: top;
+    animation: scrollPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%   { transform: scaleY(0); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: scaleY(1); opacity: 0; }
+}
+
+.hm-scroll-text {
+    font-size: 0.58rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+}
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────────── */
+.hm-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+            opacity   0.9s cubic-bezier(0.22,1,0.36,1),
+            transform 0.9s cubic-bezier(0.22,1,0.36,1);
+
+    &.hm-in {
+        opacity: 1;
+        transform: none;
     }
+}
 
-    .btns {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 20px;
+/* ══ MARQUEE STRIP ══════════════════════════════════════════════════════ */
+.hm-marquee-wrap {
+    width: 100%;
+    background: #1A1A1A;
+    overflow: hidden;
+    padding: 1rem 0;
+    /* Bridges hero ↔ body */
+}
+
+.hm-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.hm-mq-track {
+    display: inline-block;
+    animation: marqueeRoll 28s linear infinite;
+    white-space: nowrap;
+}
+
+.hm-mq-text {
+    font-size: 0.68rem;
+    letter-spacing: 0.26em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    margin-right: 0;
+}
+
+@keyframes marqueeRoll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-33.333%); }
+}
+
+/* ══ STATS BAR ══════════════════════════════════════════════════════════ */
+.hm-stats {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 5rem 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.hm-stat {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.hm-stat-n {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 300;
+    color: var(--text-body);
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.hm-stat-l {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+}
+
+.hm-stats-div {
+    width: 1px;
+    height: 60px;
+    background: var(--rule);
+    flex-shrink: 0;
+}
+
+/* ══ WORK SECTION ═══════════════════════════════════════════════════════ */
+.hm-work {
+    padding-bottom: 6rem;
+}
+
+.hm-work-hd {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5rem 2.4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+}
+
+.hm-work-label {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text-body);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.hm-work-idx {
+    color: var(--muted);
+    font-size: 1.4rem;
+    font-weight: 300;
+}
+
+.hm-work-hint {
+    font-size: 0.6rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--rule);
+    user-select: none;
+}
+
+/* ── 6. Momentum gallery ── */
+.hm-gallery {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    cursor: grab;
+    user-select: none;
+    scrollbar-width: none;
+    padding: 3.5rem 5rem 2rem;
+    /* Edge fade */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 93%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 4%, black 93%, transparent 100%);
+
+    &::-webkit-scrollbar { display: none; }
+}
+
+.hm-gallery-row {
+    display: flex;
+    width: max-content;
+    gap: 1.8rem;
+    align-items: flex-start;
+}
+
+.hm-gallery-end { width: 3rem; flex-shrink: 0; }
+
+/* ── Project card ── */
+.hm-card {
+    width: 360px;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    &:hover {
+        .hm-card-img { transform: scale(1.06); filter: grayscale(0%) brightness(0.7); }
+        .hm-card-hover { clip-path: inset(0% 0% 0% 0%); }
+        .hm-card-arr { transform: translate(5px, -2px); }
     }
+}
 
-    .btn {
-        border: 1px solid #000;
-        text-align: center;
-        font-size: 18px;
-        font-weight: 900;
-        padding: 10px 20px;
-        cursor: pointer;
-        transition: background-color 0.5s, color 0.5s; // 添加transition属性
-        &:hover {
-            background-color: #000;
-            color: #fff;
-        }
-    }
-    
+.hm-card-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: #1A1A1A;
+}
 
-    .footer {
-        text-align: center;
+/* 7. Clip-path slide-up hover reveal */
+.hm-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: grayscale(18%) brightness(0.92);
+    transition:
+            transform 0.55s cubic-bezier(0.22,1,0.36,1),
+            filter    0.55s ease;
+    will-change: transform;
+    display: block;
+}
 
-        img {
-            width: 150px;
-            cursor: pointer;
+.hm-card-hover {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+                    to top,
+                    rgba(10,10,10,0.95) 0%,
+                    rgba(10,10,10,0.78) 50%,
+                    rgba(10,10,10,0.3)  100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.6rem 1.4rem;
+    /* Clip from bottom — hidden by default, slides up on hover */
+    clip-path: inset(100% 0% 0% 0%);
+    transition: clip-path 0.52s cubic-bezier(0.22,1,0.36,1);
+}
 
-        }
-    }
+.hm-card-desc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.82);
+    margin-bottom: 0.9rem;
+}
 
-    .centered-paragraph {
-        max-width: 1200px; /* Adjust the max-width as necessary */
-        margin: 0 auto; /* Centers the paragraph */
-        padding: 20px; /* Adds some padding inside the borders of the paragraph */
-        font-size: 1rem; /* Adjust the font size as necessary */
-        line-height: 1.6; /* Gives some nice line spacing */
-        text-align: justify; /* Justifies the text for better readability */
-    }
+.hm-card-cta {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+}
 
+/* Card footer */
+.hm-card-foot {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0 0;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1rem;
+}
 
+.hm-card-num {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 26px;
+}
+
+.hm-card-meta { flex: 1; min-width: 0; }
+
+.hm-card-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-body);
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hm-card-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hm-card-arr {
+    font-size: 1rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.28s ease;
+}
+
+/* ══ FOOTER ═════════════════════════════════════════════════════════════ */
+.hm-footer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 5rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hm-footer-logo {
+    width: 76px;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.28s ease;
+    &:hover { opacity: 1; }
+}
+
+.hm-copy {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
 }
