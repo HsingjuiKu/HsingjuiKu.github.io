@@ -1,29 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+/* ─────────────────────────────────────────────────────────────────────────
+   IMPORTANT: Add this to your public/index.html <head> instead of @import:
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+   ───────────────────────────────────────────────────────────────────────── */
 
-// ── Design System — Apple-adjacent cool gray ──────────────────
-:root {
-    --bg:       #E9E9E9;
-    --surface:  #F2F2F2;
-    --text:     #1D1D1F;
-    --muted:    #6E6E73;
-    --rule:     #D2D2D7;
-    --accent:   #3A3A3C;
-    --white:    #F5F5F7;
-}
+/* All class names use the av2- prefix so they NEVER conflict with
+   any existing global styles in your project. */
 
-// ── Base reset ────────────────────────────────────────────────
-*, *::before, *::after { box-sizing: border-box; }
+.about-v2 {
+    /* ── Design tokens ── */
+    --av2-bg:      #E9E9E9;
+    --av2-text:    #1D1D1F;
+    --av2-muted:   #6E6E73;
+    --av2-rule:    #D2D2D7;
+    --av2-white:   #F5F5F7;
 
-.about {
-    // Apple system font stack — renders as SF Pro on Mac / iOS
+    /* ── Base ── */
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background-color: var(--av2-bg);
+    color: var(--av2-text);
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    box-sizing: border-box;
 
-    // Subtle grain overlay — breaks up the flat gray, adds tactility
+    /* Grain texture */
     &::before {
         content: '';
         position: fixed;
@@ -34,15 +36,25 @@
         z-index: 9999;
     }
 
-    // ── Strip inherited global styles ──
-    p    { font-size: inherit; margin: 0; padding: 0; }
-    h2   { font-size: inherit; font-weight: inherit; margin: 0; }
-    img  { margin: 0; }
-    a    { color: inherit; text-decoration: none; }
+    /* Full local reset — only inside .about-v2 */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    div, p, h1, h2, h3, span, a, nav, footer {
+        margin: 0;
+        padding: 0;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    img { display: block; margin: 0; max-width: 100%; }
+
+    a { cursor: pointer; }
 }
 
-// ── 1. Ambient cursor orb ─────────────────────────────────────
-.cursor-light {
+/* ── 1. Ambient cursor orb ──────────────────────────────────── */
+.av2-cursor-light {
     position: fixed;
     width: 680px;
     height: 680px;
@@ -56,227 +68,231 @@
     pointer-events: none;
     z-index: 1;
     will-change: left, top;
-    // Tiny lag for soft trailing feel
     transition: left 0.06s linear, top 0.06s linear;
     mix-blend-mode: soft-light;
 }
 
-// ── 2. Scroll progress bar ────────────────────────────────────
-.scroll-track {
+/* ── 2. Scroll progress bar ─────────────────────────────────── */
+.av2-scroll-track {
     position: fixed;
     right: 28px;
     top: 50%;
     transform: translateY(-50%);
     width: 1px;
     height: 100px;
-    background: var(--rule);
+    background: var(--av2-rule);
     z-index: 200;
-
-    .scroll-fill {
-        width: 1px;
-        height: 0%;
-        background: var(--text);
-        transition: height 0.12s ease;
-    }
 }
 
-// ── Navigation ────────────────────────────────────────────────
+.av2-scroll-fill {
+    width: 1px;
+    height: 0%;
+    background: var(--av2-text);
+    transition: height 0.12s ease;
+}
+
+/* ── Navigation ─────────────────────────────────────────────── */
 .av2-nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
     padding: 1.5rem 4rem;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
-    .logo {
-        a { display: block; }
-        img { width: 32px; display: block; margin: 0; }
-    }
-
-    .nav-tag {
-        font-size: 0.65rem;
-        letter-spacing: 0.26em;
-        color: var(--muted);
-        text-transform: uppercase;
-    }
 }
 
-// ── 3 & 7. Hero (parallax + 3-D tilt) ────────────────────────
+.av2-logo {
+    a { display: block; }
+    img { width: 32px; }
+}
+
+.av2-nav-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.26em;
+    color: var(--av2-muted);
+    text-transform: uppercase;
+}
+
+/* ── 3 & 7. Hero ────────────────────────────────────────────── */
 .av2-hero {
     min-height: 100vh;
-    display: grid;
+    display: grid !important;                 /* !important beats any inherited flex */
     grid-template-columns: 1fr 1fr;
     gap: 5rem;
     padding: 9rem 4rem 5rem;
     align-items: center;
     max-width: 1400px;
     margin: 0 auto;
+}
 
-    // ─ Left
-    .hero-left {
-        display: flex;
-        flex-direction: column;
-        gap: 2.4rem;
-    }
+.av2-hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+}
 
-    .hero-eyebrow {
-        font-size: 0.65rem;
-        letter-spacing: 0.28em;
-        color: var(--muted);
-        text-transform: uppercase;
-    }
+.av2-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.28em;
+    color: var(--av2-muted);
+    text-transform: uppercase;
+}
 
-    // Dual-layer name creates a depth illusion during parallax
-    .hero-name-wrap {
-        position: relative;
-        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-        width: fit-content;
-    }
+/* Dual-layer parallax name */
+.av2-name-wrap {
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    width: fit-content;
+}
 
-    .hero-name-back,
-    .hero-name-front {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: clamp(4.5rem, 8vw, 7.5rem);
-        font-weight: 300;
-        line-height: 0.91;
-        margin: 0;
-        user-select: none;
-    }
+.av2-name-back,
+.av2-name-front {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(4.5rem, 8vw, 7.5rem);
+    font-weight: 300;
+    line-height: 0.91;
+    user-select: none;
+}
 
-    // Back layer: blurred shadow layer for depth
-    .hero-name-back {
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        color: transparent;
-        -webkit-text-stroke: 1px rgba(0, 0, 0, 0.08);
-        filter: blur(2px);
-        pointer-events: none;
-    }
+.av2-name-back {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    color: transparent !important;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.08);
+    filter: blur(2px);
+    pointer-events: none;
+}
 
-    .hero-name-front {
-        position: relative;
-        color: var(--text);
-        .name-indent { padding-left: 3.5rem; display: block; }
-    }
+.av2-name-front {
+    position: relative;
+    color: var(--av2-text);
+}
 
-    .hero-desc {
-        font-size: 0.96rem;
-        line-height: 1.9;
-        color: var(--muted);
-        font-weight: 400;
-        max-width: 460px;
-        border-left: 1px solid var(--rule);
-        padding-left: 1.3rem;
-    }
+.av2-name-indent {
+    padding-left: 3.5rem;
+    display: block;
+}
 
-    // ─ 4. Magnetic tags
-    .hero-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.45rem;
-    }
+.av2-hero-desc {
+    font-size: 0.96rem !important;
+    line-height: 1.9 !important;
+    color: var(--av2-muted) !important;
+    font-weight: 400;
+    max-width: 460px;
+    border-left: 1px solid var(--av2-rule);
+    padding-left: 1.3rem !important;
+    margin: 0 !important;
+}
 
-    .hero-tag {
-        padding: 0.32rem 0.8rem;
-        border: 1px solid var(--rule);
-        font-size: 0.65rem;
-        letter-spacing: 0.16em;
-        color: var(--muted);
-        text-transform: uppercase;
-        cursor: default;
-        // Return-to-origin transition; mousemove overrides this inline
-        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-        background 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
+/* 4. Magnetic tags */
+.av2-tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
 
-        &:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
-    }
+.av2-tag {
+    display: inline-block;
+    padding: 0.32rem 0.8rem;
+    border: 1px solid var(--av2-rule);
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    color: var(--av2-muted);
+    text-transform: uppercase;
+    cursor: default;
+    transition:
+            transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
 
-    // ─ Right
-    .hero-right {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.6rem;
-    }
-
-    // 7. 3-D tilt photo card
-    .photo-frame {
-        position: relative;
-        width: 88%;
-        transform-style: preserve-3d;
-        // Smooth spring-back
-        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        will-change: transform;
-
-        // Decorative rotated outer border
-        &::before {
-            content: '';
-            position: absolute;
-            inset: -14px;
-            border: 1px solid var(--rule);
-            transform: rotate(2deg);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        img {
-            width: 100%;
-            aspect-ratio: 4 / 5;
-            object-fit: cover;
-            filter: grayscale(10%) contrast(1.04) brightness(0.97);
-            display: block;
-            position: relative;
-            z-index: 1;
-        }
-
-        // Specular glare — moves with the card for physical realism
-        .photo-glare {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                            135deg,
-                            rgba(255, 255, 255, 0.18) 0%,
-                            rgba(255, 255, 255, 0.04) 40%,
-                            transparent 65%
-            );
-            z-index: 2;
-            pointer-events: none;
-        }
-    }
-
-    .hero-affiliation {
-        font-size: 0.64rem;
-        letter-spacing: 0.24em;
-        color: var(--muted);
-        text-transform: uppercase;
+    &:hover {
+        background-color: var(--av2-text);
+        color: var(--av2-bg);
+        border-color: var(--av2-text);
     }
 }
 
-// ── 5. Scroll reveal ──────────────────────────────────────────
-.reveal {
+/* Hero right — photo */
+.av2-hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+}
+
+/* 7. 3-D tilt photo card */
+.av2-photo-frame {
+    position: relative;
+    width: 88%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -14px;
+        border: 1px solid var(--av2-rule);
+        transform: rotate(2deg);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    img {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        filter: grayscale(10%) contrast(1.04) brightness(0.97);
+        display: block;
+        position: relative;
+        z-index: 1;
+        margin: 0;
+    }
+
+    .av2-photo-glare {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, 0.18) 0%,
+                        rgba(255, 255, 255, 0.04) 40%,
+                        transparent 65%
+        );
+        z-index: 2;
+        pointer-events: none;
+    }
+}
+
+.av2-affiliation {
+    font-size: 0.64rem;
+    letter-spacing: 0.24em;
+    color: var(--av2-muted);
+    text-transform: uppercase;
+}
+
+/* ── 5. Scroll reveal ───────────────────────────────────────── */
+.av2-reveal {
     opacity: 0;
     transform: translateY(36px);
     transition:
             opacity  0.9s cubic-bezier(0.22, 1, 0.36, 1),
             transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 
-    &.visible {
+    &.av2-visible {
         opacity: 1;
         transform: none;
 
-        // Stagger horizontal timeline items once section reveals
-        .ht-item {
+        .av2-ht-item {
             opacity: 1;
             transform: none;
+
             &:nth-child(1) { transition-delay: 0.05s; }
             &:nth-child(2) { transition-delay: 0.13s; }
             &:nth-child(3) { transition-delay: 0.21s; }
@@ -287,350 +303,346 @@
     }
 }
 
-// ── Section skeleton ──────────────────────────────────────────
+/* ── Section skeleton ───────────────────────────────────────── */
 .av2-section {
     max-width: 1400px;
     margin: 0 auto;
     padding: 5rem 4rem;
-
-    .section-inner {
-        display: grid;
-        grid-template-columns: 210px 1fr;
-        gap: 5rem;
-        padding-top: 2.4rem;
-        border-top: 1px solid var(--rule);
-    }
-
-    .section-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-    }
-
-    .section-index {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 0.75rem;
-        color: var(--muted);
-        letter-spacing: 0.14em;
-    }
-
-    .section-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 2rem;
-        font-weight: 400;
-        line-height: 1.1;
-        color: var(--text);
-    }
-
-    .drag-hint {
-        font-size: 0.6rem;
-        letter-spacing: 0.2em;
-        color: var(--rule);
-        text-transform: uppercase;
-        margin-top: 0.8rem;
-        user-select: none;
-    }
-
-    .section-body { padding-top: 0.1rem; }
 }
 
-// ── Research / Bio ────────────────────────────────────────────
-.bio-paras {
+.av2-section-inner {
+    display: grid !important;
+    grid-template-columns: 210px 1fr;
+    gap: 5rem;
+    padding-top: 2.4rem;
+    border-top: 1px solid var(--av2-rule);
+}
+
+.av2-section-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.av2-index {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.75rem;
+    color: var(--av2-muted);
+    letter-spacing: 0.14em;
+}
+
+.av2-section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2rem !important;
+    font-weight: 400 !important;
+    line-height: 1.1;
+    color: var(--av2-text);
+    margin: 0 !important;
+}
+
+.av2-drag-hint {
+    font-size: 0.6rem !important;
+    letter-spacing: 0.2em;
+    color: var(--av2-rule);
+    text-transform: uppercase;
+    margin-top: 0.8rem !important;
+    user-select: none;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.av2-section-body { padding-top: 0.1rem; }
+
+/* ── Research bio ───────────────────────────────────────────── */
+.av2-bio {
     display: flex;
     flex-direction: column;
     gap: 1.8rem;
 
     p {
-        font-size: 1.01rem;
-        line-height: 1.95;
+        font-size: 1.01rem !important;
+        line-height: 1.95 !important;
         color: #3A3A3C;
         font-weight: 400;
+        margin: 0 !important;
+        padding: 0 !important;
 
         a {
-            color: var(--text);
+            color: var(--av2-text);
             text-decoration: underline;
             text-underline-offset: 3px;
-            text-decoration-color: var(--rule);
+            text-decoration-color: var(--av2-rule);
             transition: text-decoration-color 0.2s ease;
-            &:hover { text-decoration-color: var(--text); }
+            &:hover { text-decoration-color: var(--av2-text); }
         }
     }
 }
 
-// ── 6. Horizontal drag-scroll timeline ───────────────────────
-.horiz-timeline {
+/* ── 6. Horizontal drag-scroll timeline ─────────────────────── */
+.av2-horiz {
     overflow-x: scroll;
     overflow-y: hidden;
     cursor: grab;
     user-select: none;
     scrollbar-width: none;
-    // Fade edges to hint at more content
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 90%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, black 4%, black 90%, transparent 100%);
 
     &::-webkit-scrollbar { display: none; }
     &.dragging { cursor: grabbing; }
-
-    .ht-track {
-        display: flex;
-        width: max-content;
-        position: relative;
-        padding: 2.8rem 2rem 2rem 2rem;
-
-        // Horizontal connecting line
-        &::before {
-            content: '';
-            position: absolute;
-            // Aligns with center of 9px dot (9/2 = 4.5px from top of dot, dot is at top of item)
-            top: calc(2.8rem + 4px);
-            left: 2rem;
-            right: 2rem;
-            height: 1px;
-            background: var(--rule);
-        }
-    }
-
-    .ht-item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding-right: 5rem;
-        min-width: 190px;
-        max-width: 250px;
-        opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-
-        .ht-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--text);
-            margin-bottom: 1.6rem;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-            // Subtle ring on hover
-            transition: box-shadow 0.2s ease;
-            &:hover { box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
-        }
-
-        .ht-date {
-            font-size: 0.66rem;
-            color: var(--muted);
-            letter-spacing: 0.1em;
-            margin-bottom: 0.45rem;
-            text-transform: uppercase;
-        }
-
-        .ht-org {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.18rem;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1.35;
-            margin-bottom: 0.28rem;
-        }
-
-        .ht-role {
-            font-size: 0.78rem;
-            color: var(--muted);
-            font-weight: 400;
-        }
-    }
-
-    .ht-spacer { width: 4rem; flex-shrink: 0; }
 }
 
-// ── 8. Publications — expandable accordion ────────────────────
+.av2-ht-track {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    position: relative;
+    padding: 2.8rem 2rem 2rem;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: calc(2.8rem + 4px);
+        left: 2rem;
+        right: 2rem;
+        height: 1px;
+        background: var(--av2-rule);
+    }
+}
+
+.av2-ht-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-right: 5rem;
+    min-width: 190px;
+    max-width: 250px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    .av2-ht-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--av2-text);
+        margin-bottom: 1.6rem;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .av2-ht-date {
+        font-size: 0.66rem;
+        color: var(--av2-muted);
+        letter-spacing: 0.1em;
+        margin-bottom: 0.45rem;
+        text-transform: uppercase;
+    }
+
+    .av2-ht-org {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.18rem;
+        font-weight: 500;
+        color: var(--av2-text);
+        line-height: 1.35;
+        margin-bottom: 0.28rem;
+    }
+
+    .av2-ht-role {
+        font-size: 0.78rem;
+        color: var(--av2-muted);
+    }
+}
+
+.av2-ht-spacer { width: 4rem; flex-shrink: 0; }
+
+/* ── 8. Publications accordion ──────────────────────────────── */
 .av2-pubs {
     display: flex;
     flex-direction: column;
+}
 
-    .pub-card {
-        border-bottom: 1px solid var(--rule);
-        cursor: pointer;
-        // Subtle background tint on hover
-        transition: background 0.2s ease;
+.av2-pub-card {
+    border-bottom: 1px solid var(--av2-rule);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 
-        &:first-child { border-top: 1px solid var(--rule); }
+    &:first-child { border-top: 1px solid var(--av2-rule); }
+    &:hover { background-color: rgba(255,255,255,0.45); }
+    &.av2-pub-open { background-color: rgba(255,255,255,0.55); }
+}
 
-        &:hover { background: rgba(255,255,255,0.45); }
+.av2-pub-header {
+    display: grid !important;
+    grid-template-columns: 34px 1fr 28px;
+    gap: 1.5rem;
+    padding: 1.8rem 1rem 1.8rem 0;
+    align-items: center;
+}
 
-        &.expanded {
-            background: rgba(255,255,255,0.55);
-            .pub-toggle { transform: rotate(0deg); }
-        }
+.av2-pub-num {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.8rem;
+    color: var(--av2-muted);
+}
 
-        .pub-header {
-            display: grid;
-            grid-template-columns: 34px 1fr 28px;
-            gap: 1.5rem;
-            padding: 1.8rem 1rem 1.8rem 0;
-            align-items: center;
-        }
+.av2-pub-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.12rem !important;
+    font-weight: 500 !important;
+    line-height: 1.5;
+    color: var(--av2-text);
+    transition: color 0.25s ease;
 
-        .pub-num {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
+    .av2-pub-card:hover & { color: #555; }
+}
 
-        .pub-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.12rem;
-            font-weight: 500;
-            line-height: 1.5;
-            color: var(--text);
-            transition: color 0.25s ease;
-        }
+.av2-pub-toggle {
+    font-size: 1.3rem;
+    font-weight: 200;
+    color: var(--av2-muted);
+    text-align: center;
+    line-height: 1;
+    user-select: none;
+}
 
-        &:hover .pub-title { color: var(--accent); }
+.av2-pub-collapse {
+    overflow: hidden;
+    transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-        .pub-toggle {
-            font-size: 1.3rem;
-            font-weight: 200;
-            color: var(--muted);
-            text-align: center;
-            line-height: 1;
-            transition: transform 0.3s ease;
-            user-select: none;
-        }
+.av2-pub-body {
+    padding: 0 1rem 2rem calc(34px + 1.5rem);
 
-        // Smooth accordion
-        .pub-collapse {
-            overflow: hidden;
-            transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    .av2-pub-desc {
+        font-size: 0.9rem !important;
+        line-height: 1.85 !important;
+        color: var(--av2-muted);
+        margin-bottom: 1.2rem !important;
+        padding: 0 !important;
+    }
 
-            .pub-body {
-                padding: 0 1rem 2rem calc(34px + 1.5rem);
+    .av2-pub-meta {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
 
-                .pub-desc {
-                    font-size: 0.9rem;
-                    line-height: 1.85;
-                    color: var(--muted);
-                    font-weight: 400;
-                    margin-bottom: 1.2rem;
-                }
+    .av2-pub-venue {
+        font-size: 0.68rem;
+        color: var(--av2-muted);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
 
-                .pub-meta {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    flex-wrap: wrap;
-                }
+    .av2-pub-badge {
+        display: inline-block;
+        padding: 0.14rem 0.5rem;
+        border: 1px solid var(--av2-rule);
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        color: var(--av2-muted);
+        text-transform: uppercase;
+    }
 
-                .pub-venue {
-                    font-size: 0.68rem;
-                    color: var(--muted);
-                    letter-spacing: 0.12em;
-                    text-transform: uppercase;
-                }
-
-                .pub-badge {
-                    padding: 0.14rem 0.5rem;
-                    border: 1px solid var(--rule);
-                    font-size: 0.62rem;
-                    letter-spacing: 0.14em;
-                    color: var(--muted);
-                    text-transform: uppercase;
-                }
-
-                .pub-link {
-                    margin-left: auto;
-                    font-size: 0.82rem;
-                    color: var(--text);
-                    text-decoration: underline;
-                    text-underline-offset: 3px;
-                    transition: color 0.2s ease;
-                    &:hover { color: var(--muted); }
-                }
-            }
-        }
+    .av2-pub-link {
+        margin-left: auto;
+        font-size: 0.82rem;
+        color: var(--av2-text);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.2s ease;
+        &:hover { color: var(--av2-muted); }
     }
 }
 
-// ── Honors ────────────────────────────────────────────────────
+/* ── Honors ─────────────────────────────────────────────────── */
 .av2-honors {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-
-    .honor-item {
-        display: flex;
-        gap: 1.1rem;
-        align-items: flex-start;
-
-        .honor-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--accent);
-            flex-shrink: 0;
-            margin-top: 0.65rem;
-        }
-
-        .honor-text {
-            font-size: 0.98rem;
-            line-height: 1.8;
-            color: #3A3A3C;
-            font-weight: 400;
-        }
-    }
 }
 
-// ── Contact ───────────────────────────────────────────────────
+.av2-honor-item {
+    display: flex;
+    flex-direction: row;
+    gap: 1.1rem;
+    align-items: flex-start;
+}
+
+.av2-honor-dot {
+    width: 5px;
+    height: 5px;
+    min-width: 5px;
+    border-radius: 50%;
+    background: var(--av2-text);
+    margin-top: 0.65rem;
+}
+
+.av2-honor-text {
+    font-size: 0.98rem;
+    line-height: 1.8;
+    color: #3A3A3C;
+}
+
+/* ── Contact ─────────────────────────────────────────────────── */
 .av2-contact {
-    .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        padding: 1.35rem 0;
-        border-bottom: 1px solid var(--rule);
-        text-decoration: none;
-        color: inherit;
+    display: flex;
+    flex-direction: column;
+}
 
-        &:first-child { border-top: 1px solid var(--rule); }
+.av2-contact-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--av2-rule);
+    text-decoration: none;
 
-        &:hover {
-            .contact-value { color: var(--muted); }
-            .contact-arrow { transform: translate(4px, -4px); }
-        }
+    &:first-child { border-top: 1px solid var(--av2-rule); }
 
-        .contact-label {
-            font-size: 0.63rem;
-            letter-spacing: 0.24em;
-            text-transform: uppercase;
-            color: var(--muted);
-            width: 84px;
-            flex-shrink: 0;
-        }
+    &:hover {
+        .av2-contact-value { color: var(--av2-muted); }
+        .av2-contact-arrow { transform: translate(4px, -4px); }
+    }
 
-        .contact-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.15rem;
-            font-weight: 400;
-            transition: color 0.25s ease;
-        }
+    .av2-contact-label {
+        font-size: 0.63rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--av2-muted);
+        width: 84px;
+        flex-shrink: 0;
+    }
 
-        .contact-arrow {
-            margin-left: auto;
-            font-size: 0.9rem;
-            color: var(--muted);
-            transition: transform 0.28s ease;
-        }
+    .av2-contact-value {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.15rem;
+        transition: color 0.25s ease;
+    }
+
+    .av2-contact-arrow {
+        margin-left: auto;
+        font-size: 0.9rem;
+        color: var(--av2-muted);
+        transition: transform 0.28s ease;
     }
 }
 
-// ── Footer ────────────────────────────────────────────────────
+/* ── Footer ─────────────────────────────────────────────────── */
 .av2-footer {
     max-width: 1400px;
     margin: 2rem auto 0;
     padding: 3.5rem 4rem;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--av2-rule);
 
     img {
         width: 84px;
@@ -641,12 +653,12 @@
         &:hover { opacity: 1; }
     }
 
-    .footer-copy {
+    .av2-footer-copy {
         font-size: 0.68rem;
-        color: var(--muted);
+        color: var(--av2-muted);
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
