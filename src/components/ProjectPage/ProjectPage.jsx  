@@ -1,0 +1,230 @@
+import React, { useState, useEffect, useRef } from "react";
+import "./ProjectPage.scss";
+
+/*
+  Props shape:
+  {
+    title:    string           — project name
+    sub:      string           — tagline
+    meta:     { label, value }[]
+    intro:    string           — short intro paragraph
+    tabs:     { label, body }[]  — Concept / Process / Result
+    images:   string[]         — paths after the carousel hero
+    hero:     string           — hero image path
+    videoId:  string | null    — YouTube video ID
+    accentColor: string        — subtle accent (default: #C8C8CC)
+  }
+*/
+
+const ProjectPage = ({
+    title,
+    sub,
+    meta = [],
+    intro,
+    tabs = [],
+    images = [],
+    hero,
+    videoId = null,
+    accentColor = "#AAAAAA",
+}) => {
+    const [activeTab, setActiveTab]   = useState(0);
+    const [heroLoaded, setHeroLoaded] = useState(false);
+    const [titleIn, setTitleIn]       = useState(false);
+    const cursorRef = useRef(null);
+
+    /* Cursor orb */
+    useEffect(() => {
+        const fn = (e) => {
+            if (!cursorRef.current) return;
+            cursorRef.current.style.left = e.clientX + "px";
+            cursorRef.current.style.top  = e.clientY + "px";
+        };
+        window.addEventListener("mousemove", fn, { passive: true });
+        return () => window.removeEventListener("mousemove", fn);
+    }, []);
+
+    /* Scroll reveal */
+    useEffect(() => {
+        const els = document.querySelectorAll(".pp-reveal");
+        const obs = new IntersectionObserver(
+            (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("pp-in"); }),
+            { threshold: 0.04 }
+        );
+        els.forEach((el) => obs.observe(el));
+        return () => els.forEach((el) => obs.unobserve(el));
+    }, []);
+
+    /* Hero image load → trigger title animation */
+    const onHeroLoad = () => {
+        setHeroLoaded(true);
+        setTimeout(() => setTitleIn(true), 80);
+    };
+
+    const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+    return (
+        <div className="pp-root">
+
+            {/* Cursor orb */}
+            <div className="pp-orb" ref={cursorRef} />
+
+            {/* ── Fixed nav ── */}
+            <nav className="pp-nav">
+                <a className="pp-nav-logo" href="/">
+                    <img src="/assets/logo.png" alt="home" />
+                </a>
+                <a className="pp-nav-back" href="/">← Work</a>
+            </nav>
+
+            {/* ══ HERO ══════════════════════════════════════════════════════ */}
+            <div className="pp-hero">
+                {/* Hero image — full viewport */}
+                <div className="pp-hero-img-wrap">
+                    <img
+                        src={hero}
+                        alt={title}
+                        className={`pp-hero-img${heroLoaded ? " pp-hero-img-in" : ""}`}
+                        onLoad={onHeroLoad}
+                    />
+                    {/* Gradient overlay — light-to-dark bottom */}
+                    <div className="pp-hero-grad" />
+                </div>
+
+                {/* Title block — bottom-left over image */}
+                <div className={`pp-hero-text${titleIn ? " pp-hero-text-in" : ""}`}>
+                    <div className="pp-hero-num">Project</div>
+                    <h1 className="pp-hero-title">{title}</h1>
+                    <p  className="pp-hero-sub">{sub}</p>
+                </div>
+
+                {/* Scroll cue */}
+                <div className="pp-scroll-cue">
+                    <div className="pp-scroll-line" />
+                    <span className="pp-scroll-label">Scroll</span>
+                </div>
+            </div>
+
+            {/* ══ METADATA + INTRO ════════════════════════════════════════ */}
+            <div className="pp-intro-section pp-reveal">
+                {/* LEFT: sticky metadata panel */}
+                <div className="pp-meta-panel">
+                    <div className="pp-meta-list">
+                        {meta.map((m, i) => (
+                            <div className="pp-meta-item" key={i}>
+                                <span className="pp-meta-label">{m.label}</span>
+                                <span className="pp-meta-value">{m.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Accent rule driven by project color */}
+                    <div className="pp-meta-rule" style={{ background: accentColor }} />
+                </div>
+
+                {/* RIGHT: large intro paragraph */}
+                <div className="pp-intro-body">
+                    <div className="pp-section-num">01</div>
+                    <h2 className="pp-intro-heading">Overview</h2>
+                    <p className="pp-intro-text">{intro}</p>
+                </div>
+            </div>
+
+            {/* ══ TABS — Concept / Process / Result ═══════════════════════ */}
+            {tabs.length > 0 && (
+                <div className="pp-tabs-section pp-reveal">
+                    <div className="pp-section-num">02</div>
+                    <h2 className="pp-tabs-heading">Deep Dive</h2>
+
+                    {/* Tab buttons */}
+                    <div className="pp-tab-bar">
+                        {tabs.map((t, i) => (
+                            <button
+                                key={i}
+                                className={`pp-tab-btn${activeTab === i ? " pp-tab-active" : ""}`}
+                                onClick={() => setActiveTab(i)}
+                            >
+                                <span className="pp-tab-idx">0{i + 1}</span>
+                                {t.label}
+                                {activeTab === i && <span className="pp-tab-dot" />}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Tab content — animate on change */}
+                    <div className="pp-tab-body">
+                        {tabs.map((t, i) => (
+                            <div
+                                key={i}
+                                className={`pp-tab-pane${activeTab === i ? " pp-tab-pane-in" : ""}`}
+                            >
+                                <p className="pp-tab-text">{t.body}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* ══ GALLERY ═════════════════════════════════════════════════ */}
+            {images.length > 0 && (
+                <div className="pp-gallery-section">
+                    <div className="pp-section-num pp-reveal">03</div>
+                    <h2 className="pp-gallery-heading pp-reveal">Visual Documentation</h2>
+
+                    <div className="pp-gallery-grid">
+                        {images.map((src, i) => {
+                            /* Alternate layout: wide / narrow / full */
+                            const spanClass =
+                                i % 5 === 0 ? "pp-cell-wide" :
+                                i % 5 === 3 ? "pp-cell-full" : "pp-cell-std";
+                            return (
+                                <div key={i} className={`pp-cell ${spanClass} pp-reveal`}>
+                                    <div className="pp-cell-inner">
+                                        <img
+                                            src={src}
+                                            alt={`${title} ${i + 1}`}
+                                            className="pp-cell-img"
+                                            loading="lazy"
+                                        />
+                                        {/* Number badge */}
+                                        <span className="pp-cell-badge">{String(i + 1).padStart(2, "0")}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* ══ YOUTUBE ═════════════════════════════════════════════════ */}
+            {videoId && (
+                <div className="pp-video-section pp-reveal">
+                    <div className="pp-section-num">04</div>
+                    <h2 className="pp-video-heading">Film</h2>
+                    <div className="pp-video-wrap">
+                        <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title="Project Video"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="pp-iframe"
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* ══ FOOTER ══════════════════════════════════════════════════ */}
+            <div className="pp-footer">
+                <img
+                    src="/assets/kn.png"
+                    alt="Back to top"
+                    className="pp-footer-logo"
+                    onClick={toTop}
+                />
+                <span className="pp-footer-copy">© Xingrui Gu — All Rights Reserved</span>
+            </div>
+
+        </div>
+    );
+};
+
+export default ProjectPage;
