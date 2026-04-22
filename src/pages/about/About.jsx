@@ -58,7 +58,7 @@ const CONTACTS = [
     { label: "X",         val: "@grxprc98",               href: "https://x.com/grxprc98" },
 ];
 
-const TAGS = ["Lifelong Learning", "Bayesian ML", "Decision Science", "HCI", "RL"];
+const TAGS = ["Machine Learning", "Learning Theory"];
 
 const STATS = [
     { n: "6",  label: "Publications"    },
@@ -317,7 +317,7 @@ const About = () => {
             {/* Nav */}
             <nav className="ab-nav">
                 <a className="ab-logo" href="/"><img src="/assets/logo.png" alt="home" /></a>
-                <span className="ab-nav-loc">Berkeley · CA</span>
+                <span className="ab-nav-loc">San Francisco · CA</span>
             </nav>
 
             {/* ══ HERO — split: name left / photo right ══════════════════════ */}
