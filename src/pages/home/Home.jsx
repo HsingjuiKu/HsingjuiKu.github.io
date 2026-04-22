@@ -269,7 +269,7 @@ const Home = () => {
 
                 {/* Subtitle + location */}
                 <div className={`hm-hero-sub${subIn ? " hm-sub-in" : ""}`}>
-                    <span className="hm-sub-role">Researcher · Designer · Engineer</span>
+                    <span className="hm-sub-role">Researcher · Designer · Entrepreneur</span>
                     <span className="hm-sub-sep">—</span>
                     <span className="hm-sub-loc">San Francisco, CA</span>
                 </div>

@@ -66,7 +66,6 @@ const STATS = [
     { n: "5+", label: "Years Research"  },
     { n: "7",  label: "Projects"        },
 ];
-
 /* ── FireTitle — chars ignite on viewport entry ───────────────────────────── */
 const FireTitle = ({ text, className = "", baseDelay = 0 }) => {
     const [lit, setLit] = useState(false);
@@ -324,7 +323,7 @@ const About = () => {
             <div className="ab-hero">
                 {/* LEFT: name + subtitle + tags */}
                 <div className="ab-hero-l">
-                    <p className="ab-eyebrow">Researcher · Engineer · Builder</p>
+                    <p className="ab-eyebrow">Researcher · Designer · Entrepreneur</p>
 
                     <div className="ab-hero-name-wrap">
                         <div className={`ab-hero-line1${nameReady ? " ab-name-go" : ""}`}>
