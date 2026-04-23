@@ -323,8 +323,8 @@ const About = () => {
             <div className="ab-hero">
 
                 {/* 青龙 — large atmospheric dragon over the right side */}
-                <img src="/assets/dragon.png" alt="" aria-hidden="true" className="ab-dragon" />
-                <div className="ab-dragon-breath" />
+                {/*<img src="/assets/dragon.png" alt="" aria-hidden="true" className="ab-dragon" />*/}
+                {/*<div className="ab-dragon-breath" />*/}
 
                 {/* LEFT: name + subtitle + tags */}
                 <div className="ab-hero-l">
