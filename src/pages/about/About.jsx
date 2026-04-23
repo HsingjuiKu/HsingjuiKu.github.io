@@ -316,17 +316,17 @@ const About = () => {
             {/* Nav */}
             <nav className="ab-nav">
                 <a className="ab-logo" href="/"><img src="/assets/logo.png" alt="home" /></a>
-                <span className="ab-nav-loc">Berkeley · CA</span>
+                <span className="ab-nav-loc">San Francisco · CA</span>
             </nav>
 
             {/* ══ HERO — split: name left / photo right ══════════════════════ */}
             <div className="ab-hero">
                 {/* LEFT: name + subtitle + tags */}
                 <div className="ab-hero-l">
-                    <p className="ab-eyebrow">Researcher · Engineer · Builder</p>
+                    <p className="ab-eyebrow">Researcher · Designer · Entrepreneur</p>
 
                     <div className="ab-hero-name-wrap">
-                        {/* 青龙 — Azure Dragon watermark behind name, 30% opacity */}
+                         {/*青龙 — Azure Dragon watermark behind name, 30% opacity */}
                         <img
                             src="/assets/dragon.png"
                             alt=""
