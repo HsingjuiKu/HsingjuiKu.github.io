@@ -131,22 +131,34 @@
     text-transform: uppercase; color: var(--muted);
 }
 
-/* 青龙 — Dragon watermark behind name */
+/* 青龙 — Dragon ghost behind name */
 .ab-dragon {
     position: absolute;
-    /* Shift right so dragon head aligns roughly behind the name letters */
-    top:  -18%;
-    right: -22%;
-    width: 90%;
-    /* White image on dark bg — screen blend so only light bleeds through */
-    mix-blend-mode: screen;
-    opacity: 0.1;
+    top: -20%;
+    left: -6%;
+    width: 100%;
+    /* No mix-blend-mode — parent stacking context breaks it */
+    /* Instead: invert dark dragon to white, then low opacity */
+    filter: invert(1) brightness(1.8) blur(0.5px) sepia(0.15) hue-rotate(-12deg);
+    opacity: 0.13;
     pointer-events: none;
     user-select: none;
-    /* Slow float animation — the dragon breathes */
-    animation: dragonFloat 9s ease-in-out infinite;
-    filter: blur(0.6px) brightness(0.9);
     z-index: 0;
+    transform-origin: 48% 42%;
+    animation: dragonFloat 12s ease-in-out infinite,
+    dragonBreath 4.5s ease-in-out infinite;
+}
+
+@keyframes dragonFloat {
+    0%,  100% { transform: translateY(0px)   rotate(-0.8deg) scale(1);    }
+    35%        { transform: translateY(-12px) rotate(0.4deg)  scale(1.025); }
+    70%        { transform: translateY(6px)   rotate(-1.2deg) scale(0.98);  }
+}
+
+/* Dragon breathes — opacity + brightness pulse */
+@keyframes dragonBreath {
+    0%,  100% { opacity: 0.10; filter: invert(1) brightness(1.6) blur(0.6px) sepia(0.1) hue-rotate(-12deg); }
+    50%        { opacity: 0.22; filter: invert(1) brightness(2.4) blur(0.1px) sepia(0.25) hue-rotate(-18deg); }
 }
 @keyframes dragonFloat {
     0%,  100% { transform: translateY(0px)    rotate(-1deg); opacity: 0.28; }
