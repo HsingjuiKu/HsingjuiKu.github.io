@@ -319,20 +319,18 @@ const About = () => {
                 <span className="ab-nav-loc">San Francisco · CA</span>
             </nav>
 
-            {/* ══ HERO — split: name left / photo right ══════════════════════ */}
+            {/* ══ HERO — Dragon atmospheric right / name left ═══════════════ */}
             <div className="ab-hero">
+
+                {/* 青龙 — large atmospheric dragon over the right side */}
+                <img src="/assets/dragon.png" alt="" aria-hidden="true" className="ab-dragon" />
+                <div className="ab-dragon-breath" />
+
                 {/* LEFT: name + subtitle + tags */}
                 <div className="ab-hero-l">
                     <p className="ab-eyebrow">Researcher · Designer · Entrepreneur</p>
 
                     <div className="ab-hero-name-wrap">
-                         {/*青龙 — Azure Dragon watermark behind name, 30% opacity */}
-                        <img
-                            src="/assets/dragon.png"
-                            alt=""
-                            aria-hidden="true"
-                            className="ab-dragon"
-                        />
                         <div className={`ab-hero-line1${nameReady ? " ab-name-go" : ""}`}>
                             {"XINGRUI".split("").map((ch, i) => (
                                 <span key={i} className="ab-nch" style={{ "--i": i }}>{ch}</span>

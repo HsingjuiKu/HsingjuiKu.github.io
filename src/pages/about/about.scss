@@ -107,16 +107,91 @@
 .ab-hero {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1.05fr 0.95fr;
     gap: 4rem;
     padding: 8rem 3.5rem 5rem;
     align-items: center;
     position: relative;
     overflow: hidden;
     background:
-            radial-gradient(ellipse at 30% 50%, rgba(200,69,58,0.04) 0%, transparent 50%),
-            radial-gradient(ellipse at 70% 30%, rgba(200,196,190,0.02) 0%, transparent 45%),
+            radial-gradient(ellipse at 20% 55%, rgba(200,69,58,0.055) 0%, transparent 42%),
+            radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.5) 0%, transparent 75%),
             var(--bg);
+}
+
+/* ── 青龙 Dragon — cinematic atmospheric right-side element ──────────────── */
+.ab-dragon {
+    position: absolute;
+    right:  -4%;
+    top:    -8%;
+    width:  64%;
+    height: auto;
+
+    /* Gray dragon on near-black — naturally sits as a darker presence */
+    opacity: 0.52;
+    filter: brightness(0.7) contrast(1.18) blur(0.25px);
+
+    /* Radial mask: dragon emerges from its center, dissolves at all edges.
+       Left edge dissolves first so text column stays on pure black.        */
+    -webkit-mask-image: radial-gradient(
+                    ellipse 88% 85% at 65% 42%,
+                    black           0%,
+                    black           25%,
+                    rgba(0,0,0,.75) 44%,
+                    rgba(0,0,0,.35) 60%,
+                    rgba(0,0,0,.08) 72%,
+                    transparent     82%
+    );
+    mask-image: radial-gradient(
+                    ellipse 88% 85% at 65% 42%,
+                    black           0%,
+                    black           25%,
+                    rgba(0,0,0,.75) 44%,
+                    rgba(0,0,0,.35) 60%,
+                    rgba(0,0,0,.08) 72%,
+                    transparent     82%
+    );
+
+    pointer-events: none;
+    user-select: none;
+    z-index: 3;
+    transform-origin: 55% 38%;
+    animation: dragonFloat 13s ease-in-out infinite,
+    dragonBreath 5.5s ease-in-out infinite;
+}
+
+@keyframes dragonBreath {
+    0%,  100% { opacity: 0.46; filter: brightness(0.68) contrast(1.15) blur(0.3px); }
+    45%        { opacity: 0.60; filter: brightness(0.88) contrast(1.22) blur(0px); }
+}
+
+@keyframes dragonFloat {
+    0%,  100% { transform: translateY(0px)   rotate(-0.6deg) scale(1);     }
+    30%        { transform: translateY(-14px) rotate(0.5deg)  scale(1.022); }
+    65%        { transform: translateY(7px)   rotate(-1.1deg) scale(0.981); }
+}
+
+/* Ambient fire-breath glow — warm red radial at dragon mouth area */
+.ab-dragon-breath {
+    position: absolute;
+    right:  8%;
+    top:    30%;
+    width:  360px;
+    height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+            rgba(200,69,58,0.10) 0%,
+            rgba(200,69,58,0.04) 40%,
+            transparent          66%
+    );
+    filter: blur(30px);
+    pointer-events: none;
+    z-index: 2;
+    animation: breathGlow 5.5s ease-in-out infinite;
+}
+@keyframes breathGlow {
+    0%,  100% { opacity: 0.45; transform: scale(1);    }
+    45%        { opacity: 1.0;  transform: scale(1.28); }
 }
 
 /* ── Hero left ── */
@@ -131,44 +206,8 @@
     text-transform: uppercase; color: var(--muted);
 }
 
-/* 青龙 — Dragon ghost behind name */
-.ab-dragon {
-    position: absolute;
-    top: -20%;
-    left: -6%;
-    width: 100%;
-    /* No mix-blend-mode — parent stacking context breaks it */
-    /* Instead: invert dark dragon to white, then low opacity */
-    filter: invert(1) brightness(1.8) blur(0.5px) sepia(0.15) hue-rotate(-12deg);
-    opacity: 0.13;
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
-    transform-origin: 48% 42%;
-    animation: dragonFloat 12s ease-in-out infinite,
-    dragonBreath 4.5s ease-in-out infinite;
-}
-
-@keyframes dragonFloat {
-    0%,  100% { transform: translateY(0px)   rotate(-0.8deg) scale(1);    }
-    35%        { transform: translateY(-12px) rotate(0.4deg)  scale(1.025); }
-    70%        { transform: translateY(6px)   rotate(-1.2deg) scale(0.98);  }
-}
-
-/* Dragon breathes — opacity + brightness pulse */
-@keyframes dragonBreath {
-    0%,  100% { opacity: 0.10; filter: invert(1) brightness(1.6) blur(0.6px) sepia(0.1) hue-rotate(-12deg); }
-    50%        { opacity: 0.22; filter: invert(1) brightness(2.4) blur(0.1px) sepia(0.25) hue-rotate(-18deg); }
-}
-@keyframes dragonFloat {
-    0%,  100% { transform: translateY(0px)    rotate(-1deg); opacity: 0.28; }
-    33%        { transform: translateY(-10px)  rotate(0.4deg); opacity: 0.32; }
-    66%        { transform: translateY(6px)    rotate(-0.6deg); opacity: 0.25; }
-}
-
 /* ── 4. Name ignition ── */
 .ab-hero-name-wrap {
-    position: relative;
     user-select: none;
 }
 .ab-nch {
@@ -194,8 +233,6 @@
     line-height: 0.88;
     letter-spacing: -0.025em;
     animation: nameGlow 5.5s ease-in-out infinite 2s;
-    position: relative;
-    z-index: 1;
 }
 .ab-hero-line2 {
     position: relative;
