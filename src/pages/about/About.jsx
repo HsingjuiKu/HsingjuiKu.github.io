@@ -327,12 +327,12 @@ const About = () => {
 
                     <div className="ab-hero-name-wrap">
                          {/*青龙 — Azure Dragon watermark behind name, 30% opacity */}
-                        <img
-                            src="/assets/dragon.png"
-                            alt=""
-                            aria-hidden="true"
-                            className="ab-dragon"
-                        />
+                        {/*<img*/}
+                        {/*    src="/assets/dragon.png"*/}
+                        {/*    alt=""*/}
+                        {/*    aria-hidden="true"*/}
+                        {/*    className="ab-dragon"*/}
+                        {/*/>*/}
                         <div className={`ab-hero-line1${nameReady ? " ab-name-go" : ""}`}>
                             {"XINGRUI".split("").map((ch, i) => (
                                 <span key={i} className="ab-nch" style={{ "--i": i }}>{ch}</span>
