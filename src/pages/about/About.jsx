@@ -99,6 +99,7 @@ const About = () => {
     const [statsReady,  setStatsReady]  = useState(false);
 
     const canvasRef  = useRef(null);
+    const nameVfxRef = useRef(null);   // 五行 particle canvas behind name
     const progRef    = useRef(null);
     const eduRef     = useRef(null);
     const expRef     = useRef(null);
@@ -195,6 +196,246 @@ const About = () => {
         const t3 = setTimeout(() => setPhotoReady(true), 700);
         return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }, []);
+
+    /* ── 五行 Name Particle Universe ─────────────────────────────────────────
+       Layers: 玄武(水) nebula · 白虎(金) orbital rings · 朱雀(火) sparks
+               青龙(木) lissajous tracers · 麒麟(土) pulse rings           */
+    useEffect(() => {
+        if (!nameReady) return;
+        const canvas = nameVfxRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+
+        const setSize = () => {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width  = Math.round(rect.width)  || window.innerWidth;
+            canvas.height = Math.round(rect.height) || window.innerHeight;
+        };
+        setSize();
+        window.addEventListener("resize", setSize);
+
+        // Name center: left column (~27% of canvas width), ~48% down
+        const cx = () => canvas.width  * 0.27;
+        const cy = () => canvas.height * 0.48;
+
+        let mouseX = -9999, mouseY = -9999;
+        const onMM = (e) => {
+            const r = canvas.getBoundingClientRect();
+            mouseX = e.clientX - r.left;
+            mouseY = e.clientY - r.top;
+        };
+        window.addEventListener("mousemove", onMM, { passive: true });
+
+        // ── 玄武 (Water) — Nebula cloud ──────────────────────────────────
+        const NEBULA = Array.from({ length: 340 }, () => {
+            const ang = Math.random() * Math.PI * 2;
+            const r   = Math.pow(Math.random(), 0.55) * 305;
+            const tc  = Math.random(); // tint choice
+            return {
+                hx: 0, hy: 0,  // home set in draw (dynamic cx/cy)
+                ax: ang, ar: r, // polar coords for home
+                x: 0, y: 0, vx: 0, vy: 0,
+                // Tri-tint: pure white / cool blue-white / warm fire-white
+                cr: tc < 0.55 ? 255 : (tc < 0.78 ? 218 : 255),
+                cg: tc < 0.55 ? 255 : (tc < 0.78 ? 232 : 242),
+                cb: tc < 0.55 ? 255 : (tc < 0.78 ? 255 : 218),
+                sz: Math.random() * 1.1 + 0.35,
+                op: Math.random() * 0.20 + 0.04,
+                ph: Math.random() * Math.PI * 2,
+                dr: Math.random() * 11 + 3,
+                ds: Math.random() * 0.007 + 0.003,
+                init: false,
+            };
+        });
+        // scatter initial positions so they converge on first frames
+        NEBULA.forEach(p => {
+            const w = window.innerWidth, h = window.innerHeight;
+            p.x = cx() + (Math.random() - 0.5) * w * 0.5;
+            p.y = cy() + (Math.random() - 0.5) * h * 0.65;
+            p.init = true;
+        });
+
+        // ── 白虎 (Metal) — Orbital rings ─────────────────────────────────
+        const RING_DEFS = [
+            { sA: 326, sB: 42,  tilt:  0.18, spd:  0.00068, n: 72, oLo: 0.30, oHi: 0.76, szLo: 0.9, szHi: 2.2 },
+            { sA: 228, sB: 74,  tilt: -0.30, spd: -0.00098, n: 52, oLo: 0.18, oHi: 0.54, szLo: 0.7, szHi: 1.7 },
+            { sA: 408, sB: 27,  tilt:  0.07, spd:  0.00044, n: 88, oLo: 0.10, oHi: 0.37, szLo: 0.5, szHi: 1.3 },
+        ];
+        const rings = RING_DEFS.flatMap(d =>
+            Array.from({ length: d.n }, (_, i) => ({
+                d,
+                θ: (i / d.n) * Math.PI * 2 + Math.random() * 0.2,
+                sz: d.szLo + Math.random() * (d.szHi - d.szLo),
+                op: d.oLo  + Math.random() * (d.oHi  - d.oLo),
+            }))
+        );
+
+        // ── 朱雀 (Fire) — Rising white sparks ────────────────────────────
+        const sparks = Array.from({ length: 52 }, () => ({
+            x: 0, y: 0, vx: 0, vy: 0, life: Math.random(), sz: 0, wm: 0
+        }));
+        const resetSpark = (s) => {
+            s.x   = cx() + (Math.random() - 0.5) * 350;
+            s.y   = cy() + 55 + Math.random() * 55;
+            s.vx  = (Math.random() - 0.5) * 0.32;
+            s.vy  = -(Math.random() * 0.65 + 0.28);
+            s.life = 0.55 + Math.random() * 0.45;
+            s.sz  = Math.random() * 1.5 + 0.45;
+            s.wm  = Math.random();
+        };
+        sparks.forEach(s => resetSpark(s));
+
+        // ── 青龙 (Wood) — Lissajous figure tracers ───────────────────────
+        const LISS = [
+            { A:185, B:90,  a:3, b:2, δ:0,           sp:0.000410, trail:[], cr:255, cg:255, cb:255 },
+            { A:148, B:120, a:5, b:4, δ:Math.PI/4,   sp:0.000285, trail:[], cr:222, cg:232, cb:255 },
+            { A:240, B:62,  a:2, b:3, δ:Math.PI/2,   sp:0.000488, trail:[], cr:255, cg:250, cb:228 },
+            { A:168, B:102, a:4, b:3, δ:Math.PI/3,   sp:0.000352, trail:[], cr:230, cg:255, cb:252 },
+            { A:108, B:138, a:3, b:5, δ:Math.PI*0.7, sp:0.000576, trail:[], cr:255, cg:245, cb:220 },
+        ];
+
+        // ── 麒麟 (Earth) — Pulse rings from centre ───────────────────────
+        const PULSE_MAX = 275, PULSE_SPD = 0.56;
+        const pulses = [
+            { r: 0,   life: 1.0 },
+            { r: 92,  life: 0.66 },
+            { r: 184, life: 0.32 },
+        ];
+        let lastPulseTs = 0;
+
+        let frame = 0, raf;
+        const draw = (ts) => {
+            const CW = canvas.width, CH = canvas.height;
+            const CCX = cx(), CCY = cy();
+            ctx.clearRect(0, 0, CW, CH);
+            frame++;
+
+            // ── 麒麟 Pulses (bottom-most layer) ──────────────────────────
+            if (ts - lastPulseTs > 3100) {
+                lastPulseTs = ts;
+                const dead = pulses.find(p => p.life <= 0);
+                if (dead) { dead.r = 0; dead.life = 1; }
+            }
+            pulses.forEach(p => {
+                if (p.life <= 0) return;
+                p.r += PULSE_SPD; p.life = Math.max(0, 1 - p.r / PULSE_MAX);
+                ctx.beginPath();
+                ctx.arc(CCX, CCY, p.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255,255,255,${p.life * 0.042})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // ── 玄武 Nebula ───────────────────────────────────────────────
+            const gAng = frame * 0.000125;
+            const cosG = Math.cos(gAng), sinG = Math.sin(gAng);
+            ctx.save();
+            ctx.shadowBlur = 5;
+            NEBULA.forEach(p => {
+                // Rotating elliptical home
+                const rhx = Math.cos(p.ax) * p.ar * 1.58 ;
+                const rhy = Math.sin(p.ax) * p.ar * 0.53;
+                const tx = CCX + rhx * cosG - rhy * sinG + Math.cos(p.ph + frame * p.ds) * p.dr;
+                const ty = CCY + rhx * sinG + rhy * cosG + Math.sin(p.ph + frame * p.ds) * p.dr;
+
+                // Mouse repulsion (water retreats from fire)
+                const mdx = p.x - mouseX, mdy = p.y - mouseY;
+                const md  = Math.sqrt(mdx * mdx + mdy * mdy) || 1;
+                if (md < 135) {
+                    const f = (1 - md / 135) * 1.7;
+                    p.vx += mdx / md * f; p.vy += mdy / md * f;
+                }
+                // Spring to home
+                p.vx += (tx - p.x) * 0.017; p.vy += (ty - p.y) * 0.017;
+                p.vx *= 0.86; p.vy *= 0.86;
+                p.x += p.vx; p.y += p.vy;
+
+                ctx.globalAlpha = p.op;
+                ctx.shadowColor = `rgb(${p.cr},${p.cg},${p.cb})`;
+                ctx.fillStyle   = `rgb(${p.cr},${p.cg},${p.cb})`;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
+
+            // ── 白虎 Orbital Rings ────────────────────────────────────────
+            ctx.save();
+            rings.forEach(rp => {
+                rp.θ += rp.d.spd;
+                const cosT = Math.cos(rp.d.tilt), sinT = Math.sin(rp.d.tilt);
+                const ex = rp.d.sA * Math.cos(rp.θ);
+                const ey = rp.d.sB * Math.sin(rp.θ);
+                const px = CCX + ex * cosT - ey * sinT;
+                const py = CCY + ex * sinT + ey * cosT;
+                const depth = (Math.sin(rp.θ) + 1) * 0.5; // 0-1, 3D depth
+                const op    = rp.op * (0.22 + depth * 0.78);
+
+                ctx.globalAlpha = op;
+                ctx.shadowBlur  = 4 + depth * 6;
+                ctx.shadowColor = "rgba(228,228,242,0.9)";
+                ctx.fillStyle   = "rgba(242,242,252,1)";
+                ctx.beginPath();
+                ctx.arc(px, py, rp.sz * (0.65 + depth * 0.35), 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
+
+            // ── 青龙 Lissajous Tracers ─────────────────────────────────────
+            ctx.save();
+            LISS.forEach(lj => {
+                const px = CCX + lj.A * Math.sin(lj.a * frame * lj.sp * 60 + lj.δ);
+                const py = CCY + lj.B * Math.sin(lj.b * frame * lj.sp * 60);
+                lj.trail.push({ x: px, y: py });
+                if (lj.trail.length > 34) lj.trail.shift();
+
+                // Trail lines
+                for (let i = 1; i < lj.trail.length; i++) {
+                    const f = i / lj.trail.length;
+                    ctx.beginPath();
+                    ctx.moveTo(lj.trail[i-1].x, lj.trail[i-1].y);
+                    ctx.lineTo(lj.trail[i].x,   lj.trail[i].y);
+                    ctx.strokeStyle = `rgba(${lj.cr},${lj.cg},${lj.cb},${f * 0.17})`;
+                    ctx.lineWidth   = 0.9 + f * 0.9;
+                    ctx.stroke();
+                }
+                // Head
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = `rgba(${lj.cr},${lj.cg},${lj.cb},0.85)`;
+                ctx.globalAlpha = 0.78;
+                ctx.fillStyle   = `rgb(${lj.cr},${lj.cg},${lj.cb})`;
+                ctx.beginPath(); ctx.arc(px, py, 2.8, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
+
+            // ── 朱雀 Rising Sparks ─────────────────────────────────────────
+            ctx.save();
+            sparks.forEach(s => {
+                s.x += s.vx + (Math.random() - 0.5) * 0.09;
+                s.y += s.vy;
+                s.life -= 0.0028 + Math.random() * 0.001;
+                if (s.life <= 0 || s.y < CCY - 230) { resetSpark(s); return; }
+
+                // Warm-white (fire) → cool-white (metal) as ascending
+                const rr = 255;
+                const gg = Math.floor(240 + s.wm * 14);
+                const bb = Math.floor(200 + (1 - s.wm) * 55);
+                ctx.globalAlpha = s.life * 0.58;
+                ctx.shadowBlur  = 7;
+                ctx.shadowColor = `rgba(${rr},${gg},${bb},0.75)`;
+                ctx.fillStyle   = `rgb(${rr},${gg},${bb})`;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.sz, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
+
+            raf = requestAnimationFrame(draw);
+        };
+        raf = requestAnimationFrame(draw);
+
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", setSize);
+            window.removeEventListener("mousemove", onMM);
+        };
+    }, [nameReady]);
 
     /* ── Stats reveal ── */
     useEffect(() => {
@@ -321,6 +562,9 @@ const About = () => {
 
             {/* ══ HERO — Dragon atmospheric right / name left ═══════════════ */}
             <div className="ab-hero">
+
+                {/* 五行 particle universe — sits behind name text */}
+                <canvas className="ab-name-vfx" ref={nameVfxRef} />
 
                 {/* 青龙 — large atmospheric dragon over the right side */}
                 {/*<img src="/assets/dragon.png" alt="" aria-hidden="true" className="ab-dragon" />*/}
