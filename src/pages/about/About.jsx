@@ -104,7 +104,9 @@ const About = () => {
     const nameVfxRef = useRef(null);   // 五行 particle canvas behind name
     const progRef    = useRef(null);
     const eduRef     = useRef(null);
+    const eduPipRef  = useRef(null);   // scroll position pip for education
     const expRef     = useRef(null);
+    const expPipRef  = useRef(null);   // scroll position pip for experience
     const photoRef   = useRef(null);
     const statsRef   = useRef(null);
     const tagRefs    = useRef([]);
@@ -460,26 +462,82 @@ const About = () => {
         return () => document.removeEventListener("mousemove", fn);
     }, []);
 
-    /* ── Momentum drag timelines ── */
-    const makeDrag = useCallback((ref) => {
+    /* ── Momentum drag timelines — mouse + touch + scroll pip ── */
+    const makeDrag = useCallback((ref, pipRef) => {
         const el = ref.current;
         if (!el) return;
-        let on = false, sx = 0, ss = 0, vel = 0, last = 0, raf;
-        const coast = () => { vel *= 0.88; el.scrollLeft -= vel; if (Math.abs(vel) > 0.5) raf = requestAnimationFrame(coast); };
-        const down  = (e) => { on = true; sx = e.pageX - el.offsetLeft; ss = el.scrollLeft; last = e.pageX; cancelAnimationFrame(raf); el.style.cursor = "grabbing"; };
-        const move  = (e) => { if (!on) return; vel = (e.pageX - last) * 0.9; last = e.pageX; el.scrollLeft = ss - (e.pageX - el.offsetLeft - sx) * 1.4; };
-        const up    = ()  => { on = false; el.style.cursor = "grab"; raf = requestAnimationFrame(coast); };
-        el.addEventListener("mousedown",  down); el.addEventListener("mousemove",  move);
-        el.addEventListener("mouseup",    up);   el.addEventListener("mouseleave", up);
+        let on = false, ss = 0, vel = 0, last = 0, raf;
+
+        // Momentum coast after release
+        const coast = () => {
+            vel *= 0.90;
+            el.scrollLeft -= vel;
+            updatePip();
+            if (Math.abs(vel) > 0.4) raf = requestAnimationFrame(coast);
+        };
+
+        // Scroll-pip: tiny red ember indicator
+        const updatePip = () => {
+            if (!pipRef?.current) return;
+            const max = el.scrollWidth - el.clientWidth;
+            if (max <= 0) { pipRef.current.style.display = "none"; return; }
+            pipRef.current.style.display = "block";
+            pipRef.current.style.left = `${(el.scrollLeft / max) * 100}%`;
+        };
+
+        // Mouse
+        const mDown = (e) => {
+            on = true; ss = el.scrollLeft; last = e.pageX;
+            cancelAnimationFrame(raf); el.style.cursor = "grabbing";
+        };
+        const mMove = (e) => {
+            if (!on) return;
+            vel = (e.pageX - last) * 0.9; last = e.pageX;
+            el.scrollLeft -= e.movementX * 1.4;
+            updatePip();
+        };
+        const mUp = () => { on = false; el.style.cursor = "grab"; raf = requestAnimationFrame(coast); };
+
+        // Touch
+        const tStart = (e) => {
+            on = true; ss = el.scrollLeft; last = e.touches[0].clientX;
+            cancelAnimationFrame(raf);
+        };
+        const tMove = (e) => {
+            if (!on) return;
+            const dx = e.touches[0].clientX - last;
+            vel = dx * 0.9; last = e.touches[0].clientX;
+            el.scrollLeft -= dx * 1.6;
+            updatePip();
+        };
+        const tEnd = () => { on = false; raf = requestAnimationFrame(coast); };
+
+        el.addEventListener("mousedown",  mDown);
+        el.addEventListener("mousemove",  mMove);
+        el.addEventListener("mouseup",    mUp);
+        el.addEventListener("mouseleave", mUp);
+        el.addEventListener("touchstart", tStart, { passive: true });
+        el.addEventListener("touchmove",  tMove,  { passive: true });
+        el.addEventListener("touchend",   tEnd);
+
+        // Init pip
+        setTimeout(updatePip, 300);
+
         return () => {
-            el.removeEventListener("mousedown",  down); el.removeEventListener("mousemove",  move);
-            el.removeEventListener("mouseup",    up);   el.removeEventListener("mouseleave", up);
+            el.removeEventListener("mousedown",  mDown);
+            el.removeEventListener("mousemove",  mMove);
+            el.removeEventListener("mouseup",    mUp);
+            el.removeEventListener("mouseleave", mUp);
+            el.removeEventListener("touchstart", tStart);
+            el.removeEventListener("touchmove",  tMove);
+            el.removeEventListener("touchend",   tEnd);
             cancelAnimationFrame(raf);
         };
     }, []);
+
     useEffect(() => {
-        const c1 = makeDrag(eduRef);
-        const c2 = makeDrag(expRef);
+        const c1 = makeDrag(eduRef, eduPipRef);
+        const c2 = makeDrag(expRef, expPipRef);
         return () => { c1?.(); c2?.(); };
     }, [makeDrag]);
 
@@ -644,17 +702,23 @@ const About = () => {
                         <span className="ab-drag-hint">← drag →</span>
                     </div>
                     <div className="ab-sbody">
-                        <div className="ab-horiz" ref={eduRef}>
-                            <div className="ab-track">
-                                {EDUCATION.map((item, i) => (
-                                    <div className="ab-titem" key={i}>
-                                        <div className="ab-tdot" />
-                                        <div className="ab-tdate">{item.date}</div>
-                                        <div className="ab-torg">{item.org}</div>
-                                        <div className="ab-trole">{item.role}</div>
-                                    </div>
-                                ))}
-                                <div className="ab-tspacer" />
+                        <div className="ab-scroll-wrap">
+                            <div className="ab-horiz" ref={eduRef}>
+                                <div className="ab-track">
+                                    {EDUCATION.map((item, i) => (
+                                        <div className="ab-titem" key={i}>
+                                            <div className="ab-tdot" />
+                                            <div className="ab-tdate">{item.date}</div>
+                                            <div className="ab-torg">{item.org}</div>
+                                            <div className="ab-trole">{item.role}</div>
+                                        </div>
+                                    ))}
+                                    <div className="ab-tspacer" />
+                                </div>
+                            </div>
+                            {/* Scroll position pip */}
+                            <div className="ab-scroll-rail">
+                                <div className="ab-scroll-pip" ref={eduPipRef} />
                             </div>
                         </div>
                     </div>
@@ -670,17 +734,23 @@ const About = () => {
                         <span className="ab-drag-hint">← drag →</span>
                     </div>
                     <div className="ab-sbody">
-                        <div className="ab-horiz" ref={expRef}>
-                            <div className="ab-track">
-                                {EXPERIENCE.map((item, i) => (
-                                    <div className="ab-titem" key={i}>
-                                        <div className="ab-tdot" />
-                                        <div className="ab-tdate">{item.date}</div>
-                                        <div className="ab-torg">{item.org}</div>
-                                        {item.role && <div className="ab-trole">{item.role}</div>}
-                                    </div>
-                                ))}
-                                <div className="ab-tspacer" />
+                        <div className="ab-scroll-wrap">
+                            <div className="ab-horiz" ref={expRef}>
+                                <div className="ab-track">
+                                    {EXPERIENCE.map((item, i) => (
+                                        <div className="ab-titem" key={i}>
+                                            <div className="ab-tdot" />
+                                            <div className="ab-tdate">{item.date}</div>
+                                            <div className="ab-torg">{item.org}</div>
+                                            {item.role && <div className="ab-trole">{item.role}</div>}
+                                        </div>
+                                    ))}
+                                    <div className="ab-tspacer" />
+                                </div>
+                            </div>
+                            {/* Scroll position pip */}
+                            <div className="ab-scroll-rail">
+                                <div className="ab-scroll-pip" ref={expPipRef} />
                             </div>
                         </div>
                     </div>
