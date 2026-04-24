@@ -13,7 +13,7 @@ const EXPERIENCE = [
     { date: "2021 – 2024", org: "LJÜS LIGHTEN US LTD",                                       role: "Co-founder" },
     { date: "2023",         org: "Microsoft",                                                  role: "SWE Intern" },
     { date: "2024",         org: "INNO Angel Fund",                                            role: "Investment Analyst" },
-    { date: "2024 – Now",  org: "BAIR Lab / Helen Wills Neuroscience Institute, UC Berkeley", role: "Researcher" },
+    { date: "2024 – 2026",  org: "BAIR Lab / Helen Wills Neuroscience Institute, UC Berkeley", role: "Researcher" },
     { date: "2025 – 2026",  org: "Tensor Auto",                                                      role: "MLE" },
     { date: "2026 – Present",  org: "UCSF Radiology at China Basin",                                    role: "MLE" },
 ];
