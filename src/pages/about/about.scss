@@ -52,10 +52,11 @@
     width: 100vw; height: 100vh;
 }
 
-/* ── 五行 Name Particle Canvas ───────────────────────────────────────────── */
+/* ── 五行 Aurora Canvas ───────────────────────────────────────────────────── */
 /*
-   Sits inside .ab-hero (position:relative; overflow:hidden)
-   z-index 4 → above fire canvas (fixed z=2), below hero text (z=10)
+   Inside .ab-hero (position:relative; overflow:hidden).
+   mix-blend-mode:screen → coloured light ADDS to dark bg, exactly like aurora.
+   z-index 4 → above fixed fire canvas (z=2), below text columns (z=10).
 */
 .ab-name-vfx {
     position: absolute;
@@ -64,8 +65,16 @@
     height: 100%;
     pointer-events: none;
     z-index: 4;
-    /* Soft additive blend — particles add light to the dark bg */
     mix-blend-mode: screen;
+    /* Slight feather at all edges so orbs never look cropped */
+    -webkit-mask-image: radial-gradient(
+                    ellipse 85% 88% at 27% 48%,
+                    black 35%, rgba(0,0,0,0.7) 60%, transparent 80%
+    );
+    mask-image: radial-gradient(
+                    ellipse 85% 88% at 27% 48%,
+                    black 35%, rgba(0,0,0,0.7) 60%, transparent 80%
+    );
 }
 
 /* ── Ember progress bar ──────────────────────────────────────────────────── */
