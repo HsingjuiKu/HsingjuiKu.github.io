@@ -1,4 +1,4 @@
-import { Routes, Route, HashRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, HashRouter } from "react-router-dom";
 import Home from "./pages/home/Home";
 import About from "./pages/about/About";
 import MoodClip from "./pages/moodClip/MoodClip";
@@ -10,11 +10,9 @@ import ExerciseApp from "./pages/exerciseApp/exerciseApp";
 import RL from "./pages/rl/rl";
 import NeuralHear from "./pages/neuralHear/NeuralHear"
 import Almour from "./pages/almour/Almour";
-import CommandPalette from "./components/CommandPalette";
 function App() {
   return (<div className="app">
     <HashRouter baseline="/">
-      <CommandPalette />
       <Routes>
         <Route exact path={process.env.PUBLIC_URL + '/'} element={<Home />} />
         <Route exact path={process.env.PUBLIC_URL + '/about'} element={<About />} />
