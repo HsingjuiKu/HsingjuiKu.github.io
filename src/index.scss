@@ -1,0 +1,53 @@
+/* ── Self-hosted variable fonts ─────────────────────────────────────────── */
+@font-face {
+    font-family: "Cormorant Garamond";
+    src: url("./assets/fonts/cormorant-normal-latin.woff2") format("woff2");
+    font-weight: 300 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Cormorant Garamond";
+    src: url("./assets/fonts/cormorant-italic-latin.woff2") format("woff2");
+    font-weight: 300 700;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Inter";
+    src: url("./assets/fonts/inter-normal-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ── Reset (moved out of index.html inline styles) ──────────────────────── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #0F0F0F; /* matches hero — avoids white flash before bundle loads */
+}
+
+/* ── View Transitions (route changes) ───────────────────────────────────── */
+::view-transition-old(root) { animation: vt-out 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+::view-transition-new(root) { animation: vt-in  0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes vt-out { to   { opacity: 0; transform: translateY(-12px); } }
+@keyframes vt-in  { from { opacity: 0; transform: translateY(12px); } }
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation: none; }
+}

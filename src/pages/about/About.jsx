@@ -111,77 +111,438 @@ const About = () => {
     const statsRef   = useRef(null);
     const tagRefs    = useRef([]);
 
-    /* ── Canvas: fire cursor + water ripple + ambient embers ── */
+    /* ── Canvas: original fire cursor + five-phase manifold field ── */
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext("2d");
-        let W = window.innerWidth, H = window.innerHeight;
-        canvas.width = W; canvas.height = H;
-        const resize = () => { W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; };
-        window.addEventListener("resize", resize);
+        const TAU = Math.PI * 2;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const phases = [
+            { key: "water", rgb: [130, 184, 255], alpha: 0.24, rail: 0.42 },
+            { key: "wood",  rgb: [102, 220, 150], alpha: 0.22, rail: 0.50 },
+            { key: "fire",  rgb: [255, 132,  72], alpha: 0.34, rail: 0.58 },
+            { key: "earth", rgb: [210, 185, 130], alpha: 0.18, rail: 0.74 },
+            { key: "metal", rgb: [238, 236, 255], alpha: 0.28, rail: 0.36 },
+        ];
 
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        let motes = [];
+        let prevTs = 0;
         const fps = [], rips = [], embs = [];
+        let heatImpulses = [];
+        let sediments = [];
+        let branches = [];
+        let metalNodes = [];
         let lastEmber = 0;
+        let lastHeat = 0;
+        const pointer = { x: W * 0.52, y: H * 0.52, tx: W * 0.52, ty: H * 0.52, active: false };
 
-        const spawnFire = (x, y, n = 4) => {
-            for (let i = 0; i < n; i++) {
-                fps.push({ x: x + (Math.random() - 0.5) * 14, y,
-                    vx: (Math.random() - 0.5) * 1.4, vy: -(Math.random() * 2.8 + 1.6),
-                    life: 1, decay: Math.random() * 0.026 + 0.018, sz: Math.random() * 8 + 3 });
+        const fract = (v) => v - Math.floor(v);
+        const hash = (x, y) => fract(Math.sin(x * 127.1 + y * 311.7) * 43758.5453123);
+        const noise = (x, y) => {
+            const ix = Math.floor(x);
+            const iy = Math.floor(y);
+            const fx = x - ix;
+            const fy = y - iy;
+            const ux = fx * fx * (3 - 2 * fx);
+            const uy = fy * fy * (3 - 2 * fy);
+            const a = hash(ix, iy);
+            const b = hash(ix + 1, iy);
+            const c = hash(ix, iy + 1);
+            const d = hash(ix + 1, iy + 1);
+            return (a + (b - a) * ux) * (1 - uy) + (c + (d - c) * ux) * uy;
+        };
+        const fbm = (x, y) => {
+            let v = 0;
+            let a = 0.5;
+            let sx = x;
+            let sy = y;
+            for (let i = 0; i < 4; i++) {
+                v += noise(sx, sy) * a;
+                const rx = sx * 0.82 - sy * 0.57;
+                const ry = sx * 0.57 + sy * 0.82;
+                sx = rx * 2.03 + 17.7;
+                sy = ry * 2.03 + 9.2;
+                a *= 0.5;
+            }
+            return v;
+        };
+        const manifold = (x, y, t) => {
+            const sx = x / Math.max(W, 1);
+            const sy = y / Math.max(H, 1);
+            const qx = fbm(sx * 1.8 + t * 0.018, sy * 1.8 + 4.7);
+            const qy = fbm(sx * 1.8 + 6.2, sy * 1.8 - t * 0.014);
+            const rx = fbm(sx * 3.3 + qx * 2.4 + 1.7, sy * 3.3 + qy * 2.4 + t * 0.026);
+            const ry = fbm(sx * 3.3 + qx * 2.4 + 8.3, sy * 3.3 + qy * 2.4 - t * 0.022);
+            return {
+                x: x + (qx - 0.5) * W * 0.052 + (rx - 0.5) * W * 0.024,
+                y: y + (qy - 0.5) * H * 0.072 + (ry - 0.5) * H * 0.034,
+            };
+        };
+        const potential = (x, y, t) => {
+            const p = manifold(x, y, t);
+            return fbm(p.x * 0.0022, p.y * 0.0026 + t * 0.012) * 0.72 +
+                fbm(p.x * 0.0051 + 11.6, p.y * 0.0048 - t * 0.01) * 0.28;
+        };
+        const flowAt = (x, y, t) => {
+            const e = 18;
+            const px0 = potential(x - e, y, t);
+            const px1 = potential(x + e, y, t);
+            const py0 = potential(x, y - e, t);
+            const py1 = potential(x, y + e, t);
+            let vx = py1 - py0;
+            let vy = -(px1 - px0);
+            const centerPull = (x - W * 0.44) / Math.max(W, 1);
+            vx += 0.022;
+            vy -= centerPull * 0.018;
+            const len = Math.hypot(vx, vy) || 1;
+            return { x: vx / len, y: vy / len };
+        };
+
+        const buildMotes = () => {
+            const count = Math.min(145, Math.max(82, Math.floor((W * H) / 15500)));
+            motes = Array.from({ length: count }, (_, i) => {
+                const phase = phases[i % phases.length];
+                return {
+                    phase,
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    seed: Math.random() * 1000,
+                    speed: 0.18 + Math.random() * 0.42,
+                    size: 0.45 + Math.random() * 1.45,
+                    alpha: 0.16 + Math.random() * 0.24,
+                    trail: Math.random() > 0.82,
+                };
+            });
+            metalNodes = Array.from({ length: 7 }, (_, i) => ({
+                a: -0.55 + i * TAU / 7,
+                rx: W * (0.24 + Math.random() * 0.035),
+                ry: H * (0.125 + Math.random() * 0.024),
+                phase: Math.random() * TAU,
+            }));
+            branches = [];
+            for (let i = 0; i < 4; i++) {
+                addBranch(W * (0.18 + i * 0.08), H * (0.58 + Math.random() * 0.12), -0.72 + Math.random() * 0.32, 0, 0.55);
             }
         };
-        const spawnRipple = (x, y) => rips.push({ x, y, r: 2, life: 1 });
-        const spawnEmber  = (ts) => {
-            if (ts - lastEmber < 280) return; lastEmber = ts;
-            embs.push({ x: Math.random() * W, y: H + 6,
-                vx: (Math.random() - 0.5) * 0.55, vy: -(Math.random() * 0.7 + 0.35),
-                life: 1, decay: Math.random() * 0.003 + 0.0018, sz: Math.random() * 1.8 + 0.8 });
+
+        const addHeat = (x, y, power = 1) => {
+            const now = performance.now();
+            if (now - lastHeat < 58 && power < 1.4) return;
+            lastHeat = now;
+            heatImpulses.push({ x, y, life: 1, radius: 90 + power * 42, power });
+            if (heatImpulses.length > 14) heatImpulses.shift();
+            sediments.push({ x, y: y + 18, life: 1, size: 28 + Math.random() * 36, seed: Math.random() * 1000 });
+            if (sediments.length > 44) sediments.shift();
+            if (branches.length < 72 && Math.random() > 0.35) {
+                const f = flowAt(x, y, performance.now() * 0.001);
+                addBranch(x - f.x * 14, y - f.y * 14, Math.atan2(f.y, f.x), 0, 0.42 + Math.random() * 0.34);
+            }
         };
 
-        const onMove  = (e) => spawnFire(e.clientX, e.clientY, 4);
+        const addBranch = (x, y, angle, depth = 0, life = 1) => {
+            branches.push({
+                x, y, angle, depth, life,
+                progress: 0,
+                split: false,
+                len: (42 + Math.random() * 28) * Math.pow(0.68, depth),
+                bend: (Math.random() - 0.5) * 0.28,
+                seed: Math.random() * 1000,
+            });
+        };
+
+        const spawnFire = (x, y, n = 4) => {
+            addHeat(x, y, 1);
+            for (let i = 0; i < n; i++) {
+                fps.push({
+                    x: x + (Math.random() - 0.5) * 14,
+                    y,
+                    vx: (Math.random() - 0.5) * 1.4,
+                    vy: -(Math.random() * 2.8 + 1.6),
+                    life: 1,
+                    decay: Math.random() * 0.026 + 0.018,
+                    sz: Math.random() * 8 + 3,
+                });
+            }
+        };
+
+        const spawnRipple = (x, y) => {
+            rips.push({ x, y, r: 2, life: 1 });
+            addHeat(x, y, 1.6);
+        };
+
+        const spawnEmber = (ts) => {
+            if (ts - lastEmber < 280) return;
+            lastEmber = ts;
+            embs.push({
+                x: Math.random() * W,
+                y: H + 6,
+                vx: (Math.random() - 0.5) * 0.55,
+                vy: -(Math.random() * 0.7 + 0.35),
+                life: 1,
+                decay: Math.random() * 0.003 + 0.0018,
+                sz: Math.random() * 1.8 + 0.8,
+            });
+        };
+
+        const resize = () => {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = Math.round(W * dpr);
+            canvas.height = Math.round(H * dpr);
+            canvas.style.width = `${W}px`;
+            canvas.style.height = `${H}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            buildMotes();
+        };
+        resize();
+        window.addEventListener("resize", resize);
+
+        const onMove = (e) => {
+            pointer.tx = e.clientX;
+            pointer.ty = e.clientY;
+            pointer.active = true;
+            spawnFire(e.clientX, e.clientY, 4);
+        };
+        const onLeave = () => { pointer.active = false; };
         const onClick = (e) => spawnRipple(e.clientX, e.clientY);
         window.addEventListener("mousemove", onMove, { passive: true });
+        window.addEventListener("mouseleave", onLeave);
         window.addEventListener("click", onClick);
 
         let raf;
         const draw = (ts) => {
+            const dt = Math.min(32, ts - prevTs || 16);
+            prevTs = ts;
+            const t = ts * 0.001;
+
             ctx.clearRect(0, 0, W, H);
             spawnEmber(ts);
+            pointer.x += (pointer.tx - pointer.x) * 0.12;
+            pointer.y += (pointer.ty - pointer.y) * 0.12;
 
-            // embers
+            ctx.globalCompositeOperation = "screen";
+
+            // 水: invisible manifold direction made visible by thin streamlines.
+            for (let lane = 0; lane < 8; lane++) {
+                const yStart = H * (0.29 + lane * 0.052) + Math.sin(t * 0.26 + lane) * 18;
+                let x = W * 0.08;
+                let y = yStart;
+                const water = phases[0].rgb;
+                const grad = ctx.createLinearGradient(W * 0.06, 0, W * 0.66, 0);
+                grad.addColorStop(0, `rgba(${water[0]},${water[1]},${water[2]},0)`);
+                grad.addColorStop(0.35, `rgba(${water[0]},${water[1]},${water[2]},0.055)`);
+                grad.addColorStop(0.74, "rgba(244,240,234,0.038)");
+                grad.addColorStop(1, "rgba(244,240,234,0)");
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = lane % 3 === 0 ? 0.72 : 0.42;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                for (let step = 0; step < 34; step++) {
+                    const f = flowAt(x, y, t);
+                    x += f.x * 28;
+                    y += f.y * 22 + Math.sin(step * 0.52 + lane + t * 0.3) * 0.9;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // 火: cursor sparks inject warm impulses into the lower field.
+            heatImpulses = heatImpulses.filter((h) => h.life > 0.02);
+            heatImpulses.forEach((h) => {
+                h.life *= 0.962;
+                h.radius += 0.75;
+                const g = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, h.radius);
+                g.addColorStop(0, `rgba(255,180,92,${0.085 * h.life * h.power})`);
+                g.addColorStop(0.42, `rgba(200,69,58,${0.035 * h.life * h.power})`);
+                g.addColorStop(1, "rgba(200,69,58,0)");
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(h.x, h.y, h.radius, 0, TAU);
+                ctx.fill();
+            });
+
+            // 土: slow sediment, visible as warm residue after motion.
+            sediments = sediments.filter((s) => s.life > 0.015);
+            sediments.forEach((s) => {
+                s.life *= 0.988;
+                const wobble = Math.sin(t * 0.35 + s.seed) * 2.2;
+                const g = ctx.createRadialGradient(s.x + wobble, s.y, 0, s.x + wobble, s.y, s.size);
+                g.addColorStop(0, `rgba(210,185,130,${s.life * 0.035})`);
+                g.addColorStop(0.55, `rgba(255,132,72,${s.life * 0.018})`);
+                g.addColorStop(1, "rgba(210,185,130,0)");
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(s.x + wobble, s.y, s.size, 0, TAU);
+                ctx.fill();
+            });
+
+            // 木: binary growth, small and topological rather than leafy.
+            branches = branches.filter((b) => b.life > 0.025);
+            branches.forEach((b) => {
+                b.progress = Math.min(1, b.progress + dt * 0.00135 / (1 + b.depth * 0.32));
+                b.life *= 0.9975;
+                const drift = flowAt(b.x, b.y, t);
+                const angle = b.angle + b.bend * Math.sin(t * 0.54 + b.seed) + Math.atan2(drift.y, drift.x) * 0.12;
+                const grow = Math.sin(b.progress * Math.PI * 0.5);
+                const ex = b.x + Math.cos(angle) * b.len * grow;
+                const ey = b.y + Math.sin(angle) * b.len * grow;
+                const alpha = (0.24 - b.depth * 0.03) * b.life;
+                ctx.strokeStyle = `rgba(102,220,150,${Math.max(0.025, alpha)})`;
+                ctx.lineWidth = Math.max(0.42, 1.08 - b.depth * 0.15);
+                ctx.beginPath();
+                ctx.moveTo(b.x, b.y);
+                ctx.quadraticCurveTo(
+                    b.x + Math.cos(angle + b.bend) * b.len * grow * 0.48,
+                    b.y + Math.sin(angle + b.bend) * b.len * grow * 0.48,
+                    ex,
+                    ey
+                );
+                ctx.stroke();
+                if (!b.split && b.progress > 0.72 && b.depth < 4 && branches.length < 96) {
+                    b.split = true;
+                    const fork = 0.42 + noise(b.seed, b.depth) * 0.24;
+                    addBranch(ex, ey, angle - fork, b.depth + 1, b.life * 0.82);
+                    addBranch(ex, ey, angle + fork * 0.82, b.depth + 1, b.life * 0.76);
+                }
+            });
+
+            // 金: a quiet constraint field, holding the manifold in an editorial ellipse.
+            const mcx = W * 0.54;
+            const mcy = H * 0.49;
+            ctx.strokeStyle = "rgba(238,236,255,0.032)";
+            ctx.lineWidth = 0.7;
+            for (let i = 0; i < 2; i++) {
+                ctx.beginPath();
+                ctx.ellipse(mcx, mcy, W * (0.27 + i * 0.035), H * (0.16 + i * 0.02), -0.05 + i * 0.04, 0, TAU);
+                ctx.stroke();
+            }
+            metalNodes.forEach((node, i) => {
+                const a = node.a + t * (0.045 + i * 0.004);
+                const x = mcx + Math.cos(a) * node.rx;
+                const y = mcy + Math.sin(a + node.phase * 0.04) * node.ry;
+                const pulse = 0.58 + Math.sin(t * 1.4 + node.phase) * 0.28;
+                ctx.strokeStyle = `rgba(238,236,255,${0.08 + pulse * 0.08})`;
+                ctx.lineWidth = 0.62;
+                ctx.beginPath();
+                ctx.moveTo(x, y - 4.2);
+                ctx.lineTo(x + 4.2, y);
+                ctx.lineTo(x, y + 4.2);
+                ctx.lineTo(x - 4.2, y);
+                ctx.closePath();
+                ctx.stroke();
+            });
+
+            // Particles are carried by water, brightened by fire, slowed by earth, edged by metal.
+            motes.forEach((m) => {
+                const f = flowAt(m.x, m.y, t + m.seed * 0.002);
+                let heat = 0;
+                heatImpulses.forEach((h) => {
+                    heat += Math.max(0, 1 - Math.hypot(m.x - h.x, m.y - h.y) / h.radius) * h.life * h.power;
+                });
+                const px = pointer.active ? Math.max(0, 1 - Math.hypot(pointer.x - m.x, pointer.y - m.y) / 230) : 0;
+                const earthDrag = m.phase.key === "earth" ? 0.34 : 1;
+                m.x += (f.x * m.speed * 28 + Math.sin(t + m.seed) * 0.24) * earthDrag * (1 + heat * 0.22);
+                m.y += (f.y * m.speed * 22 - 0.04 + Math.cos(t * 0.7 + m.seed) * 0.18) * earthDrag;
+                m.x += (m.x - pointer.x) * px * 0.012;
+                m.y += (m.y - pointer.y) * px * 0.012;
+                if (m.x < -30) m.x = W + 30;
+                if (m.x > W + 30) m.x = -30;
+                if (m.y < -30) m.y = H + 30;
+                if (m.y > H + 30) m.y = -30;
+
+                const [r, g, b] = m.phase.rgb;
+                const a = (m.alpha + heat * 0.18 + px * 0.18) * m.phase.alpha;
+                if (m.phase.key === "metal") {
+                    const arm = m.size * (2.4 + heat * 2.4 + px * 1.8);
+                    ctx.strokeStyle = `rgba(${r},${g},${b},${a * 0.9})`;
+                    ctx.lineWidth = 0.58;
+                    ctx.beginPath();
+                    ctx.moveTo(m.x - arm, m.y); ctx.lineTo(m.x + arm, m.y);
+                    ctx.moveTo(m.x, m.y - arm); ctx.lineTo(m.x, m.y + arm);
+                    ctx.stroke();
+                } else if (m.trail || m.phase.key === "water") {
+                    ctx.strokeStyle = `rgba(${r},${g},${b},${a * 0.45})`;
+                    ctx.lineWidth = 0.55;
+                    ctx.beginPath();
+                    ctx.moveTo(m.x - f.x * 12, m.y - f.y * 12);
+                    ctx.lineTo(m.x + f.x * 4, m.y + f.y * 4);
+                    ctx.stroke();
+                } else {
+                    ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+                    ctx.beginPath();
+                    ctx.arc(m.x, m.y, m.size + heat * 0.55 + px * 0.55, 0, TAU);
+                    ctx.fill();
+                }
+            });
+
+            // Original ambient embers.
             for (let i = embs.length - 1; i >= 0; i--) {
                 const e = embs[i];
-                e.x += e.vx + (Math.random() - 0.5) * 0.1; e.y += e.vy; e.life -= e.decay;
-                if (e.life <= 0 || e.y < -8) { embs.splice(i, 1); continue; }
+                e.x += e.vx + (Math.random() - 0.5) * 0.1;
+                e.y += e.vy;
+                e.life -= e.decay;
+                if (e.life <= 0 || e.y < -8) {
+                    embs.splice(i, 1);
+                    continue;
+                }
                 const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.sz * 2.5);
                 g.addColorStop(0, `rgba(255,210,130,${e.life})`);
                 g.addColorStop(0.5, `rgba(200,69,58,${e.life * 0.45})`);
                 g.addColorStop(1, "rgba(200,69,58,0)");
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(e.x, e.y, e.sz * 2.5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.sz * 2.5, 0, TAU);
+                ctx.fill();
             }
-            // fire cursor
+
+            // Original cursor fire.
             for (let i = fps.length - 1; i >= 0; i--) {
                 const p = fps[i];
-                p.x += p.vx; p.y += p.vy; p.vy *= 0.97; p.vx *= 0.97; p.life -= p.decay; p.sz *= 0.965;
-                if (p.life <= 0) { fps.splice(i, 1); continue; }
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy *= 0.97;
+                p.vx *= 0.97;
+                p.life -= p.decay;
+                p.sz *= 0.965;
+                if (p.life <= 0) {
+                    fps.splice(i, 1);
+                    continue;
+                }
                 const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.sz);
                 g.addColorStop(0, `rgba(255,240,200,${p.life})`);
                 g.addColorStop(0.28, `rgba(255,155,55,${p.life * 0.8})`);
                 g.addColorStop(0.65, `rgba(200,69,58,${p.life * 0.4})`);
                 g.addColorStop(1, "rgba(200,69,58,0)");
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.sz, 0, TAU);
+                ctx.fill();
             }
-            // ripples
+
+            // Original click ripple.
             for (let i = rips.length - 1; i >= 0; i--) {
-                const r = rips[i]; r.r += 3.8; r.life = 1 - r.r / 150;
-                if (r.life <= 0) { rips.splice(i, 1); continue; }
+                const r = rips[i];
+                r.r += 3.8;
+                r.life = 1 - r.r / 150;
+                if (r.life <= 0) {
+                    rips.splice(i, 1);
+                    continue;
+                }
                 for (let j = 0; j < 3; j++) {
-                    const rr = r.r - j * 16; if (rr < 0) continue;
+                    const rr = r.r - j * 16;
+                    if (rr < 0) continue;
                     ctx.strokeStyle = `rgba(200,69,58,${r.life * (0.55 - j * 0.15)})`;
-                    ctx.lineWidth = 1 - j * 0.28; ctx.beginPath(); ctx.arc(r.x, r.y, rr, 0, Math.PI * 2); ctx.stroke();
+                    ctx.lineWidth = 1 - j * 0.28;
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, rr, 0, TAU);
+                    ctx.stroke();
                 }
             }
+
+            ctx.globalCompositeOperation = "source-over";
             raf = requestAnimationFrame(draw);
         };
         raf = requestAnimationFrame(draw);
@@ -189,6 +550,7 @@ const About = () => {
             cancelAnimationFrame(raf);
             window.removeEventListener("resize", resize);
             window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseleave", onLeave);
             window.removeEventListener("click", onClick);
         };
     }, []);
@@ -201,77 +563,146 @@ const About = () => {
         return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }, []);
 
-    /* ── 五行 Aurora — v3 ───────────────────────────────────────────────────
-       Zero particles. Five large elemental aurora orbs drift behind the name,
-       five silk ribbon streams cut through them, a breathing core pulses from
-       the name centre, and 金 metal cross-glints flash at irregular intervals.
-       mix-blend-mode:screen on the canvas lets all colours add light
-       on the pure-black background — genuine aurora layering effect.          */
+    /* ── 五行 field — v5: manifold flow + binary wood + metal constraint ─── */
     useEffect(() => {
         if (!nameReady) return;
         const canvas = nameVfxRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext("2d");
         const TAU = Math.PI * 2;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let W = 0, H = 0;
 
         const setSize = () => {
             const rect = canvas.getBoundingClientRect();
-            canvas.width  = Math.round(rect.width)  || window.innerWidth;
-            canvas.height = Math.round(rect.height) || window.innerHeight;
+            W = Math.round(rect.width) || window.innerWidth;
+            H = Math.round(rect.height) || window.innerHeight;
+            canvas.width  = Math.round(W * dpr);
+            canvas.height = Math.round(H * dpr);
+            canvas.style.width = `${W}px`;
+            canvas.style.height = `${H}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         };
         setSize();
-        const onResize = () => setSize();
-        window.addEventListener("resize", onResize);
+        let onResize;
 
-        // Anchor: left hero column
-        const CX = () => canvas.width  * 0.268;
-        const CY = () => canvas.height * 0.468;
+        const CSSX = () => W * 0.268;
+        const CSSY = () => H * 0.468;
 
-        // ══════════════════════════════════════════════════════════════════
-        // 五 AURA ORBS — aurora-style large radial gradients
-        // Each drifts on slow sine path; pulse alpha independently
-        // ══════════════════════════════════════════════════════════════════
-        const AURAS = [
-            // 水 Water — deep blue-indigo, wide, horizontal drift
-            { ox: -0.06, oy:  0.00, r: 360, rgb:[145,195,255], dSpd:0.000022, dAmp:0.09,  pSpd:0.00040, phase:0.00, maxA:0.058 },
-            // 火 Fire  — amber-orange, medium, rises and falls
-            { ox:  0.05, oy:  0.07, r: 270, rgb:[255,160, 60], dSpd:0.000034, dAmp:0.055, pSpd:0.00062, phase:1.80, maxA:0.052 },
-            // 木 Wood  — emerald, tall ellipse, grows rhythm
-            { ox: -0.10, oy: -0.05, r: 295, rgb:[100,215,138], dSpd:0.000018, dAmp:0.065, pSpd:0.00030, phase:3.60, maxA:0.045 },
-            // 金 Metal — silver-white, sharp, fast pulse
-            { ox:  0.08, oy: -0.03, r: 215, rgb:[215,215,245], dSpd:0.000048, dAmp:0.045, pSpd:0.00090, phase:5.40, maxA:0.070 },
-            // 土 Earth — warm amber, largest, very stable base
-            { ox:  0.00, oy:  0.04, r: 420, rgb:[210,185,130], dSpd:0.000012, dAmp:0.030, pSpd:0.00020, phase:0.90, maxA:0.038 },
+        const fract = (v) => v - Math.floor(v);
+        const hash = (x, y) => fract(Math.sin(x * 113.7 + y * 271.9) * 43758.5453);
+        const noise = (x, y) => {
+            const ix = Math.floor(x), iy = Math.floor(y);
+            const fx = x - ix, fy = y - iy;
+            const ux = fx * fx * (3 - 2 * fx);
+            const uy = fy * fy * (3 - 2 * fy);
+            const a = hash(ix, iy), b = hash(ix + 1, iy);
+            const c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+            return (a + (b - a) * ux) * (1 - uy) + (c + (d - c) * ux) * uy;
+        };
+        const fbm = (x, y) => {
+            let v = 0, a = 0.5, sx = x, sy = y;
+            for (let i = 0; i < 4; i++) {
+                v += noise(sx, sy) * a;
+                const rx = sx * 0.82 - sy * 0.57;
+                const ry = sx * 0.57 + sy * 0.82;
+                sx = rx * 2.03 + 11.7;
+                sy = ry * 2.03 + 5.4;
+                a *= 0.5;
+            }
+            return v;
+        };
+        const fieldPotential = (x, y, time) => {
+            const sx = x / Math.max(W, 1);
+            const sy = y / Math.max(H, 1);
+            const qx = fbm(sx * 1.5 + time * 0.016, sy * 1.5 + 4.7);
+            const qy = fbm(sx * 1.5 + 6.2, sy * 1.5 - time * 0.012);
+            return fbm(sx * 3.2 + qx * 2.8, sy * 2.6 + qy * 2.8) * 0.74 +
+                fbm(sx * 7.2 + 9.2, sy * 5.8 - time * 0.018) * 0.26;
+        };
+        const nameFlow = (x, y, time) => {
+            const e = 12;
+            const px0 = fieldPotential(x - e, y, time);
+            const px1 = fieldPotential(x + e, y, time);
+            const py0 = fieldPotential(x, y - e, time);
+            const py1 = fieldPotential(x, y + e, time);
+            let vx = py1 - py0 + 0.028;
+            let vy = -(px1 - px0) - (x - CSSX()) / Math.max(W, 1) * 0.06;
+            const len = Math.hypot(vx, vy) || 1;
+            return { x: vx / len, y: vy / len };
+        };
+
+        const phases = [
+            { key: "water", rgb: [128, 180, 255], dy: -52, amp: 18, freq: 0.0041, speed: 0.19, lw: 0.75, alpha: 0.18, phase: 0.1 },
+            { key: "wood",  rgb: [ 96, 218, 150], dy: -14, amp: 26, freq: 0.0032, speed: 0.14, lw: 0.62, alpha: 0.14, phase: 1.4 },
+            { key: "fire",  rgb: [255, 132,  70], dy:  16, amp: 15, freq: 0.0056, speed: 0.22, lw: 0.92, alpha: 0.22, phase: 2.6 },
+            { key: "earth", rgb: [216, 188, 128], dy:  48, amp:  9, freq: 0.0038, speed: 0.10, lw: 0.48, alpha: 0.13, phase: 3.8 },
+            { key: "metal", rgb: [238, 236, 255], dy: -82, amp:  8, freq: 0.0072, speed: 0.28, lw: 0.55, alpha: 0.16, phase: 5.0 },
         ];
 
-        // ══════════════════════════════════════════════════════════════════
-        // SILK RIBBONS — one per element, sine-wave path + gradient stroke
-        // ══════════════════════════════════════════════════════════════════
-        const RIBBONS = [
-            { dy: -42, amp: 26, freq: 0.0042, tSpd: 0.022, rgb:[145,195,255], lw:1.5, ph:0.00 }, // 水
-            { dy:  18, amp: 16, freq: 0.0060, tSpd:-0.018, rgb:[255,172, 70], lw:1.1, ph:1.20 }, // 火
-            { dy: -66, amp: 38, freq: 0.0031, tSpd: 0.014, rgb:[110,220,155], lw:0.9, ph:2.40 }, // 木
-            { dy:  42, amp: 11, freq: 0.0078, tSpd:-0.024, rgb:[222,220,248], lw:0.7, ph:3.60 }, // 金
-            { dy:  -8, amp: 20, freq: 0.0050, tSpd: 0.016, rgb:[215,195,142], lw:0.6, ph:4.80 }, // 土
-        ];
+        const motes = Array.from({ length: 108 }, (_, i) => ({
+            phase: i % phases.length,
+            seed: Math.random(),
+            lane: Math.floor(Math.random() * 3),
+            offset: (Math.random() - 0.5) * 22,
+            size: 0.55 + Math.random() * 1.55,
+            speed: 0.018 + Math.random() * 0.026,
+            metal: i % 17 === 0,
+        }));
 
-        // ══════════════════════════════════════════════════════════════════
-        // 金 METAL GLINTS — 4-armed star cross flashes (白虎 spark)
-        // ══════════════════════════════════════════════════════════════════
-        let glints   = [];
-        let gTimer   = 0;
-        const addGlint = (cx, cy) => {
-            const ang = Math.random() * TAU;
-            const rad = 60 + Math.random() * 250;
-            glints.push({
-                x: cx + Math.cos(ang) * rad,
-                y: cy + Math.sin(ang) * rad * 0.55,
-                life: 1,
-                sz: 2.8 + Math.random() * 3.5,
+        let glints = [];
+        let branches = [];
+        let sediments = [];
+        let glintTimer = 0;
+        let raf, prevTs = 0, t = 0;
+
+        const ribbonY = (p, x, time, lane = 0) =>
+            CSSY() + p.dy + lane * 13 +
+            Math.sin(x * p.freq + time * p.speed + p.phase + lane * 0.7) * p.amp +
+            Math.sin(x * p.freq * 0.43 - time * p.speed * 0.7 + p.phase) * p.amp * 0.28;
+
+        const drawDiamond = (x, y, size, alpha) => {
+            ctx.strokeStyle = `rgba(238,236,255,${alpha})`;
+            ctx.lineWidth = 0.65;
+            ctx.beginPath();
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x + size, y);
+            ctx.lineTo(x, y + size);
+            ctx.lineTo(x - size, y);
+            ctx.closePath();
+            ctx.stroke();
+        };
+
+        const addNameBranch = (x, y, angle, depth = 0, life = 1) => {
+            branches.push({
+                x, y, angle, depth, life,
+                progress: 0,
+                split: false,
+                len: (56 + Math.random() * 28) * Math.pow(0.68, depth),
+                bend: (Math.random() - 0.5) * 0.32,
+                seed: Math.random() * 1000,
             });
         };
 
-        let raf, prevTs = 0, t = 0;
+        const seedNameBranches = () => {
+            branches = [];
+            sediments = Array.from({ length: 14 }, (_, i) => ({
+                x: CSSX() - 260 + Math.random() * 560,
+                y: CSSY() + 72 + Math.random() * 58,
+                size: 42 + Math.random() * 70,
+                life: 0.55 + Math.random() * 0.45,
+                seed: i * 19.3 + Math.random() * 4,
+            }));
+            for (let i = 0; i < 5; i++) {
+                addNameBranch(CSSX() - 270 + i * 92, CSSY() + 50 + Math.random() * 22, -0.82 + Math.random() * 0.24, 0, 0.86);
+            }
+        };
+        seedNameBranches();
+        onResize = () => {
+            setSize();
+            seedNameBranches();
+        };
+        window.addEventListener("resize", onResize);
 
         const draw = (ts) => {
             const dt = ts - prevTs;
@@ -279,110 +710,244 @@ const About = () => {
             prevTs = ts;
             t += dt * 0.001; // seconds
 
-            const CW = canvas.width, CH = canvas.height;
-            const cx = CX(), cy = CY();
-            ctx.clearRect(0, 0, CW, CH);
+            const cx = CSSX(), cy = CSSY();
+            ctx.clearRect(0, 0, W, H);
+            ctx.globalCompositeOperation = "screen";
 
-            // ── LAYER 1: 土 Earth base — warm deep radial floor ────────────
-            // Extra large foundation orb so the whole name area has warmth
-            const floor = ctx.createRadialGradient(cx, cy, 0, cx, cy, 480);
-            floor.addColorStop(0,   `rgba(160,135,85,0.045)`);
-            floor.addColorStop(0.6, `rgba(160,135,85,0.018)`);
-            floor.addColorStop(1,   `rgba(160,135,85,0)`);
+            const floor = ctx.createRadialGradient(cx, cy, 0, cx, cy, 520);
+            floor.addColorStop(0,   "rgba(244,240,234,0.046)");
+            floor.addColorStop(0.42,"rgba(255,132,70,0.018)");
+            floor.addColorStop(1,   "rgba(0,0,0,0)");
             ctx.fillStyle = floor;
-            ctx.beginPath(); ctx.arc(cx, cy, 480, 0, TAU); ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx, cy, 520, 0, TAU);
+            ctx.fill();
 
-            // ── LAYER 2: Five aurora aura orbs ────────────────────────────
-            AURAS.forEach(a => {
-                // Slow 2D sinusoidal drift
-                const px = cx + (a.ox + Math.sin(t * a.dSpd * 1000 + a.phase)         * a.dAmp) * CW;
-                const py = cy + (a.oy + Math.cos(t * a.dSpd * 780  + a.phase + 1.1)   * a.dAmp * 0.55) * CH;
-                // Breathing alpha
-                const breathe = (Math.sin(t * a.pSpd * 1000 + a.phase * 1.4) + 1) * 0.5;
-                const alpha   = a.maxA * (0.48 + breathe * 0.52);
+            // 水: manifold flow direction, softly readable behind the name.
+            for (let lane = 0; lane < 9; lane++) {
+                let x = cx - 370;
+                let y = cy - 88 + lane * 24 + Math.sin(t * 0.28 + lane) * 10;
+                const grad = ctx.createLinearGradient(cx - 380, 0, cx + 440, 0);
+                grad.addColorStop(0, "rgba(128,180,255,0)");
+                grad.addColorStop(0.28, "rgba(128,180,255,0.105)");
+                grad.addColorStop(0.68, "rgba(244,240,234,0.055)");
+                grad.addColorStop(1, "rgba(128,180,255,0)");
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = lane % 3 === 0 ? 0.78 : 0.46;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                for (let s = 0; s < 34; s++) {
+                    const f = nameFlow(x, y, t);
+                    x += f.x * 24;
+                    y += f.y * 18;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
 
-                const [r, g, b] = a.rgb;
-                const gr = ctx.createRadialGradient(px, py, 0, px, py, a.r);
-                gr.addColorStop(0,    `rgba(${r},${g},${b},${alpha})`);
-                gr.addColorStop(0.38, `rgba(${r},${g},${b},${(alpha * 0.5).toFixed(3)})`);
-                gr.addColorStop(0.72, `rgba(${r},${g},${b},${(alpha * 0.15).toFixed(3)})`);
-                gr.addColorStop(1,    `rgba(${r},${g},${b},0)`);
-                ctx.fillStyle = gr;
-                ctx.beginPath(); ctx.arc(px, py, a.r, 0, TAU); ctx.fill();
+            // 土: sedimented warmth under the field, giving the system memory.
+            sediments.forEach((s) => {
+                const alpha = s.life * (0.52 + Math.sin(t * 0.38 + s.seed) * 0.16);
+                const sx = s.x + Math.sin(t * 0.18 + s.seed) * 4;
+                const g = ctx.createRadialGradient(sx, s.y, 0, sx, s.y, s.size);
+                g.addColorStop(0, `rgba(216,188,128,${alpha * 0.038})`);
+                g.addColorStop(0.54, `rgba(255,132,70,${alpha * 0.018})`);
+                g.addColorStop(1, "rgba(216,188,128,0)");
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(sx, s.y, s.size, 0, TAU);
+                ctx.fill();
             });
 
-            // ── LAYER 3: Central name glow — breathing white core ─────────
-            const breath = (Math.sin(t * 0.52) + 1) * 0.5;
-            const ng = ctx.createRadialGradient(cx, cy, 0, cx, cy, 300);
-            ng.addColorStop(0,    `rgba(255,255,255,${(0.042 + breath * 0.028).toFixed(3)})`);
-            ng.addColorStop(0.28, `rgba(255,255,255,${(0.014 + breath * 0.010).toFixed(3)})`);
-            ng.addColorStop(0.65, `rgba(255,255,255,${(0.004 + breath * 0.004).toFixed(3)})`);
-            ng.addColorStop(1,    `rgba(255,255,255,0)`);
-            ctx.fillStyle = ng;
-            ctx.beginPath(); ctx.arc(cx, cy, 300, 0, TAU); ctx.fill();
+            // 火: a slow warm impulse below the name, separate from the cursor fire.
+            const fireBreath = 0.58 + Math.sin(t * 1.05) * 0.28;
+            const fire = ctx.createRadialGradient(cx - 48, cy + 44, 0, cx - 48, cy + 44, 260);
+            fire.addColorStop(0, `rgba(255,132,70,${0.035 * fireBreath})`);
+            fire.addColorStop(0.42, `rgba(200,69,58,${0.016 * fireBreath})`);
+            fire.addColorStop(1, "rgba(200,69,58,0)");
+            ctx.fillStyle = fire;
+            ctx.beginPath();
+            ctx.arc(cx - 48, cy + 44, 260, 0, TAU);
+            ctx.fill();
 
-            // ── LAYER 4: Silk ribbon streams ──────────────────────────────
-            const x0 = cx - 295, x1 = cx + 295;
-            RIBBONS.forEach(rib => {
-                const [r, g, b] = rib.rgb;
-                const ribAlpha = 0.20 + Math.sin(t * 0.42 + rib.ph) * 0.10;
-
-                // Horizontal gradient → ribbon fades at both edges
-                const sg = ctx.createLinearGradient(x0, 0, x1, 0);
-                sg.addColorStop(0,    `rgba(${r},${g},${b},0)`);
-                sg.addColorStop(0.14, `rgba(${r},${g},${b},${(ribAlpha * 0.55).toFixed(3)})`);
-                sg.addColorStop(0.50, `rgba(${r},${g},${b},${ribAlpha.toFixed(3)})`);
-                sg.addColorStop(0.86, `rgba(${r},${g},${b},${(ribAlpha * 0.55).toFixed(3)})`);
-                sg.addColorStop(1,    `rgba(${r},${g},${b},0)`);
-
-                ctx.strokeStyle = sg;
-                ctx.lineWidth   = rib.lw;
-                ctx.lineCap     = "round";
+            phases.forEach((p, i) => {
+                const [r, g, b] = p.rgb;
+                const px = cx + Math.cos(t * (0.11 + i * 0.018) + p.phase) * (80 + i * 16);
+                const py = cy + Math.sin(t * (0.09 + i * 0.014) + p.phase) * (36 + i * 5);
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(-0.12 + i * 0.035);
+                ctx.scale(1.9, 0.48);
+                const aura = ctx.createRadialGradient(0, 0, 0, 0, 0, 260 + i * 18);
+                aura.addColorStop(0, `rgba(${r},${g},${b},${p.alpha * 0.28})`);
+                aura.addColorStop(0.45, `rgba(${r},${g},${b},${p.alpha * 0.08})`);
+                aura.addColorStop(1, `rgba(${r},${g},${b},0)`);
+                ctx.fillStyle = aura;
                 ctx.beginPath();
-                ctx.moveTo(x0, cy + rib.dy + Math.sin(x0 * rib.freq + t * rib.tSpd * 30 + rib.ph) * rib.amp);
-                for (let x = x0 + 4; x <= x1; x += 4) {
-                    ctx.lineTo(x, cy + rib.dy + Math.sin(x * rib.freq + t * rib.tSpd * 30 + rib.ph) * rib.amp);
+                ctx.arc(0, 0, 260 + i * 18, 0, TAU);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            const x0 = cx - Math.min(360, W * 0.34);
+            const x1 = cx + Math.min(430, W * 0.44);
+            phases.forEach((p) => {
+                const [r, g, b] = p.rgb;
+                for (let lane = 0; lane < 2; lane++) {
+                    const alpha = p.alpha * (lane === 0 ? 0.95 : 0.42) *
+                        (0.72 + Math.sin(t * 0.45 + p.phase + lane) * 0.18);
+                    const grad = ctx.createLinearGradient(x0, 0, x1, 0);
+                    grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+                    grad.addColorStop(0.18, `rgba(${r},${g},${b},${alpha * 0.42})`);
+                    grad.addColorStop(0.48, `rgba(${r},${g},${b},${alpha})`);
+                    grad.addColorStop(0.82, `rgba(${r},${g},${b},${alpha * 0.36})`);
+                    grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = p.lw * (lane === 0 ? 1 : 0.46);
+                    ctx.lineCap = "round";
+                    ctx.beginPath();
+                    for (let x = x0; x <= x1; x += 7) {
+                        const y = ribbonY(p, x, t, lane);
+                        if (x === x0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
                 }
+            });
+
+            // 木: binary branching, the strongest new motif from the five-phase brief.
+            branches = branches.filter((b) => b.life > 0.04);
+            branches.forEach((b) => {
+                b.progress = Math.min(1, b.progress + dt * 0.00115 / (1 + b.depth * 0.35));
+                b.life *= 0.9985;
+                const f = nameFlow(b.x, b.y, t);
+                const angle = b.angle + b.bend * Math.sin(t * 0.5 + b.seed) + Math.atan2(f.y, f.x) * 0.14;
+                const grow = Math.sin(b.progress * Math.PI * 0.5);
+                const ex = b.x + Math.cos(angle) * b.len * grow;
+                const ey = b.y + Math.sin(angle) * b.len * grow;
+                const a = Math.max(0.024, (0.31 - b.depth * 0.042) * b.life);
+                ctx.strokeStyle = `rgba(96,218,150,${a})`;
+                ctx.lineWidth = Math.max(0.42, 1.18 - b.depth * 0.15);
+                ctx.beginPath();
+                ctx.moveTo(b.x, b.y);
+                ctx.quadraticCurveTo(
+                    b.x + Math.cos(angle + b.bend) * b.len * grow * 0.46,
+                    b.y + Math.sin(angle + b.bend) * b.len * grow * 0.46,
+                    ex,
+                    ey
+                );
+                ctx.stroke();
+                if (b.progress > 0.96 && b.depth > 0) {
+                    ctx.fillStyle = `rgba(96,218,150,${a * 0.72})`;
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, Math.max(0.8, 1.7 - b.depth * 0.18), 0, TAU);
+                    ctx.fill();
+                }
+                if (!b.split && b.progress > 0.7 && b.depth < 4 && branches.length < 90) {
+                    b.split = true;
+                    const fork = 0.38 + noise(b.seed, b.depth) * 0.24;
+                    addNameBranch(ex, ey, angle - fork, b.depth + 1, b.life * 0.82);
+                    addNameBranch(ex, ey, angle + fork * 0.78, b.depth + 1, b.life * 0.76);
+                }
+            });
+            if (branches.length < 8) seedNameBranches();
+
+            motes.forEach((m) => {
+                const p = phases[m.phase];
+                const [r, g, b] = p.rgb;
+                const travel = (m.seed + t * m.speed * (p.key === "earth" ? 0.55 : 1)) % 1;
+                const x = x0 + (x1 - x0) * travel;
+                const f = nameFlow(x, ribbonY(p, x, t, m.lane), t);
+                const y = ribbonY(p, x, t, m.lane) + m.offset + f.y * 11;
+                const pulse = 0.62 + Math.sin(t * 2.4 + m.seed * 10) * 0.28;
+                const alpha = p.alpha * 1.25 * pulse;
+                if (m.metal) {
+                    drawDiamond(x, y, m.size * 3.2, alpha * 0.82);
+                } else {
+                    const dot = ctx.createRadialGradient(x, y, 0, x, y, m.size * 5);
+                    dot.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
+                    dot.addColorStop(1, `rgba(${r},${g},${b},0)`);
+                    ctx.fillStyle = dot;
+                    ctx.beginPath();
+                    ctx.arc(x, y, m.size * 5, 0, TAU);
+                    ctx.fill();
+                }
+            });
+
+            ctx.strokeStyle = "rgba(244,240,234,0.035)";
+            ctx.lineWidth = 0.7;
+            ctx.beginPath();
+            ctx.ellipse(cx + 90, cy - 8, 330, 118, -0.1, 0.05, TAU * 0.86);
+            ctx.stroke();
+
+            const phaseNodes = phases.map((p, i) => {
+                const angle = -0.88 + i * TAU / phases.length + t * 0.105;
+                return {
+                    p,
+                    x: cx + Math.cos(angle) * (245 + Math.sin(t * 0.3 + i) * 10),
+                    y: cy + Math.sin(angle) * (92 + Math.cos(t * 0.24 + i) * 5),
+                    angle,
+                };
+            });
+
+            phaseNodes.forEach((node, i) => {
+                const next = phaseNodes[(i + 1) % phaseNodes.length];
+                const [r, g, b] = node.p.rgb;
+                const grad = ctx.createLinearGradient(node.x, node.y, next.x, next.y);
+                grad.addColorStop(0, `rgba(${r},${g},${b},${node.p.alpha * 0.12})`);
+                grad.addColorStop(1, "rgba(244,240,234,0.018)");
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 0.55;
+                ctx.beginPath();
+                ctx.moveTo(node.x, node.y);
+                ctx.lineTo(next.x, next.y);
                 ctx.stroke();
             });
 
-            // ── LAYER 5: 金 Metal cross glints — 白虎 sparks ──────────────
-            gTimer++;
-            if (gTimer > 48 + Math.random() * 52) { gTimer = 0; addGlint(cx, cy); }
+            phaseNodes.forEach((node, i) => {
+                const [r, g, b] = node.p.rgb;
+                const breath = 0.72 + Math.sin(t * 1.3 + i) * 0.18;
+                const glow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 24);
+                glow.addColorStop(0, `rgba(${r},${g},${b},${node.p.alpha * breath})`);
+                glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 24, 0, TAU);
+                ctx.fill();
+                if (node.p.key === "metal") {
+                    drawDiamond(node.x, node.y, 4.2 + breath, node.p.alpha * 0.78);
+                } else {
+                    ctx.fillStyle = `rgba(${r},${g},${b},${node.p.alpha * 0.62})`;
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 1.3 + breath * 0.7, 0, TAU);
+                    ctx.fill();
+                }
+            });
+
+            glintTimer += dt;
+            if (glintTimer > 780 + Math.random() * 540) {
+                glintTimer = 0;
+                glints.push({
+                    x: cx - 180 + Math.random() * 520,
+                    y: cy - 108 + Math.random() * 190,
+                    life: 1,
+                    size: 3 + Math.random() * 3.4,
+                });
+            }
             glints = glints.filter(g => g.life > 0);
             glints.forEach(g => {
-                g.life -= 0.038;
-                if (g.life <= 0) return;
-                const ease  = Math.sin(g.life * Math.PI);  // 0→1→0 easing
-                const alpha = ease * 0.88;
-                const arm   = g.sz * ease * 4.2;
-
-                // Horizontal and vertical arms of the cross
-                ctx.strokeStyle = `rgba(238,236,255,${alpha})`;
-                ctx.lineWidth   = 0.9;
+                g.life -= 0.026;
+                const ease = Math.sin(g.life * Math.PI);
+                const arm = g.size * ease * 4.4;
+                ctx.strokeStyle = `rgba(238,236,255,${ease * 0.72})`;
+                ctx.lineWidth = 0.75;
                 ctx.beginPath();
                 ctx.moveTo(g.x - arm, g.y); ctx.lineTo(g.x + arm, g.y);
                 ctx.moveTo(g.x, g.y - arm); ctx.lineTo(g.x, g.y + arm);
                 ctx.stroke();
-
-                // 45° diagonal arms (shorter — star-of-Bethlehem feel)
-                const dArm = arm * 0.52;
-                ctx.strokeStyle = `rgba(238,236,255,${alpha * 0.55})`;
-                ctx.beginPath();
-                ctx.moveTo(g.x - dArm, g.y - dArm); ctx.lineTo(g.x + dArm, g.y + dArm);
-                ctx.moveTo(g.x + dArm, g.y - dArm); ctx.lineTo(g.x - dArm, g.y + dArm);
-                ctx.stroke();
-
-                // Bright core
-                ctx.globalAlpha = alpha;
-                ctx.fillStyle   = "rgb(248,246,255)";
-                ctx.beginPath(); ctx.arc(g.x, g.y, g.sz * 0.55 * ease, 0, TAU); ctx.fill();
-                // Soft outer halo
-                ctx.globalAlpha = alpha * 0.28;
-                ctx.beginPath(); ctx.arc(g.x, g.y, g.sz * 2.2 * ease, 0, TAU); ctx.fill();
-                ctx.globalAlpha = 1;
             });
 
+            ctx.globalCompositeOperation = "source-over";
             raf = requestAnimationFrame(draw);
         };
         raf = requestAnimationFrame(draw);
@@ -466,7 +1031,7 @@ const About = () => {
     const makeDrag = useCallback((ref, pipRef) => {
         const el = ref.current;
         if (!el) return;
-        let on = false, ss = 0, vel = 0, last = 0, raf;
+        let on = false, vel = 0, last = 0, raf;
 
         // Momentum coast after release
         const coast = () => {
@@ -487,7 +1052,7 @@ const About = () => {
 
         // Mouse
         const mDown = (e) => {
-            on = true; ss = el.scrollLeft; last = e.pageX;
+            on = true; last = e.pageX;
             cancelAnimationFrame(raf); el.style.cursor = "grabbing";
         };
         const mMove = (e) => {
@@ -500,7 +1065,7 @@ const About = () => {
 
         // Touch
         const tStart = (e) => {
-            on = true; ss = el.scrollLeft; last = e.touches[0].clientX;
+            on = true; last = e.touches[0].clientX;
             cancelAnimationFrame(raf);
         };
         const tMove = (e) => {
@@ -616,28 +1181,49 @@ const About = () => {
                     </div>
                 </div>
 
-                {/* RIGHT: photo — 白虎 metal frame */}
+                {/* RIGHT: photo — 白虎 / metal mirror */}
                 <div className="ab-hero-r">
+                    <div className="ab-portrait-system" aria-hidden="true">
+                        <span className="ab-orbit ab-orbit-a" />
+                        <span className="ab-orbit ab-orbit-b" />
+                        <span className="ab-orbit ab-orbit-c" />
+                    </div>
                     <div
                         className={`ab-photo-frame${photoReady ? " ab-photo-ready" : ""}`}
                         ref={photoRef}
                         onMouseMove={onPhotoMove}
                         onMouseLeave={onPhotoLeave}
                     >
-                        {/* Metal corner brackets — 白虎 */}
-                        <div className="ab-corner ab-corner-tl" />
-                        <div className="ab-corner ab-corner-tr" />
-                        <div className="ab-corner ab-corner-bl" />
-                        <div className="ab-corner ab-corner-br" />
+                        <div className="ab-photo-mark ab-photo-mark-top">Metal Phase / 04</div>
+                        <div className="ab-photo-mark ab-photo-mark-side">Self-Observation</div>
 
-                        <img src="/assets/WechatIMG371.jpeg" alt="Xingrui Gu" className="ab-photo-img" />
+                        <div className="ab-photo-core">
+                            {/* Metal corner brackets — 白虎 */}
+                            <div className="ab-corner ab-corner-tl" />
+                            <div className="ab-corner ab-corner-tr" />
+                            <div className="ab-corner ab-corner-bl" />
+                            <div className="ab-corner ab-corner-br" />
 
-                        {/* Metallic sheen sweep on hover */}
-                        <div className="ab-photo-sheen" />
+                            <img src="/assets/WechatIMG371.jpeg" alt="Xingrui Gu" className="ab-photo-img" />
+
+                            <div className="ab-photo-vignette" />
+                            <div className="ab-photo-grain" />
+                            <div className="ab-photo-scan" />
+                            <div className="ab-photo-rim ab-photo-rim-l" />
+                            <div className="ab-photo-rim ab-photo-rim-r" />
+
+                            {/* Metallic sheen sweep on hover */}
+                            <div className="ab-photo-sheen" />
+                        </div>
+
+                        <div className="ab-photo-ruler ab-photo-ruler-l" />
+                        <div className="ab-photo-ruler ab-photo-ruler-r" />
                     </div>
-                    <span className={`ab-affil${subReady ? " ab-sub-in" : ""}`}>
-                        BAIR Lab · UC Berkeley
-                    </span>
+                    <div className={`ab-affil ab-portrait-caption${subReady ? " ab-sub-in" : ""}`}>
+                        <span className="ab-cap-kicker">X.G / Self-Observation</span>
+                        <span className="ab-cap-main">BAIR Lab · UC Berkeley</span>
+                        <span className="ab-cap-sub">Machine Learning / Cognition / Agents</span>
+                    </div>
                 </div>
 
                 {/* Scroll cue */}

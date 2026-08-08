@@ -1,10 +1,3 @@
-/*
-  ⚠️  Add to public/index.html <head>:
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;0,500;1,200&display=swap" rel="stylesheet">
-*/
-
 /* ── TOKENS ─────────────────────────────────────────────────────────────── */
 .hm-root {
     --hero-bg:   #0F0F0F;
@@ -13,11 +6,24 @@
     --text-body: #1A1A1A;
     --muted:     #888890;
     --rule:      #C8C8CC;
-    --accent:    #F2F2F2;
+
+    /* One accent, one meaning: 火 ember — CTA / live-state / ignition only */
+    --ember:     #FF7A3C;
+    --ember-deep:#C8453A;
+    --hot:       #FFE0A0;
+
+    /* Type */
+    --font-serif: "Cormorant Garamond", Georgia, serif;
+    --font-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /* Motion */
+    --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
     background-color: var(--body-bg);
     color: var(--text-body);
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.6;
     min-height: 100vh;
@@ -37,21 +43,21 @@
 
     *, *::before, *::after { box-sizing: border-box; }
     img { display: block; max-width: 100%; }
-    button { appearance: none; border: none; background: none; cursor: pointer; font: inherit; }
+    button { appearance: none; border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
     a { text-decoration: none; color: inherit; cursor: pointer; }
 }
 
-/* ── 1. CURSOR ORB ─────────────────────────────────────────────────────── */
+/* ── 1. CURSOR ORB (transform-driven, lerped in JS) ────────────────────── */
 .hm-orb {
     position: fixed;
+    top: 0;
+    left: 0;
     width: 640px;
     height: 640px;
     border-radius: 50%;
-    transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 2;
-    will-change: left, top;
-    transition: left 0.07s linear, top 0.07s linear;
+    will-change: transform;
     background: radial-gradient(
                     circle at center,
                     rgba(255,255,255,0.14) 0%,
@@ -59,6 +65,8 @@
                     transparent 66%
     );
     mix-blend-mode: screen;
+
+    @media (hover: none) { display: none; }
 }
 
 /* ── HERO ───────────────────────────────────────────────────────────────── */
@@ -87,7 +95,6 @@
     object-fit: cover;
     transform: scale(1.12);
     will-change: transform;
-    /* Start slightly above so parallax downward reveals more */
     transform-origin: center center;
 }
 
@@ -95,7 +102,6 @@
 .hm-overlay-grad {
     position: absolute;
     inset: 0;
-    /* Darken bottom heavily so text is readable, keep top more video-visible */
     background: linear-gradient(
                     to bottom,
                     rgba(10,10,10,0.25)  0%,
@@ -115,6 +121,15 @@
     );
 }
 
+/* Long-press ember layer (火种) */
+.hm-press-embers {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
 /* ── NAV ────────────────────────────────────────────────────────────────── */
 .hm-nav {
     position: fixed;
@@ -124,13 +139,28 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 3.5rem;
-    /* Frosted glass nav */
-    backdrop-filter: blur(0px);
-    transition: backdrop-filter 0.4s ease, background 0.4s ease;
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
+
+    &--light {
+        background: rgba(232, 232, 232, 0.72);
+        backdrop-filter: blur(12px) saturate(1.4);
+        -webkit-backdrop-filter: blur(12px) saturate(1.4);
+
+        .hm-logo img { filter: none; }
+        .hm-nav-link {
+            color: rgba(15, 15, 15, 0.55);
+            &:hover { color: #0F0F0F; }
+        }
+        .hm-nav-kbd {
+            color: rgba(15, 15, 15, 0.4);
+            border-color: rgba(15, 15, 15, 0.2);
+        }
+    }
 }
 
 .hm-logo img {
     width: 34px;
+    height: 34px;
     filter: brightness(0) invert(1);   /* white logo on dark hero */
     transition: filter 0.4s ease;
 }
@@ -148,7 +178,21 @@
     color: rgba(255,255,255,0.7);
     transition: color 0.22s ease;
     cursor: pointer;
+    padding: 0;
     &:hover { color: #fff; }
+}
+
+.hm-nav-kbd {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 5px;
+    padding: 0.2rem 0.45rem;
+    font-family: var(--font-sans);
+    transition: color 0.4s ease, border-color 0.4s ease;
+
+    @media (hover: none) { display: none; }
 }
 
 /* ── SCRAMBLE HEADLINE ─────────────────────────────────────────────────── */
@@ -168,8 +212,7 @@
 
 /* Line 1: XINGRUI */
 .hm-hl-line1 {
-    font-family: "Cormorant Garamond", Georgia, serif;
-    /* Massive display — nearly full viewport width */
+    font-family: var(--font-serif);
     font-size: clamp(80px, 14vw, 200px);
     font-weight: 200;
     line-height: 0.88;
@@ -177,7 +220,6 @@
     letter-spacing: -0.02em;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    /* Scramble uses monospace feel — keep layout stable */
 }
 
 /* Line 2: GU — with solid + outline ghost layered */
@@ -185,23 +227,23 @@
     position: relative;
     display: flex;
     align-items: baseline;
-    gap: 0;
     line-height: 0.88;
 }
 
 .hm-hl-gu {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: clamp(80px, 14vw, 200px);
     font-weight: 200;
     color: #F0EDE8;
     letter-spacing: -0.02em;
     position: relative;
     z-index: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 /* Outline ghost — offset right for depth */
 .hm-hl-ghost {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: clamp(80px, 14vw, 200px);
     font-weight: 200;
     color: transparent;
@@ -271,6 +313,8 @@
 }
 
 .hm-btn-primary {
+    position: relative;
+    overflow: hidden;
     padding: 0.75rem 2rem;
     background: #F0EDE8;
     color: #0F0F0F;
@@ -279,13 +323,34 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     transition:
-            transform    0.45s cubic-bezier(0.23,1,0.32,1),
-            background   0.22s ease,
-            color        0.22s ease;
+            transform  0.6s var(--ease-spring),
+            background 0.22s ease,
+            color      0.22s ease;
     will-change: transform;
 
     &:hover {
-        background: #fff;
+        background: var(--ember);
+        color: #0F0F0F;
+    }
+
+    /* 火种 fuse — fills over 620ms while long-pressing */
+    .hm-btn-fuse {
+        position: absolute;
+        left: 0; bottom: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, var(--ember-deep), var(--ember), var(--hot));
+        transform: scaleX(0);
+        transform-origin: left;
+        pointer-events: none;
+    }
+
+    &.hm-btn-pressing {
+        background: var(--ember);
+        .hm-btn-fuse {
+            transform: scaleX(1);
+            transition: transform 0.62s linear;
+        }
     }
 }
 
@@ -297,15 +362,21 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     transition:
-            transform      0.45s cubic-bezier(0.23,1,0.32,1),
-            border-color   0.22s ease,
-            color          0.22s ease;
+            transform    0.6s var(--ease-spring),
+            border-color 0.22s ease,
+            color        0.22s ease;
     will-change: transform;
 
     &:hover {
         border-color: rgba(255,255,255,0.75);
         color: #fff;
     }
+}
+
+/* While magnetised: track the cursor linearly (spring only on release) */
+.hm-btn--mag {
+    transition: transform 0.12s linear, background 0.22s ease,
+                color 0.22s ease, border-color 0.22s ease;
 }
 
 /* ── SCROLL CUE ────────────────────────────────────────────────────────── */
@@ -347,8 +418,8 @@
     opacity: 0;
     transform: translateY(28px);
     transition:
-            opacity   0.9s cubic-bezier(0.22,1,0.36,1),
-            transform 0.9s cubic-bezier(0.22,1,0.36,1);
+            opacity   0.9s var(--ease-soft),
+            transform 0.9s var(--ease-soft);
 
     &.hm-in {
         opacity: 1;
@@ -362,7 +433,6 @@
     background: #1A1A1A;
     overflow: hidden;
     padding: 1rem 0;
-    /* Bridges hero ↔ body */
 }
 
 .hm-marquee {
@@ -381,7 +451,6 @@
     letter-spacing: 0.26em;
     color: rgba(255,255,255,0.45);
     text-transform: uppercase;
-    margin-right: 0;
 }
 
 @keyframes marqueeRoll {
@@ -389,15 +458,45 @@
     to   { transform: translateX(-33.333%); }
 }
 
+/* ══ MANIFESTO ══════════════════════════════════════════════════════════ */
+.hm-manifesto {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 9rem 5rem 4rem;
+}
+
+.hm-mf-idx {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2.2rem;
+}
+
+.hm-mf-line {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4.4vw, 3.9rem);
+    font-weight: 300;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    color: var(--text-body);
+    max-width: 22ch;
+
+    em {
+        font-style: italic;
+        font-weight: 400;
+    }
+}
+
 /* ══ STATS BAR ══════════════════════════════════════════════════════════ */
 .hm-stats {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 5rem 5rem;
+    padding: 4rem 5rem 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
 }
 
 .hm-stat {
@@ -407,12 +506,13 @@
 }
 
 .hm-stat-n {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: clamp(3rem, 5vw, 5.5rem);
     font-weight: 300;
     color: var(--text-body);
     line-height: 1;
     letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
 }
 
 .hm-stat-l {
@@ -446,7 +546,7 @@
 }
 
 .hm-work-label {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 2rem;
     font-weight: 400;
     color: var(--text-body);
@@ -469,7 +569,7 @@
     user-select: none;
 }
 
-/* ── 6. Momentum gallery ── */
+/* ── Momentum gallery ── */
 .hm-gallery {
     overflow-x: scroll;
     overflow-y: hidden;
@@ -477,7 +577,7 @@
     user-select: none;
     scrollbar-width: none;
     padding: 3.5rem 5rem 2rem;
-    /* Edge fade */
+    -webkit-overflow-scrolling: touch;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 93%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, black 4%, black 93%, transparent 100%);
 
@@ -499,10 +599,15 @@
     flex-shrink: 0;
     cursor: pointer;
 
-    &:hover {
+    &:focus-visible {
+        outline: 2px solid var(--ember);
+        outline-offset: 6px;
+    }
+
+    &:hover, &:focus-visible {
         .hm-card-img { transform: scale(1.06); filter: grayscale(0%) brightness(0.7); }
         .hm-card-hover { clip-path: inset(0% 0% 0% 0%); }
-        .hm-card-arr { transform: translate(5px, -2px); }
+        .hm-card-arr { transform: translate(5px, -2px); color: var(--ember); }
     }
 }
 
@@ -514,7 +619,7 @@
     background: #1A1A1A;
 }
 
-/* 7. Clip-path slide-up hover reveal */
+/* Clip-path slide-up hover reveal */
 .hm-card-img {
     width: 100%;
     height: 100%;
@@ -522,7 +627,7 @@
     object-position: center;
     filter: grayscale(18%) brightness(0.92);
     transition:
-            transform 0.55s cubic-bezier(0.22,1,0.36,1),
+            transform 0.55s var(--ease-soft),
             filter    0.55s ease;
     will-change: transform;
     display: block;
@@ -541,9 +646,8 @@
     flex-direction: column;
     justify-content: flex-end;
     padding: 1.6rem 1.4rem;
-    /* Clip from bottom — hidden by default, slides up on hover */
     clip-path: inset(100% 0% 0% 0%);
-    transition: clip-path 0.52s cubic-bezier(0.22,1,0.36,1);
+    transition: clip-path 0.52s var(--ease-soft);
 }
 
 .hm-card-desc {
@@ -565,13 +669,12 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 0 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--rule);
-    padding-bottom: 1rem;
 }
 
 .hm-card-num {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 0.82rem;
     color: var(--muted);
     flex-shrink: 0;
@@ -581,7 +684,7 @@
 .hm-card-meta { flex: 1; min-width: 0; }
 
 .hm-card-title {
-    font-family: "Cormorant Garamond", Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 1.15rem;
     font-weight: 500;
     color: var(--text-body);
@@ -605,7 +708,116 @@
     font-size: 1rem;
     color: var(--muted);
     flex-shrink: 0;
-    transition: transform 0.28s ease;
+    transition: transform 0.28s ease, color 0.28s ease;
+}
+
+/* ══ ABOUT TEASER — a spark of the Five Phases ══════════════════════════ */
+.hm-about-teaser {
+    position: relative;
+    background: #090909;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: 2px solid var(--ember);
+        outline-offset: -2px;
+    }
+}
+
+.hm-teaser-embers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.9;
+}
+
+.hm-teaser-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 8rem 5rem;
+    transition: transform 0.7s var(--ease-soft);
+
+    .hm-about-teaser:hover & { transform: translateX(10px); }
+
+    .hm-mf-idx { color: rgba(255, 255, 255, 0.35); }
+}
+
+.hm-teaser-line {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: #E8E4DE;
+    max-width: 26ch;
+
+    em { font-style: italic; color: var(--hot); }
+}
+
+.hm-teaser-cta {
+    display: inline-block;
+    margin-top: 2.6rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ember);
+    border-bottom: 1px solid rgba(255, 122, 60, 0.35);
+    padding-bottom: 0.4rem;
+    transition: border-color 0.3s ease;
+
+    .hm-about-teaser:hover & { border-color: var(--ember); }
+}
+
+/* ══ FOOTER CTA ═════════════════════════════════════════════════════════ */
+.hm-footer-cta {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 7rem 5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.hm-footer-big {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-body);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    width: fit-content;
+    transition: color 0.3s ease;
+
+    .hm-footer-big-arr {
+        font-size: 0.55em;
+        transition: transform 0.4s var(--ease-out), color 0.3s ease;
+    }
+
+    &:hover {
+        color: var(--ember-deep);
+        .hm-footer-big-arr { transform: translate(10px, -4px); color: var(--ember); }
+    }
+}
+
+.hm-copy-email {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: fit-content;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.35rem;
+    transition: color 0.25s ease, border-color 0.25s ease;
+
+    &:hover { color: var(--text-body); border-color: var(--text-body); }
 }
 
 /* ══ FOOTER ═════════════════════════════════════════════════════════════ */
@@ -632,4 +844,75 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--muted);
+}
+
+/* ══ TOAST ══════════════════════════════════════════════════════════════ */
+.hm-toast {
+    position: fixed;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translate(-50%, 12px);
+    z-index: 10001;
+    background: #141416;
+    color: #EDEAE4;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.4rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 122, 60, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+
+    &--on {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* ══ RESPONSIVE ═════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .hm-nav { padding: 1.2rem 1.4rem; }
+    .hm-nav-r { gap: 1.4rem; }
+    .hm-headline { padding: 0 1.4rem 1rem; }
+    .hm-hero-sub { padding: 1.2rem 1.4rem 0; flex-wrap: wrap; gap: 0.6rem; }
+    .hm-ctas { padding: 1.6rem 1.4rem 3rem; }
+    .hm-scroll-cue { right: 1.4rem; }
+    .hm-manifesto { padding: 6rem 1.4rem 3rem; }
+    .hm-stats { padding: 3rem 1.4rem 4rem; flex-wrap: wrap; }
+    .hm-stats-div { display: none; }
+    .hm-stat { flex: 1 1 40%; }
+    .hm-work-hd { padding: 0 1.4rem 2rem; }
+    .hm-gallery { padding: 2.5rem 1.4rem 2rem; }
+    .hm-card { width: min(80vw, 340px); }
+    .hm-teaser-inner { padding: 5rem 1.4rem; }
+    .hm-footer-cta { padding: 5rem 1.4rem 3rem; }
+    .hm-footer { padding: 2rem 1.4rem; }
+}
+
+/* ══ REDUCED MOTION ═════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .hm-mq-track,
+    .hm-scroll-line { animation: none; }
+
+    .hm-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .hm-headline,
+    .hm-hero-sub,
+    .hm-ctas {
+        transition-duration: 0.01s;
+    }
+
+    .hm-video { display: none; } /* poster + overlays remain */
+    .hm-orb, .hm-press-embers, .hm-teaser-embers { display: none; }
+
+    .hm-card-img,
+    .hm-card-hover,
+    .hm-teaser-inner { transition: none; }
 }
