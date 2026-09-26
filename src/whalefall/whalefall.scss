@@ -1,0 +1,1167 @@
+// Whale Fall overlay. The water is the hero; text behaves like museum labels and
+// scientific annotation. No cards, no glass.
+
+// Text takes its colour from the water it is in: the engine updates these per frame.
+@function ink($a: 1) {
+    @return rgba(var(--wf-ink-rgb), $a);
+}
+@function accent($a: 1) {
+    @return rgba(var(--wf-accent-rgb), $a);
+}
+$muted: ink(0.62);
+$warm: #ffd3a1;
+$serif: "Cormorant Garamond", Georgia, serif;
+$sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+$halo: 0 1px 18px rgba(2, 18, 30, 0.55), 0 0 2px rgba(2, 18, 30, 0.35);
+
+// index.html sets `* { font-family: Arial }`; inside the water, fonts inherit instead.
+.wf-root * {
+    font-family: inherit;
+}
+
+.wf-root {
+    --wf-ink-rgb: 251, 241, 228;
+    --wf-accent-rgb: 243, 201, 146;
+    position: relative;
+    color: ink();
+    background: #03101c;
+    font-family: $sans;
+}
+
+// Film: a soft vignette and a fine grain over the water, as if seen through a lens.
+.wf-film {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(2, 6, 14, 0.42) 100%);
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.09;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+}
+
+.wf-stage {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    height: 100lvh; // the iOS address bar should not resize the world
+    z-index: 0;
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.wf-scroll {
+    position: relative;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.wf-ui {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden; // anchored text can project far off-screen; keep it from growing the page
+    pointer-events: none;
+}
+
+.wf-kicker {
+    display: block;
+    font-family: $sans;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: accent(0.82);
+}
+
+// ── Chrome ────────────────────────────────────────────────────────────────────
+.wf-mark {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    pointer-events: auto;
+    opacity: 0.85;
+    transition: opacity 0.4s $ease;
+
+    img {
+        display: block;
+        width: 26px;
+        height: auto;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.wf-top {
+    position: absolute;
+    top: 30px;
+    right: 32px;
+    display: flex;
+    gap: 28px;
+    pointer-events: auto;
+}
+
+.wf-top-link {
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    color: ink();
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.3s $ease;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        outline: none;
+        text-decoration: underline;
+        text-underline-offset: 6px;
+        text-decoration-thickness: 1px;
+    }
+}
+
+// ── Places: elements held at a point in the water ─────────────────────────────
+.wf-place {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    will-change: transform, opacity;
+    pointer-events: none;
+    text-shadow: $halo;
+
+    &[data-live="1"] a,
+    &[data-live="1"] button {
+        pointer-events: auto;
+    }
+}
+
+.wf-inline-link {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: ink();
+    font-family: $sans;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px solid ink(0.35);
+    padding-bottom: 3px;
+    transition: border-color 0.3s $ease;
+
+    &:hover,
+    &:focus-visible {
+        border-color: ink();
+        outline: none;
+    }
+}
+
+// The name at the surface
+.wf-title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    white-space: nowrap;
+}
+
+.wf-name {
+    font-family: $serif;
+    font-weight: 300;
+    font-size: clamp(2.5rem, 4.4vw, 4.1rem);
+    line-height: 1;
+    letter-spacing: 0.005em;
+}
+
+.wf-roles,
+.wf-place-name {
+    font-family: $sans;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+}
+
+.wf-roles {
+    opacity: 0.9;
+}
+
+.wf-place-name {
+    margin-top: -6px;
+    opacity: 0.6;
+}
+
+// About, beside the eye
+.wf-about section {
+    width: min(390px, 80vw);
+
+    p {
+        margin: 12px 0 0;
+        font-family: $serif;
+        font-size: 19px;
+        font-weight: 400;
+        line-height: 1.45;
+    }
+
+    .wf-about-interest {
+        font-style: italic;
+        color: ink(0.82);
+    }
+}
+
+// Research lights and project colonies
+.wf-hit {
+    position: absolute;
+    left: -30px;
+    top: -30px;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.wf-place[data-live="1"] .wf-hit {
+    pointer-events: auto;
+}
+
+.wf-node-label {
+    position: absolute;
+    top: 0;
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    width: max-content;
+    max-width: 260px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: ink();
+    text-align: left;
+    text-shadow: $halo;
+    transform: translateY(-50%);
+    opacity: calc(0.62 + var(--focus, 0) * 0.38); // always legible; clearer as you approach
+    transition: opacity 0.5s $ease;
+    cursor: default;
+}
+
+button.wf-node-label {
+    cursor: pointer;
+}
+
+.wf-place[data-side="left"] .wf-node-label {
+    left: auto;
+    right: 24px;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.wf-node.is-open .wf-node-label {
+    opacity: 1;
+}
+
+.wf-node-title {
+    font-family: $serif;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.wf-node--interest .wf-node-title {
+    font-size: 24px;
+    font-weight: 300;
+}
+
+.wf-node-note {
+    font-family: $serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.35;
+    color: ink(0.78);
+    opacity: calc(0.25 + var(--focus, 0) * 0.75);
+    transition: opacity 0.5s $ease;
+}
+
+.wf-node--interest.is-open .wf-node-note {
+    opacity: 1;
+}
+
+.wf-node-more {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-family: $sans;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    color: $muted;
+    transition: max-height 0.5s $ease, opacity 0.4s $ease;
+}
+
+.wf-node.is-open .wf-node-more {
+    max-height: 140px;
+    opacity: 1;
+}
+
+.wf-node-link {
+    color: ink();
+    font-family: $sans;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid ink(0.3);
+    padding-bottom: 2px;
+    margin-top: 2px;
+
+    &:hover {
+        border-color: ink();
+    }
+}
+
+.wf-node--project {
+    .wf-kicker {
+        color: rgba($warm, 0.75);
+    }
+
+    .wf-node-title {
+        font-size: 18px;
+    }
+
+    .wf-node-label {
+        left: 0;
+        opacity: calc(0.82 + var(--focus, 0) * 0.18);
+    }
+
+    &[data-side="left"] .wf-node-label {
+        left: auto;
+        right: 0;
+    }
+
+    &.is-open .wf-node-more {
+        max-height: 40px;
+    }
+
+    &.is-open .wf-node-title {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+    }
+}
+
+.wf-leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+
+    line {
+        stroke: rgba($warm, 0.6);
+        stroke-width: 1;
+    }
+
+    circle {
+        fill: $warm;
+    }
+}
+
+// Years on the sounding line
+.wf-year {
+    > .wf-year-num,
+    > ul {
+        position: absolute;
+    }
+}
+
+.wf-year-num {
+    left: 18px;
+    top: -17px;
+    font-family: $serif;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    font-variant-numeric: lining-nums;
+}
+
+.wf-year ul {
+    left: 88px;
+    top: -12px;
+    width: max-content;
+    max-width: min(290px, 38vw);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+}
+
+.wf-year-what {
+    font-family: $serif;
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.wf-year-where {
+    font-family: $sans;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+.wf-year li.is-honor .wf-year-what {
+    font-style: italic;
+    color: ink(0.8);
+}
+
+// The one annotation at the whale fall
+.wf-note {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.wf-note-zh {
+    font-family: "Songti SC", "Noto Serif SC", "STSong", serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    margin-right: -0.5em;
+}
+
+.wf-note-en {
+    font-family: $sans;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+// The deep
+.wf-contact section {
+    width: min(360px, 84vw);
+
+    ul {
+        margin: 26px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li a {
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+        padding: 9px 0;
+        color: ink();
+        text-decoration: none;
+        border-bottom: 1px solid ink(0.1);
+        transition: border-color 0.3s $ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: ink(0.5);
+            outline: none;
+        }
+    }
+}
+
+.wf-contact-line {
+    margin: 0;
+    font-family: $serif;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+}
+
+.wf-contact-label {
+    width: 76px;
+    flex: none;
+    font-family: $sans;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+.wf-contact-value {
+    font-family: $serif;
+    font-size: 18px;
+}
+
+.wf-credit,
+.wf-index-credit a {
+    display: block;
+    margin-top: 34px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: ink(0.38) !important;
+    text-decoration: none;
+    text-shadow: none;
+
+    &:hover {
+        color: ink(0.7) !important;
+    }
+}
+
+.wf-index-credit {
+    margin-top: 64px !important;
+}
+
+// ── Descend cue ───────────────────────────────────────────────────────────────
+.wf-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: $sans;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+
+    span {
+        opacity: 0.75;
+        margin-right: -0.3em; // optical centring for the tracking
+    }
+
+    i {
+        display: block;
+        width: 1px;
+        height: 34px;
+        background: linear-gradient(to bottom, ink(0.7), ink(0));
+        transform-origin: top;
+        animation: wf-cue 2.8s $ease infinite;
+    }
+}
+
+@keyframes wf-cue {
+    0% {
+        transform: scaleY(0);
+        opacity: 1;
+    }
+    60% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scaleY(1);
+        opacity: 0;
+    }
+}
+
+// ── Depth gauge ───────────────────────────────────────────────────────────────
+.wf-gauge {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    height: min(44vh, 400px);
+    transform: translateY(-54%);
+    pointer-events: auto;
+    font-family: $sans;
+}
+
+.wf-gauge-track {
+    position: relative;
+    height: 100%;
+    width: 1px;
+    margin-left: auto;
+    background: ink(0.22);
+}
+
+.wf-tick {
+    position: absolute;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0 8px 24px;
+    transform: translateY(-50%);
+    border: 0;
+    background: none;
+    color: ink();
+    cursor: pointer;
+    font: inherit;
+
+    &::after {
+        content: "";
+        width: 9px;
+        height: 1px;
+        background: ink(0.5);
+        transition: background 0.4s $ease, width 0.4s $ease;
+    }
+
+    span {
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(6px);
+        transition: opacity 0.5s $ease, transform 0.5s $ease;
+    }
+
+    &:hover::after,
+    &:focus-visible::after {
+        width: 15px;
+        background: ink();
+    }
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.wf-gauge:hover .wf-tick span,
+.wf-tick:focus-visible span {
+    opacity: 0.8;
+    transform: none;
+}
+
+.wf-gauge-marker {
+    position: absolute;
+    right: -4px;
+    top: 0;
+    width: 9px;
+    height: 1px;
+    background: accent();
+    box-shadow: 0 0 10px accent(0.8);
+}
+
+.wf-gauge-readout {
+    position: absolute;
+    right: -2px;
+    top: calc(100% + 18px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.wf-gauge-section {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: accent(0.85);
+}
+
+.wf-gauge-depth {
+    font-family: $serif;
+    font-size: 19px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: 0.02em;
+}
+
+// ── Project panel ─────────────────────────────────────────────────────────────
+.wf-panel-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.wf-panel-scrim {
+    position: absolute;
+    inset: 0;
+}
+
+.wf-panel-wrap.is-open .wf-panel-scrim {
+    pointer-events: auto;
+}
+
+.wf-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(420px, 92vw);
+    padding: 92px 40px 48px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: rgba(4, 13, 21, 0.94);
+    border-left: 1px solid ink(0.1);
+    transform: translateX(102%);
+    transition: transform 0.8s $ease;
+    pointer-events: auto;
+    text-shadow: none;
+}
+
+.wf-panel-wrap.is-open .wf-panel {
+    transform: none;
+}
+
+.wf-panel-close {
+    position: absolute;
+    top: 26px;
+    right: 28px;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: none;
+    color: ink();
+    font-size: 26px;
+    font-weight: 200;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.7;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        outline: none;
+    }
+}
+
+.wf-panel .wf-kicker {
+    color: rgba($warm, 0.8);
+}
+
+.wf-panel-title {
+    margin: 14px 0 0;
+    font-family: $serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.wf-panel-sub {
+    margin: 10px 0 0;
+    font-family: $serif;
+    font-style: italic;
+    font-size: 19px;
+    color: ink(0.78);
+}
+
+.wf-panel-desc {
+    margin: 28px 0 0;
+    font-family: $serif;
+    font-size: 19px;
+    line-height: 1.5;
+}
+
+.wf-panel-meta {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 10px 16px;
+    margin: 30px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid ink(0.12);
+
+    dt {
+        font-family: $sans;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: $muted;
+        padding-top: 3px;
+    }
+
+    dd {
+        margin: 0;
+        font-family: $sans;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+}
+
+.wf-panel-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 34px;
+
+    a {
+        color: ink();
+        font-family: $sans;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-bottom: 1px solid ink(0.35);
+        padding-bottom: 3px;
+
+        &:hover {
+            border-color: ink();
+        }
+    }
+}
+
+// ── Index: the quick way out ──────────────────────────────────────────────────
+.wf-index {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: rgba(3, 11, 19, 0.97);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s $ease, visibility 0s linear 0.6s;
+
+    &.is-open {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.6s $ease;
+    }
+
+    a {
+        color: ink();
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            text-decoration-thickness: 1px;
+        }
+    }
+
+    p {
+        margin: 12px 0 0;
+        max-width: 62ch;
+        font-family: $serif;
+        font-size: 19px;
+        line-height: 1.5;
+    }
+}
+
+.wf-index-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 34px 32px 120px;
+
+    section {
+        padding-top: 56px;
+    }
+
+    h2,
+    h3 {
+        margin: 0 0 18px;
+        font-family: $sans;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: $muted;
+    }
+
+    h3 {
+        margin-top: 34px;
+    }
+}
+
+.wf-index-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid ink(0.12);
+
+    .wf-kicker {
+        margin-top: 12px;
+        font-family: $sans;
+        font-size: 10px;
+        line-height: 1.6;
+    }
+}
+
+.wf-index-name {
+    margin: 0 !important;
+    font-size: 40px !important;
+    font-weight: 300;
+    line-height: 1 !important;
+}
+
+.wf-index-close {
+    flex: none;
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    color: ink();
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 1px solid ink(0.35);
+
+    &:hover,
+    &:focus-visible {
+        border-color: ink();
+        outline: none;
+    }
+}
+
+.wf-index-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 12px 0;
+        border-bottom: 1px solid ink(0.08);
+    }
+}
+
+.wf-index-title {
+    font-family: $serif;
+    font-size: 19px;
+    line-height: 1.3;
+}
+
+.wf-index-meta {
+    font-family: $sans;
+    font-size: 12px;
+    line-height: 1.5;
+    color: $muted;
+}
+
+.wf-index-timeline li {
+    flex-direction: row;
+    gap: 28px;
+
+    > span:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.wf-index-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.wf-index-year {
+    width: 48px;
+    flex: none;
+    font-family: $serif;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+.wf-index-dive {
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: $muted;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        color: ink();
+        outline: none;
+    }
+}
+
+// ── Loading veil: the surface seen from below ─────────────────────────────────
+.wf-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    // The evening surface from below: warm light fading into teal.
+    background: linear-gradient(180deg, #d9b48f 0%, #6f9f9f 26%, #1f6f80 58%, #0b3d50 100%);
+    pointer-events: none;
+    transition: opacity 1.6s $ease;
+
+    i {
+        display: block;
+        width: min(240px, 50vw);
+        height: 1px;
+        background: linear-gradient(to right, ink(0), ink(0.85), ink(0));
+        animation: wf-waterline 3.2s ease-in-out infinite;
+    }
+}
+
+.wf-root.is-ready .wf-veil {
+    opacity: 0;
+}
+
+@keyframes wf-waterline {
+    0%,
+    100% {
+        transform: translateY(-3px) scaleX(0.92);
+    }
+    50% {
+        transform: translateY(3px) scaleX(1);
+    }
+}
+
+.wf-debug {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    margin: 0;
+    padding: 8px 10px;
+    font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #cfe;
+    background: rgba(0, 0, 0, 0.45);
+    white-space: pre;
+}
+
+// ── Phones ────────────────────────────────────────────────────────────────────
+@media (max-width: 700px) {
+    .wf-mark {
+        top: 20px;
+        left: 20px;
+    }
+
+    .wf-top {
+        top: 20px;
+        right: 20px;
+    }
+
+    .wf-title {
+        gap: 12px;
+    }
+
+    .wf-name {
+        font-size: 2.6rem;
+    }
+
+    .wf-roles,
+    .wf-place-name {
+        font-size: 10px;
+        letter-spacing: 0.22em;
+    }
+
+    .wf-about section,
+    .wf-contact section {
+        width: min(260px, calc(100vw - 110px)); // leave the depth gauge its own margin
+
+        p {
+            font-size: 17px;
+        }
+    }
+
+    .wf-node-label {
+        max-width: 190px;
+    }
+
+    .wf-node-title {
+        font-size: 17px;
+    }
+
+    .wf-node--interest .wf-node-title {
+        font-size: 20px;
+    }
+
+    .wf-year-num {
+        font-size: 26px;
+    }
+
+    .wf-year ul {
+        left: 76px;
+        max-width: calc(100vw - 150px);
+    }
+
+    .wf-year-what {
+        font-size: 16px;
+    }
+
+    .wf-gauge {
+        right: 18px;
+        height: 34vh;
+    }
+
+    .wf-tick {
+        padding: 12px 0 12px 28px; // 44 px targets without visible bulk
+    }
+
+    .wf-gauge-depth {
+        font-size: 16px;
+    }
+
+    .wf-panel {
+        top: auto;
+        left: 0;
+        width: auto;
+        height: min(78vh, 640px);
+        padding: 64px 24px 36px;
+        border-left: 0;
+        border-top: 1px solid ink(0.12);
+        transform: translateY(102%);
+    }
+
+    .wf-panel-title {
+        font-size: 36px;
+    }
+
+    .wf-index-inner {
+        padding: 22px 22px 100px;
+    }
+
+    .wf-index-name {
+        font-size: 32px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wf-cue i,
+    .wf-veil i {
+        animation: none;
+    }
+
+    .wf-panel,
+    .wf-index {
+        transition: none;
+    }
+}

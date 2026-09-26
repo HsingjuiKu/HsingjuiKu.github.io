@@ -9547,6 +9547,11 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
+three@^0.186.1:
+  version "0.186.1"
+  resolved "https://registry.npmjs.org/three/-/three-0.186.1.tgz"
+  integrity sha512-blFeqb49wRCSGUGj7gtpfnSGHy2lwDk94RhUmS1c/hTby70kvChbWpkJ4Pm1390LqzzvTmzgXKHPEafJwCb8jA==
+
 throat@^6.0.1:
   version "6.0.2"
   resolved "https://registry.npmmirror.com/throat/-/throat-6.0.2.tgz"
