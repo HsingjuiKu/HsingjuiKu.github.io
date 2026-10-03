@@ -19,6 +19,14 @@ const EXPERIENCE = [
 ];
 
 const PUBLICATIONS = [
+    { title: "Topological Control of Optimization Dynamics on Evolving Manifolds",
+        venue: "ICML 2026 Workshop — 3rd AI for Math: Toward Self-Evolving Scientific Agents", status: "Accepted",
+        desc:  "Studies how the topology of an evolving manifold can be used to steer the dynamics of optimization running on it.",
+        href:  "https://openreview.net/pdf?id=Dc6AEOYQjM" },
+    { title: "Separable Contributions of Value and Choice to Policy Learning",
+        venue: "CogSci 2026", status: "Accepted",
+        desc:  "Two experiments that unconfound reward and choice history, showing that value-based reinforcement learning and value-free habit learning both shape human choice — to different degrees in different environments.",
+        href:  "https://escholarship.org/uc/item/5zf5v17w" },
     { title: "Advancing Pain Recognition Through Statistical Correlation-Driven Multimodal Fusion",
         venue: "ACIIW 2024 — IEEE", status: "Accepted",
         desc:  "A multimodal framework leveraging statistical correlations across physiological and behavioural signals to advance automatic pain recognition.",
@@ -63,7 +71,7 @@ const CONTACTS = [
 const TAGS = ["Machine Learning", "Learning Theory"];
 
 const STATS = [
-    { n: "6",  label: "Publications"    },
+    { n: String(PUBLICATIONS.length), label: "Publications" },
     { n: "3",  label: "Universities"    },
     { n: "5+", label: "Years Research"  },
     { n: "7",  label: "Projects"        },
@@ -1204,7 +1212,7 @@ const About = () => {
                             <div className="ab-corner ab-corner-bl" />
                             <div className="ab-corner ab-corner-br" />
 
-                            <img src="/assets/WechatIMG371.jpeg" alt="Xingrui Gu" className="ab-photo-img" />
+                            <img src="/assets/portrait-valley.webp" alt="Xingrui Gu" className="ab-photo-img" />
 
                             <div className="ab-photo-vignette" />
                             <div className="ab-photo-grain" />

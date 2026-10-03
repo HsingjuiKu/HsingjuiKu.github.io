@@ -14,11 +14,12 @@ import { PROJECTS, PUBLICATIONS, TIMELINE } from "./content";
 const RESEARCH = {
     gmt: { at: 0.255, screen: [0.16, 0.34], portrait: [0.1, 0.3], distance: 15 },
     pde: { at: 0.283, screen: [0.62, 0.3], portrait: [0.1, 0.34], distance: 17 },
-    belief: { at: 0.31, screen: [0.14, 0.58], portrait: [0.1, 0.6], distance: 13 },
-    uncertainty: { at: 0.33, screen: [0.64, 0.5], portrait: [0.12, 0.46], distance: 15 },
-    causkel: { at: 0.35, screen: [0.18, 0.36], portrait: [0.1, 0.34], distance: 14 },
-    pain: { at: 0.37, screen: [0.62, 0.64], portrait: [0.12, 0.62], distance: 12 },
-    delegation: { at: 0.39, screen: [0.16, 0.52], portrait: [0.1, 0.5], distance: 15 },
+    belief: { at: 0.305, screen: [0.14, 0.58], portrait: [0.1, 0.6], distance: 13 },
+    valuechoice: { at: 0.324, screen: [0.64, 0.42], portrait: [0.12, 0.4], distance: 14 },
+    uncertainty: { at: 0.343, screen: [0.16, 0.36], portrait: [0.1, 0.34], distance: 15 },
+    causkel: { at: 0.362, screen: [0.62, 0.62], portrait: [0.12, 0.62], distance: 14 },
+    pain: { at: 0.381, screen: [0.18, 0.5], portrait: [0.1, 0.5], distance: 12 },
+    delegation: { at: 0.4, screen: [0.62, 0.4], portrait: [0.12, 0.42], distance: 15 },
 };
 const researchWindow = (at) => [at - 0.03, Math.min(0.425, at + 0.034)];
 

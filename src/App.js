@@ -11,13 +11,15 @@ import RL from "./pages/rl/rl";
 import NeuralHear from "./pages/neuralHear/NeuralHear"
 import Almour from "./pages/almour/Almour";
 import WhaleFall from "./whalefall/WhaleFall";
+import Echo from "./echo/Echo";
 function App() {
   return (<div className="app">
     <HashRouter baseline="/">
       <Routes>
         <Route exact path={process.env.PUBLIC_URL + '/'} element={<WhaleFall />} />
         <Route exact path={process.env.PUBLIC_URL + '/classic'} element={<Home />} />
-        <Route exact path={process.env.PUBLIC_URL + '/about'} element={<About />} />
+        <Route exact path={process.env.PUBLIC_URL + '/about'} element={<Echo />} />
+        <Route exact path={process.env.PUBLIC_URL + '/about/classic'} element={<About />} />
         <Route exact path={process.env.PUBLIC_URL + '/moodclip'} element={<MoodClip />} />
         <Route exact path={process.env.PUBLIC_URL + '/miniprogram'} element={<MiniProgram />} />
         <Route exact path={process.env.PUBLIC_URL + '/ljus'} element={<LjUs />} />

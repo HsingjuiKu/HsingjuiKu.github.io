@@ -1,0 +1,1099 @@
+// About. A valley seen through a survey instrument: cinematic light, hairline reticles,
+// monospaced readouts, and one red — the seal. Text sits in the landscape, never on cards.
+
+@function ink($a: 1) {
+    @return rgba(var(--mt-ink-rgb), $a);
+}
+@function accent($a: 1) {
+    @return rgba(var(--mt-accent-rgb), $a);
+}
+@function halo($a: 1) {
+    @return rgba(var(--mt-halo-rgb), $a);
+}
+
+$sans-sc: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+$sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+$vermilion: #a8312a;
+
+.mt-root * {
+    font-family: inherit;
+}
+
+.mt-root {
+    --mt-ink-rgb: 230, 235, 240;
+    --mt-accent-rgb: 134, 212, 255;
+    --mt-halo-rgb: 5, 8, 15;
+    position: relative;
+    color: ink();
+    background: #050913;
+    font-family: $sans;
+}
+
+.mt-stage {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    height: 100lvh;
+    z-index: 0;
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.mt-film {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 58%, rgba(3, 5, 10, 0.38) 100%);
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.1;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+}
+
+.mt-scroll {
+    position: relative;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.mt-ui {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.mt-kicker {
+    display: block;
+    font-family: $mono;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: accent();
+}
+
+.mt-link {
+    display: inline-block;
+    padding: 0 0 3px;
+    border: 0;
+    border-bottom: 1px solid ink(0.35);
+    background: none;
+    color: ink();
+    font-family: $mono;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.3s $ease;
+
+    &:hover,
+    &:focus-visible {
+        border-color: ink();
+        outline: none;
+    }
+}
+
+// ── Places ────────────────────────────────────────────────────────────────────
+.mt-place {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    will-change: transform, opacity;
+    pointer-events: none;
+    text-shadow: 0 1px 18px halo(0.6), 0 0 2px halo(0.4);
+
+    &[data-live="1"] a,
+    &[data-live="1"] button,
+    &[data-live="1"] .mt-landmark-label,
+    &[data-live="1"] .mt-star-label {
+        pointer-events: auto;
+    }
+}
+
+// The name, at night.
+.mt-name {
+    display: flex;
+    align-items: flex-start;
+    gap: 26px;
+    margin: 0;
+    font-weight: 300;
+}
+
+.mt-name-zh {
+    font-family: $sans-sc;
+    font-weight: 200;
+    font-size: clamp(3rem, 5.6vw, 5.2rem);
+    line-height: 1;
+    letter-spacing: 0.36em;
+    writing-mode: vertical-rl;
+}
+
+.mt-name-en {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 6px;
+    white-space: nowrap;
+
+    > span:not(.mt-kicker) {
+        font-family: $sans;
+        font-size: clamp(1.3rem, 2vw, 1.8rem);
+        font-weight: 200;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    > .mt-kicker {
+        padding-top: 12px;
+        border-top: 1px solid ink(0.25);
+    }
+}
+
+.mt-seal-char {
+    font-family: $sans-sc;
+    font-weight: 700;
+}
+
+// ── The portrait, as a plate ──────────────────────────────────────────────────
+.mt-figure {
+    position: relative;
+    width: min(300px, 28vw);
+    margin: 0;
+    text-shadow: none;
+
+    figcaption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+        color: ink(0.7);
+    }
+}
+
+.mt-figure-frame {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid ink(0.28);
+    // Revealed by a scan line travelling down the plate when it comes into view.
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.7s cubic-bezier(0.65, 0, 0.35, 1);
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: saturate(0.82) contrast(1.06) brightness(0.9);
+    }
+
+    // A faint raster, as if the plate were on a display in the field.
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(to bottom, rgba(5, 9, 19, 0.16) 0 1px, transparent 1px 3px);
+        mix-blend-mode: multiply;
+        pointer-events: none;
+    }
+}
+
+.mt-figure-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    background: accent();
+    box-shadow: 0 0 14px 2px accent(0.8);
+    opacity: 0;
+    transform: translateY(0);
+}
+
+.mt-place[data-live="1"] {
+    .mt-figure-frame {
+        clip-path: inset(0 0 0 0);
+    }
+
+    .mt-figure-scan {
+        animation: mt-scan 1.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+}
+
+@keyframes mt-scan {
+    0% {
+        opacity: 1;
+        top: 0;
+    }
+    90% {
+        opacity: 1;
+        top: calc(100% - 2px);
+    }
+    100% {
+        opacity: 0;
+        top: calc(100% - 2px);
+    }
+}
+
+.mt-corner {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 0 solid accent(0.9);
+
+    &--tl {
+        left: -6px;
+        top: -6px;
+        border-left-width: 1px;
+        border-top-width: 1px;
+    }
+
+    &--tr {
+        right: -6px;
+        top: -6px;
+        border-right-width: 1px;
+        border-top-width: 1px;
+    }
+
+    &--bl {
+        left: -6px;
+        bottom: 34px;
+        border-left-width: 1px;
+        border-bottom-width: 1px;
+    }
+
+    &--br {
+        right: -6px;
+        bottom: 34px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+    }
+}
+
+.mt-mono {
+    font-family: $mono;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+// The colophon beside it.
+.mt-colophon section {
+    width: min(390px, 34vw);
+
+    p {
+        margin: 14px 0 0;
+        font-family: $sans;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.65;
+        color: ink(0.9);
+    }
+
+    .mt-link {
+        margin-top: 22px;
+    }
+}
+
+// ── Landmarks of the survey ──────────────────────────────────────────────
+// A reticle on the thing itself, a hairline leader to its label.
+.mt-landmark {
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        transition: transform 0.6s $ease, opacity 0.6s $ease;
+    }
+
+    &::before {
+        left: -9px;
+        top: -9px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid accent(0.8);
+        box-shadow: 0 0 14px accent(0.35);
+        // Crosshair ticks outside the ring.
+        background:
+            linear-gradient(accent(0.9), accent(0.9)) 50% -4px / 1px 7px no-repeat,
+            linear-gradient(accent(0.9), accent(0.9)) 50% calc(100% + 4px) / 1px 7px no-repeat,
+            linear-gradient(accent(0.9), accent(0.9)) -4px 50% / 7px 1px no-repeat,
+            linear-gradient(accent(0.9), accent(0.9)) calc(100% + 4px) 50% / 7px 1px no-repeat;
+        transform: scale(0.75) rotate(0deg);
+    }
+
+    &::after {
+        left: -2px;
+        top: -2px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: accent();
+    }
+
+    &.is-on::before {
+        transform: scale(1.25) rotate(45deg);
+    }
+}
+
+.mt-landmark-label {
+    position: absolute;
+    left: 22px;
+    top: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: max-content;
+    max-width: 300px;
+    padding-left: 34px;
+    transform: translateY(-22px);
+    cursor: default;
+
+    // Leader from the reticle.
+    &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 22px;
+        width: 26px;
+        height: 1px;
+        background: accent(0.6);
+        transform-origin: left;
+        transform: scaleX(calc(0.4 + var(--focus, 0) * 0.6));
+        transition: transform 0.5s $ease;
+    }
+}
+
+.mt-place[data-side="left"] .mt-landmark-label {
+    left: auto;
+    right: 22px;
+    padding-left: 0;
+    padding-right: 34px;
+    flex-direction: row-reverse;
+    text-align: right;
+
+    &::before {
+        left: auto;
+        right: 0;
+        transform-origin: right;
+    }
+}
+
+.mt-landmark-index {
+    font-family: $sans;
+    font-size: 40px;
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.mt-landmark-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 4px;
+}
+
+.mt-landmark-line {
+    font-family: $sans;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: ink(0.82);
+    opacity: calc(0.45 + var(--focus, 0) * 0.55);
+    transition: opacity 0.5s $ease;
+}
+
+.mt-landmark.is-on .mt-landmark-line {
+    opacity: 1;
+}
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+// A star is a crosshair, and its catalogue entry.
+.mt-star::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: -7px;
+    width: 14px;
+    height: 14px;
+    background:
+        linear-gradient(accent(0.75), accent(0.75)) 50% 0 / 1px 4px no-repeat,
+        linear-gradient(accent(0.75), accent(0.75)) 50% 100% / 1px 4px no-repeat,
+        linear-gradient(accent(0.75), accent(0.75)) 0 50% / 4px 1px no-repeat,
+        linear-gradient(accent(0.75), accent(0.75)) 100% 50% / 4px 1px no-repeat;
+    opacity: 0.6;
+    transition: transform 0.5s $ease, opacity 0.5s $ease;
+}
+
+.mt-star.is-on::before {
+    opacity: 1;
+    transform: scale(1.6);
+}
+
+.mt-star-label {
+    position: absolute;
+    left: 16px;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: max-content;
+    max-width: 240px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.mt-place[data-side="left"] .mt-star-label {
+    left: auto;
+    right: 16px;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.mt-star-title {
+    font-family: $sans;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.3;
+}
+
+.mt-star--interest .mt-star-title {
+    font-size: 21px;
+    font-weight: 200;
+    letter-spacing: 0.01em;
+}
+
+.mt-star-more {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: ink(0.7);
+    transition: max-height 0.5s $ease, opacity 0.4s $ease;
+
+    a {
+        color: ink();
+        font-family: $mono;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-bottom: 1px solid ink(0.3);
+        align-self: flex-start;
+    }
+}
+
+.mt-place[data-side="left"] .mt-star-more a {
+    align-self: flex-end;
+}
+
+.mt-star-note {
+    font-family: $sans;
+    font-weight: 300;
+    font-size: 13px;
+}
+
+.mt-star-venue {
+    font-family: $mono;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+}
+
+.mt-star.is-on .mt-star-more {
+    max-height: 160px;
+    opacity: 1;
+}
+
+// ── The journey: waypoints by the stream, and the log ────────────────────────
+// A survey stake: a ground mark, a stem, and the year at its head.
+.mt-waypoint {
+    --near: 0.22;
+
+    &::before {
+        content: "";
+        position: absolute;
+        left: -6px;
+        top: -3px;
+        width: 12px;
+        height: 6px;
+        border: 1px solid accent(0.7);
+        border-radius: 50%;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+        height: 54px;
+        background: linear-gradient(to top, accent(0.8), accent(0));
+        transform-origin: bottom;
+        transform: scaleY(0.6);
+        transition: transform 0.7s $ease;
+    }
+
+    &.is-current::after {
+        transform: scaleY(1);
+    }
+
+    // The engine owns this element's opacity; nearness to the current year dims its parts.
+    &[data-rel="-1"] {
+        --near: 0.4;
+    }
+    &[data-rel="0"] {
+        --near: 1;
+    }
+    &[data-rel="1"] {
+        --near: 0.6;
+    }
+    &[data-rel="2"] {
+        --near: 0.38;
+    }
+
+    &::before,
+    &::after,
+    .mt-waypoint-year {
+        opacity: var(--near);
+        transition: opacity 0.6s $ease, transform 0.7s $ease, color 0.5s $ease;
+    }
+}
+
+.mt-waypoint-year {
+    position: absolute;
+    left: 7px;
+    bottom: 26px;
+    font-family: $mono;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: ink(0.7);
+}
+
+.mt-waypoint.is-current .mt-waypoint-year {
+    color: accent();
+    transform: translateY(-22px);
+}
+
+.mt-log {
+    position: absolute;
+    left: max(32px, 7vw);
+    top: 24vh;
+    width: min(340px, 40vw);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.8s $ease, transform 0.8s $ease;
+    text-shadow: 0 1px 18px halo(0.6), 0 0 2px halo(0.4);
+
+    &.is-on {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+}
+
+.mt-log-index {
+    display: flex;
+    gap: 2px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+
+    button {
+        position: relative;
+        padding: 6px 7px 8px;
+        border: 0;
+        background: none;
+        color: ink(0.45);
+        font-family: $mono;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: color 0.4s $ease;
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            right: 7px;
+            bottom: 2px;
+            height: 1px;
+            background: accent();
+            transform: scaleX(0);
+            transition: transform 0.5s $ease;
+        }
+
+        &.is-past {
+            color: ink(0.7);
+        }
+
+        &.is-current {
+            color: accent();
+
+            &::after {
+                transform: scaleX(1);
+            }
+        }
+
+        &:hover,
+        &:focus-visible {
+            color: ink();
+            outline: none;
+        }
+    }
+}
+
+.mt-log-entry {
+    margin-top: 22px;
+    animation: mt-log-in 0.7s $ease both;
+
+    ul {
+        margin: 16px 0 0;
+        padding: 0 0 0 18px;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        border-left: 1px solid ink(0.2);
+    }
+
+    li {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .mt-year-seal {
+        left: -23px;
+    }
+}
+
+.mt-log-year {
+    display: block;
+    font-family: $sans;
+    font-weight: 200;
+    font-size: clamp(2.6rem, 4.4vw, 3.6rem);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+@keyframes mt-log-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+        filter: blur(3px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
+.mt-year-what {
+    font-family: $sans;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.3;
+}
+
+.mt-year-where {
+    font-family: $mono;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: ink(0.62);
+}
+
+.mt-log li.is-honor .mt-year-what {
+    font-weight: 400;
+}
+
+// Honours are stamped, in the one red.
+.mt-year-seal {
+    position: absolute;
+    left: -18px;
+    top: 4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 1px;
+    background: $vermilion;
+    box-shadow: 0 0 0 1px rgba(168, 49, 42, 0.25);
+}
+
+// ── Dawn ──────────────────────────────────────────────────────────────────────
+.mt-contact section {
+    width: min(360px, 84vw);
+
+    ul {
+        margin: 22px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li a {
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+        padding: 8px 0;
+        color: ink();
+        text-decoration: none;
+        border-bottom: 1px solid ink(0.14);
+        transition: border-color 0.3s $ease;
+
+        .mt-kicker {
+            width: 76px;
+            flex: none;
+            font-weight: 500;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: ink(0.55);
+            outline: none;
+        }
+    }
+}
+
+.mt-contact-line {
+    margin: 0;
+    font-family: $sans;
+    font-weight: 200;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.mt-contact-value {
+    font-family: $sans;
+    font-weight: 300;
+    font-size: 16px;
+}
+
+.mt-contact-ways {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 24px;
+}
+
+// ── Chrome ────────────────────────────────────────────────────────────────────
+.mt-mark {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    pointer-events: auto;
+    opacity: 0.85;
+
+    img {
+        display: block;
+        width: 26px;
+    }
+}
+
+.mt-top {
+    position: absolute;
+    top: 30px;
+    right: 32px;
+    display: flex;
+    gap: 28px;
+    pointer-events: auto;
+}
+
+.mt-top-link {
+    padding: 6px 0;
+    color: ink(0.85);
+    font-family: $mono;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    span {
+        font-family: $sans-sc;
+        letter-spacing: 0;
+        margin-right: 4px;
+    }
+
+    &:hover {
+        color: ink();
+    }
+}
+
+.mt-gauge {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    height: min(44vh, 400px);
+    transform: translateY(-54%);
+    pointer-events: auto;
+}
+
+.mt-gauge-track {
+    position: relative;
+    height: 100%;
+    width: 1px;
+    margin-left: auto;
+    background: ink(0.22);
+}
+
+.mt-tick {
+    position: absolute;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0 8px 24px;
+    transform: translateY(-50%);
+    border: 0;
+    background: none;
+    color: ink();
+    cursor: pointer;
+    font: inherit;
+
+    &::after {
+        content: "";
+        width: 9px;
+        height: 1px;
+        background: ink(0.5);
+    }
+
+    span {
+        font-family: $mono;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(6px);
+        transition: opacity 0.5s $ease, transform 0.5s $ease;
+    }
+}
+
+.mt-gauge:hover .mt-tick span,
+.mt-tick:focus-visible span {
+    opacity: 0.8;
+    transform: none;
+}
+
+.mt-gauge-marker {
+    position: absolute;
+    right: -4px;
+    top: 0;
+    width: 9px;
+    height: 1px;
+    background: accent();
+    box-shadow: 0 0 10px accent(0.8);
+}
+
+.mt-gauge-readout {
+    position: absolute;
+    right: -6px;
+    top: calc(100% + 16px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.mt-gauge-sun {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: $sans;
+    font-size: 22px;
+    font-weight: 200;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.mt-gauge-sun-label {
+    font-family: $mono;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: ink(0.6);
+}
+
+.mt-gauge-text {
+    font-family: $mono;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: accent(0.9);
+}
+
+// Loading: night, and a scan line sweeping for the horizon.
+.mt-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(ellipse at 50% 70%, #0f1a2e 0%, #050913 70%);
+    pointer-events: none;
+    transition: opacity 1.8s $ease;
+
+    i {
+        display: block;
+        width: min(260px, 52vw);
+        height: 1px;
+        background: linear-gradient(to right, rgba(134, 212, 255, 0), rgba(134, 212, 255, 0.8), rgba(134, 212, 255, 0));
+        box-shadow: 0 0 12px rgba(134, 212, 255, 0.4);
+        animation: mt-ridge 3.4s ease-in-out infinite;
+    }
+}
+
+.mt-root.is-ready .mt-veil {
+    opacity: 0;
+}
+
+@keyframes mt-ridge {
+    0%,
+    100% {
+        transform: scaleX(0.6);
+        opacity: 0.4;
+    }
+    50% {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+.mt-debug {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    margin: 0;
+    padding: 8px 10px;
+    font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #cfe;
+    background: rgba(0, 0, 0, 0.45);
+    white-space: pre;
+}
+
+// ── Phones ────────────────────────────────────────────────────────────────────
+@media (max-width: 700px) {
+    .mt-mark {
+        top: 20px;
+        left: 20px;
+    }
+
+    .mt-top {
+        top: 20px;
+        right: 20px;
+        gap: 18px;
+    }
+
+    .mt-name {
+        gap: 16px;
+    }
+
+    .mt-name-en {
+        white-space: normal;
+        max-width: calc(100vw - 150px);
+
+        > span:not(.mt-kicker) {
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+        }
+
+        > .mt-kicker {
+            line-height: 1.7;
+        }
+    }
+
+    .mt-figure {
+        width: 46vw;
+    }
+
+    .mt-colophon section {
+        width: min(300px, calc(100vw - 130px));
+
+        p {
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        // The rest is a tap away, in the longer version.
+        p:nth-of-type(3) {
+            display: none;
+        }
+    }
+
+    .mt-landmark-label,
+    .mt-star-label {
+        max-width: 200px;
+    }
+
+    .mt-landmark-index {
+        font-size: 32px;
+    }
+
+    .mt-star-title {
+        font-size: 14px;
+    }
+
+    .mt-star--interest .mt-star-title {
+        font-size: 18px;
+    }
+
+    .mt-log {
+        left: 20px;
+        top: auto;
+        bottom: 96px;
+        width: calc(100vw - 90px);
+    }
+
+    .mt-log-entry {
+        margin-top: 14px;
+    }
+
+    .mt-gauge {
+        right: 18px;
+        height: 34vh;
+    }
+
+    .mt-tick {
+        padding: 12px 0 12px 28px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mt-veil i,
+    .mt-log-entry {
+        animation: none;
+    }
+
+    .mt-figure-frame {
+        transition: none;
+    }
+
+    .mt-figure-scan {
+        display: none;
+    }
+}

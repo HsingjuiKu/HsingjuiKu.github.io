@@ -35,6 +35,23 @@ export const INTERESTS = [
 // `interest` links a paper to an interest only where the connection is clear from the paper itself.
 export const PUBLICATIONS = [
     {
+        id: "topology",
+        short: "Topological Control of Optimization Dynamics",
+        title: "Topological Control of Optimization Dynamics on Evolving Manifolds",
+        venue: "ICML 2026 Workshop · 3rd AI for Math: Toward Self-Evolving Scientific Agents",
+        year: 2026,
+        interest: "gmt",
+        href: "https://openreview.net/pdf?id=Dc6AEOYQjM",
+    },
+    {
+        id: "valuechoice",
+        short: "Value and Choice in Policy Learning",
+        title: "Separable Contributions of Value and Choice to Policy Learning",
+        venue: "CogSci 2026",
+        year: 2026,
+        href: "https://escholarship.org/uc/item/5zf5v17w",
+    },
+    {
         id: "laplacian",
         short: "Laplacian Flows for Policy Learning",
         title: "Laplacian Flows for Policy Learning from Experience",

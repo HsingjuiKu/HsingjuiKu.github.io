@@ -1,0 +1,712 @@
+// About. Near-black water, and one light per chapter — ochre, flame, silver, leaf, sea blue —
+// taken up by its kickers and hovers. Text reads as a single quiet column; the form stays behind.
+
+$bg: #04060c;
+$ink: #e9eef5;
+$accent: #8ccfff;
+$warm: #ffc98f;
+$sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+@function ink($a: 1) {
+    @return rgba($ink, $a);
+}
+
+.ec-root {
+    position: relative;
+    min-height: 100vh;
+    background: $bg;
+    color: ink(0.92);
+    font-family: $sans;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+
+    * {
+        font-family: inherit;
+    }
+
+    ::selection {
+        background: rgba(140, 207, 255, 0.3);
+    }
+
+    a {
+        color: inherit;
+    }
+}
+
+.ec-stage {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    height: 100lvh;
+    z-index: 0;
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// Lens: a vignette and a little grain, so the dark has a surface.
+.ec-film {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 60% 45%, transparent 50%, rgba(2, 3, 7, 0.55) 100%);
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.06;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+}
+
+.ec-main {
+    position: relative;
+    z-index: 1;
+}
+
+// ── Type ──────────────────────────────────────────────────────────────────────
+.ec-kicker {
+    display: block;
+    font-family: $mono;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tone, #{$accent});
+
+    b {
+        margin-right: 14px;
+        font-weight: 500;
+        color: $warm;
+    }
+}
+
+.ec-root h1,
+.ec-root h2 {
+    margin: 0;
+    font-weight: 200;
+    color: ink();
+}
+
+.ec-root h2 {
+    margin: 20px 0 30px;
+    font-size: clamp(2.1rem, 3.8vw, 3.5rem);
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+}
+
+.ec-root p {
+    margin: 0 0 18px;
+    max-width: 46ch;
+    font-size: 16px;
+    line-height: 1.7;
+    color: ink(0.82);
+}
+
+.ec-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 0 0 4px;
+    border-bottom: 1px solid ink(0.3);
+    font-family: $mono;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.3s $ease, color 0.3s $ease;
+
+    &:hover,
+    &:focus-visible {
+        color: $accent;
+        border-color: $accent;
+        outline: none;
+    }
+}
+
+.ec-fig {
+    position: relative;
+    margin-top: 26px !important;
+    padding-left: 34px;
+    font-family: $mono;
+    font-size: 10.5px !important;
+    line-height: 1.7 !important;
+    letter-spacing: 0.04em;
+    color: ink(0.5) !important;
+
+    &::before {
+        content: "Fig.";
+        position: absolute;
+        left: 0;
+        color: var(--tone, #{$accent});
+    }
+}
+
+// ── Sections ──────────────────────────────────────────────────────────────────
+.ec-hero {
+    --tone: #e4c48e;
+}
+.ec-about {
+    --tone: #ffa874;
+}
+.ec-research {
+    --tone: #dfe5ee;
+}
+.ec-journey {
+    --tone: #8fdcb4;
+}
+.ec-contact {
+    --tone: #8ccfff;
+}
+
+.ec-sec {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16vh 0;
+    box-sizing: border-box;
+}
+
+.ec-col {
+    width: min(480px, 40vw);
+    margin-left: max(32px, 8vw);
+    text-shadow: 0 1px 24px rgba(4, 6, 12, 0.9);
+
+    &--wide {
+        width: min(580px, 46vw);
+    }
+}
+
+// Opening: the name, low on the page, under the whale.
+.ec-hero {
+    align-items: flex-end;
+    padding-bottom: 11vh;
+
+    h1 {
+        margin-top: 18px;
+        font-size: clamp(3.4rem, 8.4vw, 8.4rem);
+        letter-spacing: -0.04em;
+        line-height: 0.9;
+        white-space: nowrap;
+
+        span {
+            display: inline-block;
+            margin-left: 0.32em;
+            font-size: 0.24em;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            color: ink(0.55);
+            vertical-align: 0.9em;
+        }
+    }
+}
+
+.ec-roles {
+    margin-top: 22px !important;
+    font-family: $mono;
+    font-size: 12px !important;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.ec-hint {
+    display: flex;
+    white-space: nowrap;
+    max-width: none !important;
+    align-items: center;
+    gap: 14px;
+    margin-top: 44px !important;
+    font-family: $mono;
+    font-size: 10.5px !important;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: ink(0.45) !important;
+
+    i {
+        position: relative;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--tone, #{$accent});
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 50%;
+            border: 1px solid var(--tone, #{$accent});
+            animation: ec-ping 2.4s $ease infinite;
+        }
+    }
+}
+
+@keyframes ec-ping {
+    from {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+    to {
+        transform: scale(5);
+        opacity: 0;
+    }
+}
+
+// About: two short lists.
+.ec-facets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin: 30px 0 26px;
+
+    > div {
+        padding-top: 14px;
+        border-top: 1px solid ink(0.18);
+    }
+
+    ul {
+        margin: 14px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        font-size: 17px;
+        line-height: 1.75;
+        color: ink(0.92);
+    }
+}
+
+.ec-facets-label {
+    font-family: $mono;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ink(0.5);
+}
+
+// Research: the areas bend the surface; then the papers.
+.ec-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        padding: 8px 15px;
+        border: 1px solid ink(0.22);
+        border-radius: 999px;
+        font-size: 14px;
+        color: ink(0.88);
+        cursor: default;
+        outline: none;
+        transition: border-color 0.3s $ease, color 0.3s $ease, background 0.3s $ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--tone);
+            color: var(--tone);
+            background: rgba(255, 255, 255, 0.04);
+        }
+    }
+}
+
+.ec-research .ec-fig {
+    margin-bottom: 34px !important;
+}
+
+.ec-papers {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+        display: grid;
+        grid-template-columns: 52px 1fr 18px;
+        align-items: baseline;
+        gap: 12px;
+        padding: 14px 0;
+        border-top: 1px solid ink(0.1);
+        text-decoration: none;
+        transition: background 0.4s $ease;
+
+        &:hover,
+        &:focus-visible {
+            outline: none;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 80%);
+
+            .ec-papers-title {
+                color: var(--tone);
+            }
+
+            .ec-papers-arrow {
+                transform: translate(3px, -3px);
+                color: var(--tone);
+            }
+        }
+    }
+}
+
+.ec-papers-year {
+    font-family: $mono;
+    font-size: 11px;
+    color: ink(0.5);
+}
+
+.ec-papers-body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ec-papers-title {
+    font-size: 15px;
+    line-height: 1.4;
+    color: ink(0.92);
+    transition: color 0.3s $ease;
+}
+
+.ec-papers-venue {
+    font-family: $mono;
+    font-size: 10.5px;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: ink(0.48);
+}
+
+.ec-papers-arrow {
+    color: ink(0.4);
+    transition: transform 0.3s $ease, color 0.3s $ease;
+}
+
+// Journey
+.ec-years {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+        display: grid;
+        grid-template-columns: 76px 1fr;
+        gap: 12px;
+        padding: 16px 0;
+        border-top: 1px solid ink(0.1);
+        transition: opacity 0.5s $ease;
+    }
+
+    &.is-live > li:not(.is-now):not(:hover) {
+        opacity: 0.42;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    ul li {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+}
+
+.ec-years-num {
+    font-family: $mono;
+    font-size: 13px;
+    line-height: 1.6;
+    color: ink(0.6);
+    transition: color 0.4s $ease;
+
+    .is-now > & {
+        color: var(--tone);
+    }
+}
+
+.ec-years-what {
+    font-size: 16px;
+    line-height: 1.4;
+    color: ink(0.94);
+}
+
+.ec-years-where {
+    font-family: $mono;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: ink(0.5);
+}
+
+// Honours glow warm.
+.ec-years li.is-honor .ec-years-what::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin: 0 10px 2px 0;
+    border-radius: 50%;
+    background: $warm;
+    box-shadow: 0 0 10px rgba(255, 201, 143, 0.8);
+}
+
+// Contact
+.ec-contact {
+    align-items: flex-start;
+    padding-top: 13vh;
+}
+
+.ec-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        align-items: baseline;
+        padding: 11px 0;
+        border-top: 1px solid ink(0.12);
+        text-decoration: none;
+        transition: border-color 0.3s $ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: $accent;
+            outline: none;
+
+            .ec-links-value {
+                color: $accent;
+            }
+        }
+    }
+}
+
+.ec-links-label {
+    font-family: $mono;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: ink(0.5);
+}
+
+.ec-links-value {
+    font-size: 17px;
+    transition: color 0.3s $ease;
+}
+
+.ec-ways {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin-top: 34px;
+}
+
+// ── Chrome ────────────────────────────────────────────────────────────────────
+.ec-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px max(32px, 3vw) 40px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(4, 6, 12, 0.92), rgba(4, 6, 12, 0.6) 55%, rgba(4, 6, 12, 0));
+
+    a {
+        pointer-events: auto;
+    }
+
+    nav {
+        display: flex;
+        gap: 30px;
+
+        a {
+            font-family: $mono;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: ink(0.75);
+            transition: color 0.3s $ease;
+
+            &:hover,
+            &:focus-visible {
+                color: $accent;
+                outline: none;
+            }
+        }
+    }
+}
+
+.ec-mark img {
+    display: block;
+    width: 26px;
+    opacity: 0.85;
+}
+
+// The rail: five chapters, like the homepage's depth gauge.
+.ec-rail {
+    position: fixed;
+    right: max(24px, 2.4vw);
+    top: 50%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transform: translateY(-50%);
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 7px 0 7px 20px;
+        border: 0;
+        background: none;
+        color: ink(0.7);
+        cursor: pointer;
+
+        &::after {
+            content: "";
+            width: 14px;
+            height: 1px;
+            background: ink(0.35);
+            transition: width 0.5s $ease, background 0.5s $ease;
+        }
+
+        span {
+            font-family: $mono;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateX(6px);
+            transition: opacity 0.4s $ease, transform 0.4s $ease;
+        }
+
+        &.is-current::after {
+            width: 30px;
+            background: $accent;
+        }
+
+        &.is-current span,
+        &:hover span,
+        &:focus-visible span {
+            opacity: 1;
+            transform: none;
+        }
+
+        &:focus-visible {
+            outline: none;
+        }
+    }
+}
+
+.ec-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    background: $bg;
+    pointer-events: none;
+    transition: opacity 1.6s $ease;
+
+    i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: 1px solid $accent;
+        animation: ec-ping 2s $ease infinite;
+    }
+}
+
+.ec-root.is-ready .ec-veil {
+    opacity: 0;
+}
+
+// ── Phones ────────────────────────────────────────────────────────────────────
+@media (max-width: 760px) {
+    .ec-top {
+        padding: 20px 20px 34px;
+    }
+
+    .ec-rail {
+        display: none;
+    }
+
+    // Each chapter opens on its figure; the words then rise over it.
+    .ec-sec {
+        display: block;
+        padding: 64vh 0 14vh;
+    }
+
+    .ec-hero {
+        display: flex;
+        padding: 0 0 12vh;
+    }
+
+    .ec-col,
+    .ec-col--wide {
+        width: auto;
+        margin: 0 20px;
+        padding: 22px 20px;
+        background: linear-gradient(180deg, rgba(4, 6, 12, 0.35), rgba(4, 6, 12, 0.78) 30%, rgba(4, 6, 12, 0.78) 70%, rgba(4, 6, 12, 0.35));
+        border-radius: 2px;
+    }
+
+    .ec-hero .ec-col {
+        background: none;
+        padding: 0;
+    }
+
+    .ec-hero h1 {
+        white-space: normal;
+
+        span {
+            display: block;
+            margin: 14px 0 0;
+            vertical-align: 0;
+        }
+    }
+
+    .ec-hint {
+        white-space: normal;
+        line-height: 1.6 !important;
+    }
+
+    .ec-facets {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .ec-years > li {
+        grid-template-columns: 56px 1fr;
+    }
+
+    .ec-links a {
+        grid-template-columns: 84px 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ec-hint i::after,
+    .ec-veil i {
+        animation: none;
+    }
+}
