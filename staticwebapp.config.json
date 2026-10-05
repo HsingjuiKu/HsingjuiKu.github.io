@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "route": "/closure_atlas", "redirect": "/closure_atlas/", "statusCode": 301 }
+  ],
+  "mimeTypes": {
+    ".wgsl": "text/plain",
+    ".bin": "application/octet-stream"
+  }
+}
