@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="/closure_atlas/" />
+  <title>Closure Atlas · 海岸水场</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #24282e; overflow: hidden; }
+    #view { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; outline: none; cursor: grab; touch-action: none; }
+    #view:active { cursor: grabbing; }
+    #hud { display: none; }
+    #status {
+      position: fixed; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 30;
+      color: #cfd6de; font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+      background: rgba(20, 22, 26, 0.7); padding: 12px 18px; border-radius: 8px; max-width: 70vw; white-space: pre-wrap;
+    }
+    #status.error { color: #ffb4a8; border: 1px solid #a1453a; }
+  </style>
+  <script>window.CLOSURE_ATLAS = { data: 'data/' };</script>
+</head>
+<body>
+  <canvas id="view" tabindex="0"></canvas>
+  <div id="hud"></div>
+  <div id="status">正在启动 WebGPU…</div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

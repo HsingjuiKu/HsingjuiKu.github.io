@@ -1,0 +1,101 @@
+/* Atlas Lens — reading a Closure Atlas on the shore world */
+:root {
+  --ink: #e9eef2; --ink-2: #aab6bf; --ink-3: #74828c;
+  --panel: rgba(17, 22, 27, 0.86); --panel-2: rgba(28, 35, 42, 0.92); --line: rgba(255, 255, 255, 0.09);
+  --accent: #6fc3df; --good: #6fcf97; --bad: #ef7d6d; --warn: #e6b75c;
+  --r: 10px; --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+#lens { position: fixed; inset: 0; pointer-events: none; font: 13px/1.5 var(--font); color: var(--ink); z-index: 15; }
+#lens * { box-sizing: border-box; }
+#lens .pe { pointer-events: auto; }
+
+/* header + tabs */
+#lens-top { position: absolute; left: 18px; right: 418px; top: 14px; display: flex; align-items: center; gap: 18px; }
+#lens-brand { pointer-events: auto; }
+#lens-brand b { letter-spacing: .18em; font-size: 12px; color: var(--ink-2); font-weight: 600; }
+#lens-brand div { font-size: 17px; font-weight: 600; margin-top: 1px; }
+#lens-tabs { display: flex; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; pointer-events: auto; margin-left: auto; }
+#lens-tabs button { all: unset; cursor: pointer; padding: 6px 14px; border-radius: 999px; color: var(--ink-2); font-size: 13px; }
+#lens-tabs button:hover { color: var(--ink); }
+#lens-tabs button.on { background: var(--ink); color: #11161b; font-weight: 600; }
+#lens-tour-btn { all: unset; cursor: pointer; pointer-events: auto; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--accent); font-weight: 600; }
+
+/* right panel */
+#lens-panel { position: absolute; right: 14px; top: 14px; bottom: 14px; width: 390px; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 14px; overflow-y: auto; pointer-events: auto; backdrop-filter: blur(10px); scrollbar-width: thin; }
+#lens-panel section { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+#lens-panel section:last-child { border-bottom: 0; }
+#lens-panel h2 { font-size: 15px; margin: 0 0 6px; font-weight: 650; }
+#lens-panel h3 { font-size: 12px; margin: 0 0 8px; color: var(--ink-2); font-weight: 600; letter-spacing: .04em; }
+#lens-panel p { margin: 0 0 8px; color: var(--ink-2); }
+#lens-panel p.lead { color: var(--ink); }
+.lens-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
+.lens-chip { all: unset; cursor: pointer; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); font-size: 12px; }
+.lens-chip.on { border-color: var(--ink); color: var(--ink); background: rgba(255, 255, 255, .06); }
+.lens-chip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.lens-row { display: flex; align-items: center; gap: 8px; }
+.lens-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 12.5px; }
+.lens-kv span:nth-child(odd) { color: var(--ink-3); }
+.lens-kv span:nth-child(even) { font-family: var(--mono); font-size: 12px; }
+.lens-list { display: flex; flex-direction: column; gap: 2px; max-height: 172px; overflow-y: auto; }
+.lens-list button { all: unset; cursor: pointer; display: grid; grid-template-columns: 52px 62px 1fr 46px; gap: 6px; padding: 4px 8px; border-radius: 6px; font: 12px var(--mono); color: var(--ink-2); }
+.lens-list button:hover { background: rgba(255, 255, 255, .05); }
+.lens-list button.on { background: rgba(111, 195, 223, .16); color: var(--ink); }
+.lens-list .hot { color: var(--bad); }
+.lens-note { font-size: 12px; color: var(--ink-3); border-left: 2px solid var(--line); padding-left: 10px; margin-top: 8px; }
+.lens-verdict { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--r); background: var(--panel-2); margin-top: 8px; }
+.lens-verdict .mark { flex: 0 0 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; color: #11161b; }
+.lens-verdict.pass .mark { background: var(--good); }
+.lens-verdict.fail .mark { background: var(--bad); }
+.lens-verdict.mixed .mark { background: var(--warn); }
+.lens-verdict b { display: block; font-size: 13px; }
+.lens-verdict span { font-size: 12px; color: var(--ink-2); }
+.lens-maps { display: grid; gap: 6px; }
+.lens-maps figure { margin: 0; }
+.lens-maps canvas { width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 6px; background: #0d1114; display: block; cursor: pointer; }
+.lens-maps figcaption { font-size: 11px; color: var(--ink-3); margin-top: 2px; text-align: center; }
+.lens-btn { all: unset; cursor: pointer; padding: 7px 14px; border-radius: 8px; background: var(--ink); color: #11161b; font-weight: 600; font-size: 13px; text-align: center; }
+.lens-btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.lens-btn[disabled] { opacity: .4; pointer-events: none; }
+.lens-svg { width: 100%; display: block; }
+.lens-svg text { font: 10.5px var(--font); fill: var(--ink-3); }
+.lens-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--ink-2); margin-top: 4px; }
+.lens-legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: 3px; }
+.lens-badge { font-size: 10.5px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-3); margin-left: 6px; }
+.lens-chartcard { display: grid; grid-template-columns: 6px 1fr; gap: 10px; padding: 8px 0; }
+.lens-chartcard .bar { border-radius: 3px; }
+.lens-chartcard b { font-size: 13px; }
+.lens-meter { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .08); overflow: hidden; display: flex; margin: 4px 0 2px; }
+.lens-meter i { display: block; height: 100%; }
+select.lens-select { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; font: 12px var(--font); }
+
+/* bottom: timeline + transport */
+#lens-bottom { position: absolute; left: 18px; right: 418px; bottom: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 10px 14px 10px; pointer-events: auto; display: flex; flex-direction: column; gap: 6px; }
+#lens-bottom .head { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--ink-2); }
+#lens-bottom .head .title { color: var(--ink); font-weight: 600; }
+#lens-bottom .head .clock { margin-left: auto; font-family: var(--mono); color: var(--ink); }
+#lens-play { all: unset; cursor: pointer; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #11161b; display: grid; place-items: center; font-size: 12px; }
+#lens-timeline { width: 100%; height: 64px; display: block; cursor: pointer; }
+#lens-legend-bar { display: flex; gap: 14px; font-size: 11.5px; color: var(--ink-2); flex-wrap: wrap; }
+#lens-legend-bar i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* tour card */
+#lens-tour { position: absolute; left: 50%; top: 82px; transform: translateX(calc(-50% - 200px)); width: min(560px, calc(100vw - 480px)); background: rgba(240, 245, 248, .97);
+  color: #14202a; border-radius: 14px; padding: 16px 18px 14px; box-shadow: 0 18px 50px rgba(0, 0, 0, .35); pointer-events: auto; display: none; }
+#lens-tour.on { display: block; }
+#lens-tour .step { font-size: 11.5px; letter-spacing: .12em; color: #4b6b7d; font-weight: 600; }
+#lens-tour h3 { margin: 4px 0 6px; font-size: 18px; }
+#lens-tour p { margin: 0 0 10px; color: #33434e; font-size: 13.5px; line-height: 1.6; }
+#lens-tour .nav { display: flex; gap: 8px; justify-content: flex-end; }
+#lens-tour .nav button { all: unset; cursor: pointer; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; }
+#lens-tour .nav .next { background: #14202a; color: #fff; }
+#lens-tour .nav .skip { color: #4b6b7d; }
+#lens-toast { position: absolute; left: 50%; bottom: 128px; transform: translateX(calc(-50% - 200px)); background: var(--panel-2); border: 1px solid var(--line);
+  padding: 8px 14px; border-radius: 999px; font-size: 12.5px; opacity: 0; transition: opacity .25s; pointer-events: none; }
+#lens-toast.on { opacity: 1; }
+#lens-loading { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(12, 16, 20, .6); font-size: 14px; color: var(--ink-2); pointer-events: auto; }
+.lens-table { display: grid; gap: 3px 12px; font: 12px var(--mono); margin-top: 8px; color: var(--ink-2); }
+.lens-table .th { font: 11px var(--font); color: var(--ink-3); }
+.lens-table .hot { color: var(--bad); }
