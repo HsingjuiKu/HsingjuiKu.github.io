@@ -11,7 +11,7 @@
 #lens .pe { pointer-events: auto; }
 
 /* header + tabs */
-#lens-top { position: absolute; left: 18px; right: 418px; top: 14px; display: flex; align-items: center; gap: 18px; }
+#lens-top { position: absolute; left: 18px; right: 418px; top: 14px; display: flex; align-items: center; gap: 12px; }
 #lens-brand { pointer-events: auto; }
 #lens-brand b { letter-spacing: .18em; font-size: 12px; color: var(--ink-2); font-weight: 600; }
 #lens-brand div { font-size: 17px; font-weight: 600; margin-top: 1px; }
@@ -19,7 +19,8 @@
 #lens-tabs button { all: unset; cursor: pointer; padding: 6px 14px; border-radius: 999px; color: var(--ink-2); font-size: 13px; }
 #lens-tabs button:hover { color: var(--ink); }
 #lens-tabs button.on { background: var(--ink); color: #11161b; font-weight: 600; }
-#lens-tour-btn { all: unset; cursor: pointer; pointer-events: auto; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--accent); font-weight: 600; }
+#lens-tour-btn, #lens-lang-btn { all: unset; cursor: pointer; pointer-events: auto; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--accent); font-weight: 600; }
+#lens-lang-btn { color: var(--ink); font-weight: 500; min-width: 30px; text-align: center; }
 
 /* right panel */
 #lens-panel { position: absolute; right: 14px; top: 14px; bottom: 14px; width: 390px; background: var(--panel); border: 1px solid var(--line);

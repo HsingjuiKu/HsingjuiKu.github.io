@@ -11,13 +11,17 @@ import { Input } from './input.js';
 import { GUI } from './gui.js';
 import { Recorder, makeNpz, downloadBlob } from './recorder.js';
 import { Bridge } from './bridge.js';
+import { getLang } from './lang.js';
 
 const canvas = document.getElementById('view');
 // a standalone Atlas Lens page (learning/web_export.py --site) sets window.CLOSURE_ATLAS: lens view, no Python bridge
 const STATIC_LENS = !!window.CLOSURE_ATLAS;
-const T = STATIC_LENS
-  ? { terrain: '正在生成地形…', warmup: '海面预热中…', noGpu: '这个页面需要 WebGPU：请用最新版 Chrome、Edge 或 Safari 打开。' }
-  : { terrain: 'Generazione del terreno…', warmup: 'Riscaldamento del mare…', noGpu: null };
+const STATUS = {
+  zh: { start: '正在启动 WebGPU…', terrain: '正在生成地形…', warmup: '海面预热中…', noGpu: '这个页面需要 WebGPU：请用最新版 Chrome、Edge 或 Safari 打开。' },
+  en: { start: 'Starting WebGPU…', terrain: 'Generating terrain…', warmup: 'Warming up the sea…', noGpu: 'This page needs WebGPU: please open it in a recent Chrome, Edge or Safari.' },
+  it: { start: 'Avvio WebGPU…', terrain: 'Generazione del terreno…', warmup: 'Riscaldamento del mare…', noGpu: null },
+};
+const T = STATUS[STATIC_LENS ? getLang() : 'it'];
 const hud = document.getElementById('hud');
 const statusEl = document.getElementById('status');
 
@@ -28,6 +32,7 @@ function setStatus(msg, isError = false) {
 }
 
 async function main() {
+  if (STATIC_LENS) setStatus(T.start);
   const gpu = await initGPU(canvas);
   const { device } = gpu;
   device.addEventListener('uncapturederror', (e) => {
